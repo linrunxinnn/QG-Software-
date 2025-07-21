@@ -1,4 +1,6 @@
 package com.qg.service.impl;
 
-public class UserServiceImpl {
+import com.qg.service.UserService;
+
+public class UserServiceImpl implements UserService {
 }

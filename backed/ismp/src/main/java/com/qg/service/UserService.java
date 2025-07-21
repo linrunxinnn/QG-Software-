@@ -1,4 +1,4 @@
-package com.qg.service.impl;
+package com.qg.service;
 
 public interface UserService {
 }
