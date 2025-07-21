@@ -14,13 +14,13 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/{email}/{password}")
-    public Result loginByPassword(@PathVariable String email, @PathVariable String password) {
+    @GetMapping("/password")
+    public Result loginByPassword(@RequestParam String email, @RequestParam String password) {
         return userService.loginByPassword(email,password);
     }
 
-    @GetMapping("/{email}/{code}")
-    public Result loginByCode(@PathVariable String email, @PathVariable String code) {
+    @GetMapping("/code")
+    public Result loginByCode(@RequestParam String email, @RequestParam String code) {
         return userService.loginByCode(email,code);
     }
 
