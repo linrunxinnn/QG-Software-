@@ -8,6 +8,9 @@ import com.qg.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static com.qg.domain.Code.CONFLICT;
+import static com.qg.domain.Code.SUCCESS;
+
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -21,9 +24,9 @@ public class UserServiceImpl implements UserService {
         lqw.eq(User::getEmail, email).eq(User::getPassword,password);
         User loginUser = userMapper.selectOne(lqw);
         if(loginUser == null){
-            return new Result();
+            return new Result(CONFLICT,"该邮箱未被注册");
         }
-        return null;
+        return new Result(SUCCESS,"登录成功");
     }
 
     @Override
