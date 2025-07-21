@@ -19,3 +19,4 @@ mybatis-plus:
       logic-delete-field: is_deleted
       logic-delete-value: 1
 
+
