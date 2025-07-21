@@ -1,6 +1,8 @@
 package com.qg.mapper;
 
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.qg.domain.User;
 
-public class UserMapper  {
+public interface UserMapper extends BaseMapper<User> {
 }
