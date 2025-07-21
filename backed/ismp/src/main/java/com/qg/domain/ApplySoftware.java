@@ -15,6 +15,6 @@ public class ApplySoftware {
     private long userId;
     private String reason;
     private String material;
-    private int status;
+    private Integer status;
     private Long softwareId;
 }

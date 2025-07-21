@@ -16,5 +16,5 @@ public class ApplyDeveloper {
     private DateTime applyTime;
     private String reason;
     private String material;
-    private int status;
+    private Integer status;
 }
