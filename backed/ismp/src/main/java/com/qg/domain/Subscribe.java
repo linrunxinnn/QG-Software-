@@ -3,6 +3,7 @@ package com.qg.domain;
 
 
 public class Subscribe {
+
     private long id;
     private long userId;
     private long developerId;
@@ -67,4 +68,5 @@ public class Subscribe {
     public String toString() {
         return "Subscribe{id = " + id + ", userId = " + userId + ", developerId = " + developerId + "}";
     }
+
 }

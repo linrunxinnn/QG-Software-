@@ -10,27 +10,11 @@ public class Result {
     private Integer code;
     private String msg;
 
-    public Result(Integer code, Object data) {
-        this.data = data;
+
+    public Result(Integer code) {
         this.code = code;
     }
 
-    public Result(Integer code, Object data, String msg) {
-        this.data = data;
-        this.code = code;
-        this.msg = msg;
-    }
-
-    public Result(Integer code, String msg) {
-        this.code = code;
-        this.msg = msg;
-    }
-
-    public Result(Integer code, String msg, Object data) {
-        this.data = data;
-        this.code = code;
-        this.msg = msg;
-    }
 
     public Result() {
     }
@@ -86,4 +70,5 @@ public class Result {
     public String toString() {
         return "Result{data = " + data + ", code = " + code + ", msg = " + msg + "}";
     }
+
 }
