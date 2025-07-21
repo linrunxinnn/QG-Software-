@@ -248,6 +248,7 @@ CREATE TABLE `software` (
   `version` varchar(20) DEFAULT NULL,
   `install_detail` varchar(300) DEFAULT NULL,
   `status` int DEFAULT NULL,
+  `picture` varchar(100) DEFAULT NULL COMMENT '图片',
   PRIMARY KEY (`id`),
   KEY `software_user_id_fk` (`author`),
   CONSTRAINT `software_user_id_fk` FOREIGN KEY (`author`) REFERENCES `user` (`id`)
@@ -302,7 +303,7 @@ CREATE TABLE `user` (
   `id` bigint NOT NULL,
   `name` varchar(32) DEFAULT NULL,
   `password` varchar(20) DEFAULT NULL,
-  `avatar` varchar(200) DEFAULT NULL,
+  `avatar` varchar(200) DEFAULT NULL COMMENT '头像',
   `email` varchar(200) DEFAULT NULL,
   `phone` varchar(11) DEFAULT NULL,
   `role` int DEFAULT NULL,
@@ -329,4 +330,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-07-21 10:36:24
+-- Dump completed on 2025-07-21 11:30:49
