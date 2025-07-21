@@ -2,5 +2,5 @@ package com.qg.mapper;
 
 
 
-public class UserMapper  {
+public interface UserMapper  {
 }

@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Subscribe {
-    private long id;
-    private long userId;
-    private long developerId;
+    private Long id;
+    private Long userId;
+    private Long developerId;
 }
