@@ -17,6 +17,7 @@ public class Software {
     private Integer status;
     private String picture;
     private String type;
+    private String name;
     @TableLogic
     private int isDeleted;
 
