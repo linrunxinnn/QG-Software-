@@ -15,7 +15,7 @@ public class Message {
     private long posterId;
     private String content;
     private DateTime time;
-    private int isRead;
+    private Integer isRead;
     @TableLogic
     private int isDeleted;
 }

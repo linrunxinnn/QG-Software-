@@ -12,7 +12,7 @@ public class Equipment {
     private long id;
     private long userId;
     private long softwareId;
-    private int status;
+    private Integer status;
     private String code1;
     private String code2;
     private String code3;

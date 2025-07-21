@@ -19,7 +19,7 @@ public class Software {
     private String introduction;
     private String version;
     private String installDetail;
-    private int status;
+    private Integer status;
     private String picture;
     private String type;
     @TableLogic
