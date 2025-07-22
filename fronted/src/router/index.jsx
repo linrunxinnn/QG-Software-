@@ -12,6 +12,7 @@ import Publish from "../pages/publish/publish.jsx";
 import ShowList from "../pages/publish/showList.jsx";
 import EditPost from "../pages/publish/editPost.jsx";
 import CreatePost from "../pages/publish/createPost.jsx";
+import SoftwareDetail from "../pages/detail/SoftwareDetail.jsx"; // 新增
 
 export const router = createBrowserRouter([
   {
@@ -53,6 +54,11 @@ export const router = createBrowserRouter([
         //软件详情页面（一个开发商版，一个用户版，用户版再分为已购未购）
         path: "detail/:id",
         element: <Detail />,
+      },
+      {
+        //新的软件详情页面（统一的软件详情展示）
+        path: "software/:id",
+        element: <SoftwareDetail />,
       },
       {
         //动态页面（消息）

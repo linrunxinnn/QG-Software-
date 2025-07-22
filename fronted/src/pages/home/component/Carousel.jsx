@@ -1,8 +1,10 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom'; // 新增
 import { Carousel, Tag } from 'antd';
 import styles from './Carousel.module.css';
 
 const CarouselComponent = () => {
+  const navigate = useNavigate(); // 新增
   // 模拟静态软件数据，后续可替换为API接口数据
   const softwareList = [
     {
@@ -68,10 +70,12 @@ const CarouselComponent = () => {
   };
 
   const handleImageClick = (software) => {
-    // 跳转到软件详情页
-    window.open(software.detailUrl, '_blank');
-    // 或使用路由跳转: navigate(software.detailUrl);
+    // 使用路由跳转到新的软件详情页
+    console.log('点击软件:', software.name); // 添加调试信息
+    navigate(`/software/${software.id}?from=carousel`);
   };
+
+  
 
   const getTagColor = (tag) => {
     const colorMap = {
@@ -110,9 +114,11 @@ const CarouselComponent = () => {
                   src={software.image}
                   alt={software.name}
                   className={styles.slideImage}
-                  onClick={() => handleImageClick(software)}
+                  
                 />
-                <div className={styles.imageOverlay}>
+                <div className={styles.imageOverlay}
+                  onClick={() => handleImageClick(software)}
+                >
                   <span>点击查看详情</span>
                 </div>
               </div>

@@ -1,0 +1,9 @@
+.category-bar {
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 14px;
+    color: #333;
+    margin: 10px 0;
+}
