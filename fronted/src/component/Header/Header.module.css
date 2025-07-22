@@ -273,7 +273,7 @@
 }
 
 /* 保留基本的响应式设计，删除过小屏幕的复杂适配 */
-@media (max-width: 1024px) {
+/* @media (max-width: 1024px) {
   .container {
     padding: 0 16px;
     box-sizing: border-box;
@@ -327,4 +327,4 @@
   .notification {
     display: flex;
   }
-}
+} */

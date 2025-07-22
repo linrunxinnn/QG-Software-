@@ -1,5 +1,15 @@
-import React, { useState } from 'react';
-import { Input, Badge, Avatar, Modal, Form, Button, Dropdown } from 'antd';
+import React, { useState, useEffect } from "react";
+import {
+  Input,
+  Badge,
+  Avatar,
+  Modal,
+  Form,
+  Button,
+  Dropdown,
+  Tabs,
+  message, // 添加 message 导入
+} from "antd";
 import {
   SearchOutlined,
   BellOutlined,
@@ -7,94 +17,134 @@ import {
   LoginOutlined,
   SettingOutlined,
   LogoutOutlined,
-  HomeOutlined
-} from '@ant-design/icons';
-import styles from './Header.module.css';
-import qgLogo from '../../assets/qg.png';
+  HomeOutlined,
+} from "@ant-design/icons";
+import styles from "./Header.module.css";
+import qgLogo from "../../assets/qg.png";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import LoginForm from "./login.jsx";
+import RegisterForm from "./register.jsx";
+import ResetForm from "./reset.jsx";
 
 const { Search } = Input;
 
 const Header = () => {
+  // 状态定义
   const [isLoginModalVisible, setIsLoginModalVisible] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [form] = Form.useForm();
+  const [activeTab, setActiveTab] = useState("login");
+  const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
+
+  // 三个表单实例
+  const [loginForm] = Form.useForm();
+  const [registerForm] = Form.useForm();
+  const [resetForm] = Form.useForm();
+
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  // Tab配置
+  const tabItems = [
+    {
+      key: "login",
+      label: "登录",
+      children: <LoginForm />,
+    },
+    {
+      key: "register",
+      label: "注册",
+      children: <RegisterForm />,
+    },
+    {
+      key: "reset",
+      label: "修改密码",
+      children: <ResetForm />,
+    },
+  ];
+
+  // Modal关闭处理
+  const handleModalClose = () => {
+    setIsLoginModalVisible(false);
+    setActiveTab("login");
+    setCountdown(0);
+    loginForm.resetFields();
+    registerForm.resetFields();
+    resetForm.resetFields();
+  };
 
   // 模拟用户信息
   const userInfo = {
-    name: '张三',
-    avatar: qgLogo
+    name: "张三",
+    avatar: qgLogo,
   };
-
-  // 通知状态 - 布尔值，false表示有未读通知（显示小红点）
-  const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
 
   // 搜索处理函数
   const handleSearch = (value) => {
-    console.log('搜索软件:', value);
-    // TODO: 后续实现跳转到软件详情页面
+    console.log("搜索软件:", value);
+    navigate(`detail/${value}`);
   };
 
   // 铃铛点击处理
   const handleNotificationClick = () => {
-    console.log('点击铃铛，跳转到消息页面');
-    // TODO: 后续实现跳转到消息页面
+    console.log("点击铃铛，跳转到消息页面");
+    navigate("/moments");
     // 点击后可以将未读状态设为已读
     setHasUnreadNotifications(true);
   };
 
   // 首页点击处理
   const handleHomeClick = () => {
-    console.log('点击首页，跳转到首页');
-    // TODO: 后续实现跳转到首页
+    console.log("点击首页，跳转到首页");
+    navigate("/");
   };
 
   // 设置点击处理
   const handleSettingsClick = () => {
-    console.log('点击设置，跳转到设置页面');
-    // TODO: 后续实现跳转到设置页面
-  };
-
-  // 登录处理
-  const handleLogin = async (values) => {
-    try {
-      console.log('登录信息:', values);
-      // TODO: 后续接入后端登录接口
-      setIsLoggedIn(true);
-      setIsLoginModalVisible(false);
-      form.resetFields();
-    } catch (error) {
-      console.error('登录失败:', error);
-    }
+    console.log("点击设置，跳转到设置页面");
+    navigate("/personal/settings");
   };
 
   // 登出处理
   const handleLogout = () => {
     setIsLoggedIn(false);
-    console.log('用户登出');
+    message.success("退出登录成功");
+    console.log("用户登出");
+    // 使用redux中暴露的logout方法清除用户信息
+  };
+
+  // Tab切换处理
+  const handleTabChange = (key) => {
+    setActiveTab(key);
+    // 清空所有表单
+    loginForm.resetFields();
+    registerForm.resetFields();
+    resetForm.resetFields();
+    // 重置倒计时
   };
 
   // 用户菜单
   const userMenuItems = [
     {
-      key: 'profile',
+      key: "profile",
       icon: <UserOutlined />,
-      label: '个人中心',
-      onClick: () => console.log('跳转到个人中心')
+      label: "个人中心",
+      onClick: () => console.log("跳转到个人中心"),
     },
     {
-      key: 'settings',
+      key: "settings",
       icon: <SettingOutlined />,
-      label: '设置',
-      onClick: () => console.log('跳转到设置页面')
+      label: "设置",
+      onClick: () => console.log("跳转到设置页面"),
     },
     {
-      type: 'divider',
+      type: "divider",
     },
     {
-      key: 'logout',
+      key: "logout",
       icon: <LogoutOutlined />,
-      label: '退出登录',
-      onClick: handleLogout
+      label: "退出登录",
+      onClick: handleLogout,
     },
   ];
 
@@ -104,15 +154,10 @@ const Header = () => {
         {/* 左侧：Logo图片、首页和设置 */}
         <div className={styles.left}>
           <div className={styles.logo}>
-            <img
-              src={qgLogo}
-              alt="Logo"
-              className={styles.logoImage}
-            />
-            <div
-              className={styles.homeButton}
-              onClick={handleHomeClick}
-            >
+            <div className={styles.logo}>
+              <img src={qgLogo} alt="Logo" className={styles.logoImage} />
+            </div>
+            <div className={styles.homeButton} onClick={handleHomeClick}>
               <HomeOutlined className={styles.homeIcon} />
               <span className={styles.homeText}>首页</span>
             </div>
@@ -190,47 +235,18 @@ const Header = () => {
 
       {/* 登录弹窗 */}
       <Modal
-        title="用户登录"
+        title="用户认证"
         open={isLoginModalVisible}
-        onCancel={() => setIsLoginModalVisible(false)}
+        onCancel={handleModalClose}
         footer={null}
         width={400}
+        destroyOnHidden // 修复：使用新的属性名
       >
-        <Form
-          form={form}
-          name="login"
-          onFinish={handleLogin}
-          layout="vertical"
-          autoComplete="off"
-        >
-          <Form.Item
-            label="用户名"
-            name="username"
-            rules={[
-              { required: true, message: '请输入用户名!' },
-              { min: 3, message: '用户名至少3个字符!' }
-            ]}
-          >
-            <Input placeholder="请输入用户名" />
-          </Form.Item>
-
-          <Form.Item
-            label="密码"
-            name="password"
-            rules={[
-              { required: true, message: '请输入密码!' },
-              { min: 6, message: '密码至少6个字符!' }
-            ]}
-          >
-            <Input.Password placeholder="请输入密码" />
-          </Form.Item>
-
-          <Form.Item>
-            <Button type="primary" htmlType="submit" block>
-              登录
-            </Button>
-          </Form.Item>
-        </Form>
+        <Tabs
+          activeKey={activeTab}
+          items={tabItems}
+          onChange={handleTabChange}
+        />
       </Modal>
     </header>
   );
