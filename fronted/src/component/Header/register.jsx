@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 const { Option } = Select;
 
-const RegisterForm = () => {
+const RegisterForm = ({ onSuccess }) => {
   // State and event control
   const [countdown, setCountdown] = useState(0);
   const dispatch = useDispatch();
@@ -61,7 +61,7 @@ const RegisterForm = () => {
       // const { token, user } = res.data;
       // dispatch(setLogin({ token, user }));
       // localStorage.setItem("token", token);
-      navigator("/home");
+      onSuccess(1);
     } catch (error) {
       console.log(error.message);
       message.warning("注册失败，请检查您的信息是否正确");

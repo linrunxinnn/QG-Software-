@@ -11,7 +11,7 @@ const layout = {
 const tailLayout = {
   wrapperCol: { offset: 8, span: 16 },
 };
-const LoginForm = () => {
+const LoginForm = ({ onSuccess }) => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const navigator = useNavigate();
@@ -21,10 +21,10 @@ const LoginForm = () => {
     try {
       console.log("登录信息:", values);
       // TODO: 后续接入后端登录接口
-      setIsLoggedIn(true);
-      setIsLoginModalVisible(false);
-      loginForm.resetFields(); // 修复：使用正确的表单实例
+      // setIsLoggedIn(true);
+      // setIsLoginModalVisible(false);
       message.success("登录成功");
+      onSuccess(1); // 假设 userData 是从后端获取的用户数据
     } catch (error) {
       console.error("登录失败:", error);
       message.error("登录失败，请重试");
