@@ -12,6 +12,11 @@ import Publish from "../pages/publish/publish.jsx";
 import ShowList from "../pages/publish/showList.jsx";
 import EditPost from "../pages/publish/editPost.jsx";
 import CreatePost from "../pages/publish/createPost.jsx";
+import ControlPage from "../pages/contorlPage/controlPage.jsx";
+import CheckDetail from "../pages/contorlPage/component/softdetail.jsx";
+import ShowSoft from "../pages/contorlPage/component/showSoft.jsx"
+import UserList from "../pages/contorlPage/component/userList.jsx"
+import CheckList from "../pages/contorlPage/component/CheckList.jsx"
 
 export const router = createBrowserRouter([
   {
@@ -82,5 +87,30 @@ export const router = createBrowserRouter([
         ],
       },
     ],
+
   },
+  {
+    //管理端路径
+    path: "/manager",
+    element: <ControlPage />,
+    children: [
+      {
+        index: true,
+        element: <CheckList />,
+      },
+      {
+        path: "user",
+        element: <UserList />,
+      },
+      {
+        path: "comment",
+        element: <ShowSoft />,
+      },
+      {
+        path: "detail/:name",
+        element: <CheckDetail />
+      }
+    ]
+  },
+
 ]);

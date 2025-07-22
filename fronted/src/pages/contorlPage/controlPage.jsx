@@ -10,9 +10,8 @@ import {
 import { Button, Layout, Menu, theme } from 'antd';
 
 import "./controlPage.css"
-import Detail from "./component/detail"
-import UserList from './component/userList';
-import ShowCard from './component/showSoft';
+import { Outlet, useNavigate } from 'react-router-dom';
+
 
 const { Header, Sider, Content } = Layout;
 const ControlPage = () => {
@@ -21,16 +20,7 @@ const ControlPage = () => {
         token: { colorBgContainer, borderRadiusLG },
     } = theme.useToken();
 
-    //从后台拉取
-    const software = {
-        name: '示例软件',
-        description: '这是一个很棒的软件。',
-        proofMaterials: [],
-        package: [],
-        preSale: true,
-        price: 199.99,
-        cover: [],
-    };
+
     //从后台拉取
     const users = [
         { name: 'Alice', email: 'alice@example.com', avatarUrl: 'https://example.com/avatar1.jpg' },
@@ -38,6 +28,14 @@ const ControlPage = () => {
         { name: 'Charlie', email: 'charlie@example.com', avatarUrl: 'https://example.com/avatar3.jpg' },
     ];
 
+    const navigate = useNavigate()
+
+    //跳转页面函数
+    const handleMenuClick = (key) => {
+        if (key === "1") navigate('');
+        else if (key === "2") navigate('user');
+        else navigate('comment');
+    }
 
     return (
         <Layout className='layout'>
@@ -51,17 +49,20 @@ const ControlPage = () => {
                         {
                             key: '1',
                             icon: <UserOutlined />,
-                            label: 'nav 1',
+                            label: '软件审核',
+                            onClick: () => handleMenuClick('1'),
                         },
                         {
                             key: '2',
                             icon: <VideoCameraOutlined />,
-                            label: 'nav 2',
+                            label: '账户管理',
+                            onClick: () => handleMenuClick('2'),
                         },
                         {
                             key: '3',
                             icon: <UploadOutlined />,
-                            label: 'nav 3',
+                            label: '社区管理',
+                            onClick: () => handleMenuClick('3'),
                         },
                     ]}
                 />
@@ -88,9 +89,7 @@ const ControlPage = () => {
                         borderRadius: borderRadiusLG,
                     }}
                 >
-                    {/*软件审核详情页 <Detail software={software} /> */}
-                    {/* 用户列表页  <UserList users={users}></UserList> */}
-                    <ShowCard />
+                    <Outlet></Outlet>
                 </Content>
             </Layout>
         </Layout>
