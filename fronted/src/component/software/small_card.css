@@ -4,9 +4,14 @@
     border: 1px solid #ddd;
     border-radius: 8px;
     padding: 12px;
-    width: 50%;
+    width: 70%;
     background: #fff;
     margin-bottom: 10px;
+}
+
+.card:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    transition: all 0.4s ease-in;
 }
 
 .card-img {
@@ -43,7 +48,7 @@
 
 .download-btn {
     padding: 4px 8px;
-    background: #f0f0f0;
+    background: white;
     border: 1px solid #ccc;
     border-radius: 4px;
     cursor: pointer;

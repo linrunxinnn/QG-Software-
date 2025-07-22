@@ -7,12 +7,13 @@ import "./ShowSoft.css"
 const ShowCard = () => {
 
     return (
-        <>
+        <div className="ShowCard">
             <Gap />
             <div className="Medium">
                 <MediumCard></MediumCard>
                 <MediumCard></MediumCard>
                 <MediumCard></MediumCard>
+
             </div>
             <Gap />
             <div className="Small">
@@ -29,7 +30,7 @@ const ShowCard = () => {
                 <BigCard></BigCard>
                 <BigCard></BigCard>
             </div>
-        </>
+        </div>
     )
 }
 
