@@ -1,9 +1,10 @@
 /* Header.module.css */
 .header {
   width: 100%;
-  background: #000000;
+  /* background: #000000; */
+  background-color: #e9ecf0;
   box-shadow: 0 2px 8px rgba(255, 255, 255, 0.1);
-  border-bottom: 1px solid #333333;
+  /* border-bottom: 1px solid #333333; */
   position: sticky;
   top: 0;
   z-index: 1000;
@@ -41,8 +42,8 @@
 }
 
 .logoImage {
-  width: 32px;
-  height: 32px;
+  width: 52px;
+  height: 52px;
   border-radius: 4px;
   object-fit: cover;
   flex-shrink: 0;
@@ -65,19 +66,19 @@
 
 .settingsButton:hover .settingsIcon,
 .settingsButton:hover .settingsText {
-  color: #1890ff;
+  color: #666666;
 }
 
 .settingsIcon {
   font-size: 15px;
-  color: #ffffff;
+  color: #333333;
   transition: all 0.3s ease;
 }
 
 .settingsText {
   font-size: 16px;
   font-weight: 500;
-  color: #ffffff;
+  color: #333333;
   user-select: none;
   white-space: nowrap;
   transition: all 0.3s ease;
@@ -101,19 +102,19 @@
 
 .homeButton:hover .homeIcon,
 .homeButton:hover .homeText {
-  color: #1890ff;
+  color: #666666;
 }
 
 .homeIcon {
   font-size: 15px;
-  color: #ffffff;
+  color: #333333;
   transition: all 0.3s ease;
 }
 
 .homeText {
   font-size: 16px;
   font-weight: 500;
-  color: #ffffff;
+  color: #333333;
   user-select: none;
   white-space: nowrap;
   transition: all 0.3s ease;
@@ -140,7 +141,7 @@
   padding: 8px 16px;
   background-color: rgba(255, 255, 255, 0.1);
   border-color: #666666;
-  color: #ffffff;
+  color: #333333;
 }
 
 .searchInput .ant-input::placeholder {
@@ -150,15 +151,15 @@
 .searchInput .ant-btn {
   border-radius: 0 8px 8px 0;
   border-left: none;
-  background-color: #1890ff;
-  border-color: #1890ff;
+  background-color: #666666;
+  border-color: #666666;
 }
 
 /* 右侧区域 - 允许收缩 */
 .right {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   flex: 0 1 auto;
   min-width: 0;
   justify-content: flex-end;
@@ -171,14 +172,14 @@
 
 .notificationIcon {
   font-size: 16px;
-  color: #ffffff;
+  color: #333333;
   transition: all 0.3s ease;
   padding: 4px;
   border-radius: 50%;
 }
 
 .notificationIcon:hover {
-  color: #1890ff;
+  color: #666666;
   background-color: rgba(255, 255, 255, 0.1);
 }
 
@@ -194,15 +195,21 @@
 }
 
 .avatar {
-  border: 1px solid #ffffff;
+  border: 1px solid #333333;
   flex-shrink: 0;
   width: 32px;
   height: 32px;
+  cursor: pointer;
+}
+
+.avatar:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: box-shadow 0.3s ease;
 }
 
 .defaultUserName {
   font-size: 12px;
-  color: #ffffff;
+  color: #333333;
   font-weight: 500;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -218,7 +225,7 @@
   font-weight: 500;
   font-size: 14px;
   background-color: transparent;
-  color: #ffffff;
+  color: #333333;
   white-space: nowrap;
   flex-shrink: 0;
   min-width: 50px;
@@ -229,7 +236,7 @@
 .loginButton:focus {
   background-color: transparent;
   border: none;
-  color: #1890ff;
+  color: #666666;
   box-shadow: none;
 }
 
@@ -237,7 +244,7 @@
 .userInfo {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   cursor: pointer;
   padding: 6px 10px;
   border-radius: 8px;
@@ -253,13 +260,23 @@
 }
 
 .userName {
-  font-size: 12px;
-  color: #ffffff;
+  cursor: pointer;
+  font-size: 15px;
+  color: #333333;
   font-weight: 500;
   max-width: 80px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.userAvatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  cursor: pointer;
 }
 
 /* Badge 小红点样式调整 */
@@ -273,7 +290,7 @@
 }
 
 /* 保留基本的响应式设计，删除过小屏幕的复杂适配 */
-/* @media (max-width: 1024px) {
+@media (max-width: 1024px) {
   .container {
     padding: 0 16px;
     box-sizing: border-box;
@@ -327,4 +344,4 @@
   .notification {
     display: flex;
   }
-} */
+}
