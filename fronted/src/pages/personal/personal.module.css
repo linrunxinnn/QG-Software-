@@ -1,0 +1,238 @@
+.personalPage {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background: #f5f5f5;
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+/* 用户信息头部 */
+.userHeader {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.userAvatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #e5e7eb;
+}
+
+.userDetails {
+  flex: 1;
+  min-width: 200px;
+}
+
+.userNameSection {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.userName {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.userRole {
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.userStats {
+  display: flex;
+  gap: 24px;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.stat strong {
+  color: #3b82f6;
+  margin-left: 4px;
+}
+
+.userActions {
+  display: flex;
+  gap: 12px;
+}
+
+.actionBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  color: #374151;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.actionBtn:hover {
+  background: #e5e7eb;
+  border-color: #9ca3af;
+}
+
+/* 快速导航 */
+.quickNav {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.navCard {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.navCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  border: 1px solid #3b82f6;
+}
+
+.navIcon {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #3b82f6 0%, #10b981 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+}
+
+.navContent {
+  flex: 1;
+}
+
+.navTitle {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.navDesc {
+  margin: 0;
+  font-size: 14px;
+  color: #6b7280;
+  line-height: 1.4;
+}
+
+/* 内容区域 */
+.contentSection {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .personalPage {
+    padding: 12px;
+  }
+
+  .userInfo {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .userActions {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .quickNav {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .navCard {
+    padding: 16px;
+  }
+
+  .navIcon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .navTitle {
+    font-size: 15px;
+  }
+
+  .navDesc {
+    font-size: 13px;
+  }
+}
+
+
+.sectionContent {
+  margin-bottom: 40px;
+  min-height: 400px;
+  /* 确保有足够高度可以滚动 */
+}
+
+.tabBar {
+  display: flex;
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 20px;
+}
+
+.tabItem {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tabItem:hover {
+  background-color: #f9fafb;
+}
+
+.activeTab {
+  color: #3b82f6;
+  border-bottom: 2px solid #3b82f6;
+}
+
+.followingContent {
+  margin-top: 20px;
+}

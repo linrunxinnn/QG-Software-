@@ -1,0 +1,413 @@
+.appointmentPage {
+  width: 100%;
+  background: #f5f5f5;
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+/* 页面头部 */
+.header {
+  background: white;
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.backBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 50%;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.backBtn:hover {
+  background: #e5e7eb;
+  border-color: #9ca3af;
+}
+
+.pageTitle {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.statsInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #6b7280;
+  font-size: 14px;
+  background: #f9fafb;
+  padding: 8px 16px;
+  border-radius: 20px;
+}
+
+/* 内容区域 */
+.content {
+  margin: 20px;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  min-height: 500px;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  color: #9ca3af;
+  font-size: 16px;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+  color: #9ca3af;
+  text-align: center;
+}
+
+.empty h3 {
+  margin: 16px 0 8px 0;
+  font-size: 18px;
+  color: #6b7280;
+}
+
+.empty p {
+  margin: 0;
+  font-size: 14px;
+}
+
+/* 预约软件列表 */
+.appointmentList {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.appointmentCard {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.appointmentCard:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.15);
+  transform: translateY(-2px);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px;
+  background: white;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.softwareInfo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+}
+
+.softwareIcon {
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 2px solid #e5e7eb;
+}
+
+.basicInfo {
+  flex: 1;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.softwareName {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.badges {
+  display: flex;
+  gap: 8px;
+}
+
+.priorityBadge,
+.statusBadge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.statusBadge {
+  border: 1px solid currentColor;
+}
+
+.developerInfo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.developer,
+.category {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.category {
+  background: #f3f4f6;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.cardActions {
+  display: flex;
+  gap: 8px;
+}
+
+.notifyBtn,
+.cancelBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: #f9fafb;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.notifyBtn:hover,
+.cancelBtn:hover {
+  border-color: #9ca3af;
+  background: #f3f4f6;
+}
+
+.notifyBtn.active {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  color: white;
+}
+
+.cancelBtn:hover {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #dc2626;
+}
+
+.cardBody {
+  padding: 24px;
+  background: white;
+}
+
+.description {
+  margin: 0 0 20px 0;
+  color: #4b5563;
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+.versionInfo {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 20px;
+}
+
+.versionItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.label {
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+.version {
+  font-size: 13px;
+  color: #1f2937;
+  font-weight: 500;
+  background: #f3f4f6;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.features {
+  margin-bottom: 20px;
+}
+
+.featuresLabel {
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.featuresList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.featureTag {
+  background: #eff6ff;
+  color: #1d4ed8;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid #bfdbfe;
+}
+
+.cardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  background: #f8fafc;
+  border-top: 1px solid #f1f5f9;
+}
+
+.timeInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.timeItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.countdown {
+  font-size: 14px;
+  color: #f59e0b;
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+.countdown strong {
+  color: #d97706;
+}
+
+.priceInfo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.price {
+  font-size: 18px;
+  font-weight: 600;
+  color: #dc2626;
+}
+
+.viewDetailBtn {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.viewDetailBtn:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .appointmentPage {
+    padding: 0;
+  }
+
+  .header,
+  .content {
+    margin: 12px;
+  }
+
+  .header {
+    padding: 16px 20px;
+  }
+
+  .pageTitle {
+    font-size: 20px;
+  }
+
+  .appointmentList {
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .cardHeader,
+  .cardBody,
+  .cardFooter {
+    padding: 16px;
+  }
+
+  .cardHeader {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .cardActions {
+    justify-content: flex-end;
+  }
+
+  .cardFooter {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .versionInfo {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
