@@ -1,0 +1,353 @@
+.fansPage {
+  width: 100%;
+  background: #f5f5f5;
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+/* 个人信息区域 */
+.personalInfoSection {
+  margin-bottom: 20px;
+}
+
+/* 页面头部 */
+.header {
+  background: white;
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.headerContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.backBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 50%;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.backBtn:hover {
+  background: #e5e7eb;
+  border-color: #9ca3af;
+}
+
+.pageTitle {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.statsInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #6b7280;
+  font-size: 14px;
+  background: #f9fafb;
+  padding: 8px 16px;
+  border-radius: 20px;
+}
+
+/* 内容区域 */
+.content {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  min-height: 500px;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  color: #9ca3af;
+  font-size: 16px;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+  color: #9ca3af;
+  text-align: center;
+}
+
+.empty h3 {
+  margin: 16px 0 8px 0;
+  font-size: 18px;
+  color: #6b7280;
+}
+
+.empty p {
+  margin: 0;
+  font-size: 14px;
+}
+
+/* 关注/粉丝列表 */
+.fansList {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.fansCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.fansCard:hover {
+  border-color: #3b82f6;
+  background: white;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+  transform: translateY(-2px);
+}
+
+.fansInfo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+}
+
+.avatarSection {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 2px solid #e5e7eb;
+}
+
+.verifiedBadge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 20px;
+  height: 20px;
+  background: #10b981;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: bold;
+  border: 2px solid white;
+}
+
+.infoSection {
+  flex: 1;
+  min-width: 0;
+}
+
+.nameSection {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.name {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.type {
+  background: #dbeafe;
+  color: #1e40af;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* 修复描述文本的显示问题 */
+.description {
+  margin: 0 8 12px 0;
+  font-size: 14px;
+  color: #6b7280;
+  line-height: 1.4;
+}
+
+/* 描述文本的基本样式和兼容性省略效果 */
+.description {
+  margin: 0 8px 12px 0;
+  font-size: 14px;
+  color: #6b7280;
+  line-height: 1.4;
+
+  /* 为不支持 -webkit-line-clamp 的浏览器提供后备方案 */
+  max-height: 2.8em;
+  /* 2行的高度 (line-height * 2) */
+  overflow: hidden;
+
+  /* 现代浏览器的多行省略 */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+
+  /* 渐进增强：支持标准属性的浏览器 */
+  display: -moz-box;
+  -moz-box-orient: vertical;
+
+  /* 最新标准（未来支持） */
+  line-clamp: 2;
+}
+
+/* 对于完全不支持的旧浏览器，提供单行省略 */
+@supports not (display: -webkit-box) {
+  .description {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-height: none;
+  }
+}
+
+.stats {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.statItem {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+/* 操作按钮 */
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.viewBtn,
+.unfollowBtn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.viewBtn {
+  background: #3b82f6;
+  color: white;
+}
+
+.viewBtn:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+}
+
+.unfollowBtn {
+  background: #f3f4f6;
+  color: #6b7280;
+  border: 1px solid #d1d5db;
+}
+
+.unfollowBtn:hover {
+  background: #fef2f2;
+  color: #dc2626;
+  border-color: #fecaca;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .header {
+    padding: 16px 20px;
+  }
+
+  .pageTitle {
+    font-size: 20px;
+  }
+
+  .fansList {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .fansCard {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px;
+  }
+
+  .fansInfo {
+    width: 100%;
+  }
+
+  .actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .stats {
+    gap: 12px;
+  }
+
+  .statItem {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  .nameSection {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .actions {
+    justify-content: stretch;
+  }
+
+  .viewBtn,
+  .unfollowBtn {
+    flex: 1;
+    font-size: 13px;
+    padding: 10px 12px;
+  }
+
+  .stats {
+    flex-direction: column;
+    gap: 8px;
+  }
+}

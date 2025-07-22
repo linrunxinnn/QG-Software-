@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Tag, Modal, Button, Select, message, Collapse, Badge } from 'antd';
 import { DownloadOutlined, ShoppingCartOutlined, DesktopOutlined, MobileOutlined, TabletOutlined, ExpandAltOutlined } from '@ant-design/icons';
+import CommentSection from '../../component/CommentSection/CommentSection'; // 引入评论组件
 import styles from './SoftwareDetail.module.css';
 
 const { Option } = Select;
@@ -153,6 +154,18 @@ const SoftwareDetail = () => {
     setBoundDevices(boundDevices.filter(device => device.id !== deviceId));
     message.success('设备解绑成功');
   };
+
+  // 评论相关回调函数
+  const handleCommentSubmit = (comment) => {
+    console.log('新评论提交:', comment);
+    // 这里可以调用API将评论保存到后端
+  };
+
+  const handleCommentDelete = (commentId) => {
+    console.log('删除评论:', commentId);
+    // 这里可以调用API从后端删除评论
+  };
+
 
   const statusConfig = getStatusConfig(softwareInfo.status);
 
@@ -309,6 +322,14 @@ const SoftwareDetail = () => {
           )}
         </div>
       </div>
+
+      {/* 用户评论区 - 新增的评论组件 */}
+      <CommentSection
+        softwareId={softwareInfo.id}
+        onCommentSubmit={handleCommentSubmit}
+        onCommentDelete={handleCommentDelete}
+        className={styles.commentSectionContainer}
+      />
 
       {/* 购买设备选择弹窗 */}
       <Modal

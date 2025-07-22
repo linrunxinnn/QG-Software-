@@ -1,0 +1,472 @@
+/* 评论区主容器 */
+.commentSection {
+  background: white;
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+/* 评论头部 */
+.commentHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #f0f0f0;
+  position: relative;
+}
+
+
+.title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.count {
+  font-size: 16px;
+  color: #666;
+  font-weight: 400;
+}
+
+.ratingInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.avgRating {
+  font-size: 16px;
+}
+
+.avgScore {
+  font-size: 16px;
+  font-weight: 600;
+  color: #faad14;
+}
+
+/* 评论表单 */
+.commentForm {
+  margin-bottom: 24px;
+  border: 1px solid #e8e8e8;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
+}
+
+.commentForm:hover {
+  border-color: #1890ff;
+  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.1);
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.username {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.formContent {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ratingRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ratingLabel {
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+  min-width: 40px;
+}
+
+.ratingInput {
+  font-size: 18px;
+}
+
+.ratingText {
+  font-size: 14px;
+  color: #666;
+  min-width: 40px;
+}
+
+.commentInput {
+  resize: none;
+  border-radius: 8px;
+  transition: border-color 0.3s ease;
+}
+
+.commentInput:focus {
+  border-color: #1890ff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+}
+
+.submitRow {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.submitBtn {
+  padding: 8px 24px;
+  height: auto;
+  border-radius: 20px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #1890ff 0%, #40a9ff 100%);
+  border: none;
+  box-shadow: 0 2px 8px rgba(24, 144, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.submitBtn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.3);
+  background: linear-gradient(135deg, #40a9ff 0%, #1890ff 100%);
+}
+
+.submitBtn:disabled {
+  background: #f5f5f5;
+  color: #bfbfbf;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+/* 购买提示 */
+.purchasePrompt {
+  margin-bottom: 24px;
+  border: 1px dashed #d9d9d9;
+  border-radius: 12px;
+  background: #fafafa;
+}
+
+.promptContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+}
+
+.promptText {
+  color: #666;
+  font-size: 14px;
+}
+
+/* 评论列表 */
+.commentList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: #999;
+  font-size: 14px;
+}
+
+.emptyState {
+  padding: 40px 20px;
+}
+
+/* 单个评论项 */
+.commentItem {
+  border: 1px solid #f0f0f0;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.commentItem:hover {
+  border-color: #e6f7ff;
+  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.08);
+  transform: translateY(-1px);
+}
+
+.commentHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.userSection {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  flex: 1;
+}
+
+.userDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.userMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.commentUsername {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.commentTime {
+  font-size: 12px;
+  color: #999;
+}
+
+.commentActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.commentRating {
+  font-size: 14px;
+}
+
+.deleteBtn {
+  color: #ff4d4f;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.deleteBtn:hover {
+  opacity: 1;
+  background: rgba(255, 77, 79, 0.1);
+}
+
+.commentContent {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #333;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+/* 分页 */
+.pagination {
+  margin-top: 32px;
+  text-align: center;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .commentSection {
+    padding: 20px;
+  }
+
+  .commentHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .title {
+    font-size: 20px;
+  }
+
+  .ratingInfo {
+    align-self: stretch;
+    justify-content: space-between;
+  }
+
+  .userInfo {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .ratingRow {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .ratingLabel {
+    min-width: auto;
+  }
+
+  .ratingText {
+    min-width: auto;
+  }
+
+  .promptContent {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .commentHeader {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .userSection {
+    align-self: stretch;
+  }
+
+  .commentActions {
+    align-self: stretch;
+    justify-content: space-between;
+  }
+
+  .commentContent {
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  .pagination {
+    margin-top: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .commentSection {
+    padding: 16px;
+  }
+
+  .title {
+    font-size: 18px;
+  }
+
+  .commentForm,
+  .purchasePrompt,
+  .commentItem {
+    margin-left: -4px;
+    margin-right: -4px;
+    border-radius: 8px;
+  }
+
+  .formContent {
+    gap: 12px;
+  }
+
+  .commentInput {
+    font-size: 16px;
+    /* 防止iOS缩放 */
+  }
+
+  .submitBtn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .userInfo {
+    gap: 8px;
+  }
+
+  .userMeta {
+    gap: 6px;
+  }
+
+  .commentUsername {
+    font-size: 13px;
+  }
+
+  .commentTime {
+    font-size: 11px;
+  }
+
+  .commentContent {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .commentActions {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+  }
+}
+
+/* 暗色主题支持 */
+@media (prefers-color-scheme: dark) {
+  .commentSection {
+    background: #1f1f1f;
+    color: #fff;
+  }
+
+  .title {
+    color: #fff;
+  }
+
+  .count {
+    color: #aaa;
+  }
+
+  .commentForm {
+    background: #2a2a2a;
+    border-color: #404040;
+  }
+
+  .commentForm:hover {
+    border-color: #1890ff;
+  }
+
+  .username {
+    color: #fff;
+  }
+
+  .ratingLabel,
+  .ratingText {
+    color: #aaa;
+  }
+
+  .commentInput {
+    background: #333;
+    border-color: #555;
+    color: #fff;
+  }
+
+  .commentInput:focus {
+    background: #333;
+    border-color: #1890ff;
+  }
+
+  .purchasePrompt {
+    background: #2a2a2a;
+    border-color: #555;
+  }
+
+  .commentItem {
+    background: #2a2a2a;
+    border-color: #404040;
+  }
+
+  .commentItem:hover {
+    border-color: #1890ff;
+  }
+
+  .commentUsername {
+    color: #fff;
+  }
+
+  .commentTime {
+    color: #aaa;
+  }
+
+  .commentContent {
+    color: #ddd;
+  }
+}

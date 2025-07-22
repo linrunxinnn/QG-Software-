@@ -1,0 +1,385 @@
+.momentsPage {
+  width: 100%;
+  background: #f5f5f5;
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+/* 页面头部 */
+.header {
+  background: white;
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.backBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 50%;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.backBtn:hover {
+  background: #e5e7eb;
+  border-color: #9ca3af;
+}
+
+.pageTitle {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.statsInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #6b7280;
+  font-size: 14px;
+  background: #f9fafb;
+  padding: 8px 16px;
+  border-radius: 20px;
+}
+
+/* 内容区域 */
+.content {
+  margin: 20px;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  min-height: 500px;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  color: #9ca3af;
+  font-size: 16px;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+  color: #9ca3af;
+  text-align: center;
+}
+
+.empty h3 {
+  margin: 16px 0 8px 0;
+  font-size: 18px;
+  color: #6b7280;
+}
+
+.empty p {
+  margin: 0;
+  font-size: 14px;
+}
+
+/* 动态列表 */
+.momentsList {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.momentCard {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.momentCard:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.15);
+  transform: translateY(-2px);
+}
+
+.momentHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  background: white;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.typeInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.typeIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.momentMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.momentTitle {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.timestamp {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.typeBadge {
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.momentContent {
+  padding: 20px 24px;
+  background: white;
+}
+
+.contentText {
+  margin: 0 0 16px 0;
+  color: #4b5563;
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+/* 软件信息卡片 */
+.softwareCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 12px;
+  transition: all 0.2s ease;
+}
+
+.softwareCard:hover {
+  border-color: #3b82f6;
+  background: #f0f9ff;
+}
+
+.softwareIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid #e5e7eb;
+}
+
+.softwareInfo {
+  flex: 1;
+}
+
+.softwareName {
+  margin: 0 0 4px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.softwareMeta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.price {
+  font-size: 14px;
+  font-weight: 600;
+  color: #dc2626;
+}
+
+.releaseDate {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.rating {
+  display: flex;
+  gap: 2px;
+}
+
+/* 开发商信息卡片 */
+.developerCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 12px;
+  transition: all 0.2s ease;
+}
+
+.developerCard:hover {
+  border-color: #10b981;
+  background: #f0fdf4;
+}
+
+.developerAvatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #e5e7eb;
+}
+
+.developerInfo {
+  flex: 1;
+}
+
+.developerName {
+  margin: 0 0 4px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.developerType {
+  font-size: 12px;
+  color: #6b7280;
+  background: #f3f4f6;
+  padding: 2px 8px;
+  border-radius: 12px;
+  display: inline-block;
+}
+
+/* 动态操作 */
+.momentActions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 16px 24px;
+  background: #f8fafc;
+  border-top: 1px solid #f1f5f9;
+}
+
+.actionBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: #6b7280;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+
+.actionBtn:hover {
+  background: rgba(59, 130, 246, 0.1);
+  color: #3b82f6;
+}
+
+.actionBtn.liked {
+  color: #ef4444;
+}
+
+.actionBtn.liked:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+}
+
+.actionBtn span {
+  margin-left: 4px;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .momentsPage {
+    padding: 0;
+  }
+
+  .header,
+  .content {
+    margin: 12px;
+  }
+
+  .header {
+    padding: 16px 20px;
+  }
+
+  .pageTitle {
+    font-size: 20px;
+  }
+
+  .momentsList {
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .momentHeader,
+  .momentContent,
+  .momentActions {
+    padding: 16px;
+  }
+
+  .momentHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .typeBadge {
+    align-self: flex-end;
+  }
+
+  .momentActions {
+    justify-content: space-around;
+  }
+
+  .softwareCard,
+  .developerCard {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .softwareMeta {
+    justify-content: flex-start;
+  }
+}
