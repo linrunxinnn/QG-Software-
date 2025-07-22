@@ -1,0 +1,68 @@
+.category-card {
+    width: 60%;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 12px;
+    background: #fff;
+    margin-top: 10px;
+}
+
+.category-title {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 12px;
+    padding-left: 4px;
+}
+
+.divider {
+    height: 1px;
+    background: #ddd;
+    margin: 8px 0;
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.item-img {
+    width: 60px;
+    height: 60px;
+    background: #ddd;
+    border-radius: 4px;
+    margin-right: 12px;
+}
+
+/* 新增：项目信息容器，用于包裹名称和价格 */
+.item-info {
+    display: flex;
+    flex-direction: column;
+    margin-right: 12px;
+    flex: 1;
+    /* 让信息区域占满剩余空间 */
+}
+
+.item-name {
+    font-size: 14px;
+    margin-bottom: 4px;
+    /* 名称和价格之间留出间距 */
+}
+
+/* 新增：价格样式 */
+.item-price {
+    font-size: 13px;
+    color: grey;
+    /* 红色表示价格，可根据UI调整 */
+    font-weight: 500;
+}
+
+.download-btn {
+    padding: 4px 8px;
+    background: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    white-space: nowrap;
+    /* 防止按钮文字换行 */
+}

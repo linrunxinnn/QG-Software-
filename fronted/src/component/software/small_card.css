@@ -1,0 +1,52 @@
+.card {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 12px;
+    width: 50%;
+    background: #fff;
+    margin-bottom: 10px;
+}
+
+.card-img {
+    width: 60px;
+    height: 60px;
+    background: #ddd;
+    border-radius: 4px;
+    margin-right: 12px;
+}
+
+/* 新增：卡片信息容器，用于包裹标题和价格 */
+.card-info {
+    display: flex;
+    flex-direction: column;
+    margin-right: 12px;
+    flex: 1;
+    /* 让信息区域占满剩余空间 */
+}
+
+.card-title {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 4px;
+    /* 标题和价格之间留出间距 */
+}
+
+/* 新增：价格样式 */
+.card-price {
+    font-size: 13px;
+    color: grey;
+    /* 红色表示价格，可根据UI调整 */
+    font-weight: 500;
+}
+
+.download-btn {
+    padding: 4px 8px;
+    background: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    white-space: nowrap;
+    /* 防止按钮文字换行 */
+}
