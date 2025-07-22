@@ -35,7 +35,7 @@ const Header = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [activeTab, setActiveTab] = useState("login");
   const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
-
+  const [options, setOptions] = useState([]);
   // 三个表单实例
   const [loginForm] = Form.useForm();
   const [registerForm] = Form.useForm();
@@ -99,12 +99,6 @@ const Header = () => {
     avatar: qgLogo,
   };
 
-  // 搜索处理函数
-  const handleSearch = (value) => {
-    console.log("搜索软件:", value);
-    navigate(`detail/${value}`);
-  };
-
   // 铃铛点击处理
   const handleNotificationClick = () => {
     console.log("点击铃铛，跳转到消息页面");
@@ -143,19 +137,40 @@ const Header = () => {
     // 重置倒计时
   };
 
+  //查询
+  const handleSearch = (value) => {
+    if (!value) {
+      setOptions([]);
+      return;
+    }
+    // 模拟异步获取结果
+    const mockResult = [
+      { value: "软件1" },
+      { value: "软件2" },
+      { value: "软件3" },
+    ].filter((item) => item.value.includes(value));
+    setOptions(mockResult);
+  };
+
+  const handleSelect = (value) => {
+    console.log("Selected:", value);
+    // 你可以在这里跳转或处理选中的结果
+    navigate(`/detail/${value}`);
+  };
+
   // 用户菜单
   const userMenuItems = [
     {
       key: "profile",
       icon: <UserOutlined />,
       label: "个人中心",
-      onClick: () => console.log("跳转到个人中心"),
+      onClick: () => navigate("/personal"),
     },
     {
       key: "settings",
       icon: <SettingOutlined />,
       label: "设置",
-      onClick: () => console.log("跳转到设置页面"),
+      onClick: () => navigate("/personal/settings"),
     },
     {
       type: "divider",
@@ -214,7 +229,7 @@ const Header = () => {
           </Badge>
 
           {/* 头像和用户名 */}
-          <div className={styles.avatarSection}>
+          {/* <div className={styles.avatarSection}>
             <Avatar
               size="small"
               src={qgLogo}
@@ -222,7 +237,7 @@ const Header = () => {
               className={styles.avatar}
             />
             <span className={styles.defaultUserName}>用户名</span>
-          </div>
+          </div> */}
 
           {/* 登录状态判断 */}
           {isLoggedIn ? (
@@ -236,6 +251,7 @@ const Header = () => {
                   size="small"
                   src={userInfo.avatar}
                   icon={<UserOutlined />}
+                  className={styles.userAvatar}
                 />
                 <span className={styles.userName}>{userInfo.name}</span>
               </div>

@@ -17,6 +17,7 @@ import CheckDetail from "../pages/contorlPage/component/softdetail.jsx";
 import ShowSoft from "../pages/contorlPage/component/showSoft.jsx"
 import UserList from "../pages/contorlPage/component/userList.jsx"
 import CheckList from "../pages/contorlPage/component/CheckList.jsx"
+import SoftwareDetail from "../pages/detail/SoftwareDetail.jsx"; // 新增
 
 export const router = createBrowserRouter([
   {
@@ -58,6 +59,11 @@ export const router = createBrowserRouter([
         //软件详情页面（一个开发商版，一个用户版，用户版再分为已购未购）
         path: "detail/:id",
         element: <Detail />,
+      },
+      {
+        //新的软件详情页面（统一的软件详情展示）
+        path: "software/:id",
+        element: <SoftwareDetail />,
       },
       {
         //动态页面（消息）
