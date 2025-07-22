@@ -1,0 +1,10 @@
+.homePage {
+  width: 100%;
+  min-height: 100vh;
+  padding: 20px;
+  background: #f5f5f5;
+}
+
+.carouselSection {
+  margin-bottom: 40px;
+}

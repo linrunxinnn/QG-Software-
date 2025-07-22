@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 //导入axios的登录，退出账号等，这里假定导入为axios
 
+//登录
 export const loginUser = createAsyncThunk(
   "", //登录用户API
   async (userData, { rejectWithValue }) => {
@@ -10,6 +11,19 @@ export const loginUser = createAsyncThunk(
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+// 获取用户信息
+export const fetchUserInfo = createAsyncThunk(
+  "", //获取用户信息API
+  async (userId, { rejectWithValue }) => {
+    try {
+      const response = await axios.getUserInfo(userId);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
     }
   }
 );

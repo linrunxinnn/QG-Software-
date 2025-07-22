@@ -1,0 +1,330 @@
+/* Header.module.css */
+.header {
+  width: 100%;
+  background: #000000;
+  box-shadow: 0 2px 8px rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid #333333;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  padding: 0;
+}
+
+.container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+  padding: 0 20px;
+  min-width: 320px;
+  box-sizing: border-box;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  min-width: 120px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  gap: 8px;
+}
+
+.logo:hover {
+  opacity: 0.8;
+}
+
+.logoImage {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.settingsButton {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.settingsButton:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.settingsButton:hover .settingsIcon,
+.settingsButton:hover .settingsText {
+  color: #1890ff;
+}
+
+.settingsIcon {
+  font-size: 15px;
+  color: #ffffff;
+  transition: all 0.3s ease;
+}
+
+.settingsText {
+  font-size: 16px;
+  font-weight: 500;
+  color: #ffffff;
+  user-select: none;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+}
+
+/* 首页按钮样式 - 与设置按钮完全一致 */
+.homeButton {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.homeButton:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.homeButton:hover .homeIcon,
+.homeButton:hover .homeText {
+  color: #1890ff;
+}
+
+.homeIcon {
+  font-size: 15px;
+  color: #ffffff;
+  transition: all 0.3s ease;
+}
+
+.homeText {
+  font-size: 16px;
+  font-weight: 500;
+  color: #ffffff;
+  user-select: none;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+}
+
+/* 中间区域 - 更灵活的收缩机制 */
+.center {
+  flex: 1 1 auto;
+  display: flex;
+  justify-content: center;
+  padding: 0 16px;
+  min-width: 120px;
+  max-width: 500px;
+}
+
+.searchInput {
+  width: 100%;
+  max-width: 400px;
+  min-width: 120px;
+}
+
+.searchInput .ant-input {
+  border-radius: 8px;
+  padding: 8px 16px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: #666666;
+  color: #ffffff;
+}
+
+.searchInput .ant-input::placeholder {
+  color: #cccccc;
+}
+
+.searchInput .ant-btn {
+  border-radius: 0 8px 8px 0;
+  border-left: none;
+  background-color: #1890ff;
+  border-color: #1890ff;
+}
+
+/* 右侧区域 - 允许收缩 */
+.right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 1 auto;
+  min-width: 0;
+  justify-content: flex-end;
+}
+
+.notification {
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.notificationIcon {
+  font-size: 16px;
+  color: #ffffff;
+  transition: all 0.3s ease;
+  padding: 4px;
+  border-radius: 50%;
+}
+
+.notificationIcon:hover {
+  color: #1890ff;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* 头像区域 */
+.avatarSection {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  flex-shrink: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.avatar {
+  border: 1px solid #ffffff;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+}
+
+.defaultUserName {
+  font-size: 12px;
+  color: #ffffff;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 50px;
+}
+
+/* 登录按钮 */
+.loginButton {
+  border: none;
+  height: 32px;
+  padding: 0 10px;
+  font-weight: 500;
+  font-size: 14px;
+  background-color: transparent;
+  color: #ffffff;
+  white-space: nowrap;
+  flex-shrink: 0;
+  min-width: 50px;
+  box-shadow: none;
+}
+
+.loginButton:hover,
+.loginButton:focus {
+  background-color: transparent;
+  border: none;
+  color: #1890ff;
+  box-shadow: none;
+}
+
+/* 用户信息 */
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  flex-shrink: 1;
+  min-width: 0;
+  overflow: hidden;
+  max-width: 120px;
+}
+
+.userInfo:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.userName {
+  font-size: 12px;
+  color: #ffffff;
+  font-weight: 500;
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Badge 小红点样式调整 */
+.notification :global(.ant-badge-dot) {
+  background-color: #ff4d4f;
+  top: 4px !important;
+  right: 8px !important;
+  width: 8px;
+  height: 8px;
+  border: 1px solid #000000;
+}
+
+/* 保留基本的响应式设计，删除过小屏幕的复杂适配 */
+/* @media (max-width: 1024px) {
+  .container {
+    padding: 0 16px;
+    box-sizing: border-box;
+  }
+
+  .center {
+    padding: 0 12px;
+    min-width: 100px;
+  }
+
+  .searchInput {
+    max-width: 300px;
+  }
+
+  .right {
+    gap: 6px;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 12px;
+    box-sizing: border-box;
+  }
+
+  .center {
+    padding: 0 8px;
+    min-width: 80px;
+  }
+
+  .searchInput {
+    max-width: 200px;
+    min-width: 80px;
+  }
+
+  .settingsText,
+  .homeText {
+    display: none;
+  }
+
+  .userName,
+  .defaultUserName {
+    display: none;
+  }
+
+  .right {
+    gap: 4px;
+    min-width: 0;
+  }
+
+  .notification {
+    display: flex;
+  }
+} */
