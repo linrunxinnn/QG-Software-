@@ -49,17 +49,38 @@ const Header = () => {
     {
       key: "login",
       label: "登录",
-      children: <LoginForm />,
+      children: (
+        <LoginForm
+          onSuccess={(userData) => {
+            setIsLoggedIn(true);
+            setIsLoginModalVisible(false);
+          }}
+        />
+      ),
     },
     {
       key: "register",
       label: "注册",
-      children: <RegisterForm />,
+      children: (
+        <RegisterForm
+          onSuccess={(userData) => {
+            setIsLoggedIn(true);
+            setIsLoginModalVisible(false);
+          }}
+        />
+      ),
     },
     {
       key: "reset",
       label: "修改密码",
-      children: <ResetForm />,
+      children: (
+        <ResetForm
+          onSuccess={() => {
+            setActiveTab("login");
+            message.success("密码修改成功，请重新登录");
+          }}
+        />
+      ),
     },
   ];
 
@@ -67,7 +88,6 @@ const Header = () => {
   const handleModalClose = () => {
     setIsLoginModalVisible(false);
     setActiveTab("login");
-    setCountdown(0);
     loginForm.resetFields();
     registerForm.resetFields();
     resetForm.resetFields();

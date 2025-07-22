@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 const { Option } = Select;
 
-const ResetForm = () => {
+const ResetForm = ({ onSuccess }) => {
   const [countdown, setCountdown] = useState(0);
   const dispatch = useDispatch();
   const navigator = useNavigate();
@@ -56,9 +56,8 @@ const ResetForm = () => {
         message.error("两次输入的密码不一致");
         return;
       }
-      const res = await register(values);
-      console.log("修改密码成功", res);
-      navigator("/sign");
+      console.log("修改密码成功", values);
+      onSuccess(1);
     } catch (error) {
       console.log(error.message);
       message.warning("修改密码失败，请检查您的信息是否正确");
