@@ -1,17 +1,17 @@
-
-import React from 'react';
-import { ConfigProvider } from 'antd';
-import zhCN from 'antd/locale/zh_CN';
-import Header from './component/Header/Header';
-import Home from './pages/home/home';
-import './App.css';
+import React from "react";
+import { ConfigProvider } from "antd";
+import zhCN from "antd/locale/zh_CN";
+import Header from "./component/Header/Header.jsx";
+import Home from "./pages/home/home.jsx";
+import "./App.css";
+import { Outlet } from "react-router-dom";
 
 function App() {
   return (
     <ConfigProvider locale={zhCN}>
       <div className="App">
-        <Header />  
-        <Home />
+        <Header />
+        <Outlet />
       </div>
     </ConfigProvider>
   );
