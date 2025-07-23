@@ -7,7 +7,10 @@ import {
   Edit3,
   Settings,
   X,
-  Send
+  Send,
+  Upload,
+  File,
+  Trash2
 } from 'lucide-react';
 import { useNavigate, Outlet, useLocation } from 'react-router-dom';
 import styles from './personal.module.css';
@@ -16,6 +19,7 @@ const Personal = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const followingContentRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   // 用户数据
   const [userInfo, setUserInfo] = useState({
@@ -41,7 +45,8 @@ const Personal = () => {
   const [upgradeForm, setUpgradeForm] = useState({
     reason: '',
     experience: '',
-    portfolio: ''
+    portfolio: '',
+    supportingFiles: [] // 新增佐证材料字段
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -64,6 +69,86 @@ const Personal = () => {
     }
   };
 
+  // 处理文件上传
+  const handleFileUpload = (e) => {
+    const files = Array.from(e.target.files);
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    const allowedTypes = [
+      'application/pdf',
+      'image/jpeg',
+      'image/png',
+      'image/gif',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    ];
+
+    const validFiles = [];
+    const errors = [];
+
+    files.forEach(file => {
+      if (!allowedTypes.includes(file.type)) {
+        errors.push(`${file.name}: 不支持的文件格式`);
+        return;
+      }
+      if (file.size > maxSize) {
+        errors.push(`${file.name}: 文件大小超过10MB`);
+        return;
+      }
+      validFiles.push({
+        file,
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        id: Date.now() + Math.random()
+      });
+    });
+
+    if (errors.length > 0) {
+      alert('以下文件上传失败：\n' + errors.join('\n'));
+    }
+
+    if (validFiles.length > 0) {
+      setUpgradeForm(prev => ({
+        ...prev,
+        supportingFiles: [...prev.supportingFiles, ...validFiles]
+      }));
+    }
+
+    // 清空input值，允许重复选择同一文件
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  // 删除佐证文件
+  const removeFile = (fileId) => {
+    setUpgradeForm(prev => ({
+      ...prev,
+      supportingFiles: prev.supportingFiles.filter(f => f.id !== fileId)
+    }));
+  };
+
+  // 格式化文件大小
+  const formatFileSize = (bytes) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
+  // 获取文件图标
+  const getFileIcon = (fileType) => {
+    if (fileType.startsWith('image/')) {
+      return '🖼️';
+    } else if (fileType === 'application/pdf') {
+      return '📄';
+    } else if (fileType.includes('word')) {
+      return '📝';
+    }
+    return '📁';
+  };
+
   // 处理升级申请表单提交
   const handleUpgradeSubmit = async (e) => {
     e.preventDefault();
@@ -78,12 +163,34 @@ const Personal = () => {
       // 模拟API调用
       await new Promise(resolve => setTimeout(resolve, 2000));
 
-      // 这里应该调用实际的API
-      console.log('升级申请提交：', upgradeForm);
+      // 这里应该调用实际的API，包括文件上传
+      const formData = new FormData();
+      formData.append('reason', upgradeForm.reason);
+      formData.append('experience', upgradeForm.experience);
+      formData.append('portfolio', upgradeForm.portfolio);
+
+      // 添加佐证文件
+      upgradeForm.supportingFiles.forEach((fileObj, index) => {
+        formData.append(`supportingFiles[${index}]`, fileObj.file);
+      });
+
+      console.log('升级申请提交：', {
+        ...upgradeForm,
+        supportingFiles: upgradeForm.supportingFiles.map(f => ({
+          name: f.name,
+          size: f.size,
+          type: f.type
+        }))
+      });
 
       alert('申请已提交，我们会在3-5个工作日内审核您的申请');
       setShowUpgradeModal(false);
-      setUpgradeForm({ reason: '', experience: '', portfolio: '' });
+      setUpgradeForm({
+        reason: '',
+        experience: '',
+        portfolio: '',
+        supportingFiles: []
+      });
     } catch (error) {
       alert('提交失败，请稍后重试');
     } finally {
@@ -187,6 +294,7 @@ const Personal = () => {
                   required
                 />
               </div>
+
               <div className={styles.formGroup}>
                 <label>开发经验</label>
                 <textarea
@@ -199,6 +307,7 @@ const Personal = () => {
                   rows={3}
                 />
               </div>
+
               <div className={styles.formGroup}>
                 <label>作品集链接</label>
                 <input
@@ -211,6 +320,55 @@ const Personal = () => {
                   placeholder="https://your-portfolio.com（选填）"
                 />
               </div>
+
+              {/* 佐证材料上传 */}
+              <div className={styles.formGroup}>
+                <label>佐证材料</label>
+                <div className={styles.fileUploadSection}>
+                  <div
+                    className={styles.fileUploadArea}
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    <Upload size={24} />
+                    <p>点击上传佐证材料</p>
+                    <small>支持 PDF、Word、图片格式，单个文件不超过10MB</small>
+                  </div>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    multiple
+                    accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif"
+                    onChange={handleFileUpload}
+                    className={styles.hiddenFileInput}
+                  />
+                </div>
+
+                {/* 已上传文件列表 */}
+                {upgradeForm.supportingFiles.length > 0 && (
+                  <div className={styles.fileList}>
+                    <h4>已上传文件 ({upgradeForm.supportingFiles.length})</h4>
+                    {upgradeForm.supportingFiles.map(fileObj => (
+                      <div key={fileObj.id} className={styles.fileItem}>
+                        <div className={styles.fileIcon}>
+                          <span>{getFileIcon(fileObj.type)}</span>
+                        </div>
+                        <div className={styles.fileInfo}>
+                          <div className={styles.fileName}>{fileObj.name}</div>
+                          <div className={styles.fileSize}>{formatFileSize(fileObj.size)}</div>
+                        </div>
+                        <button
+                          type="button"
+                          className={styles.removeFileBtn}
+                          onClick={() => removeFile(fileObj.id)}
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
               <div className={styles.formActions}>
                 <button
                   type="button"
