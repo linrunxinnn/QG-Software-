@@ -1,0 +1,543 @@
+.supplierPage {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background: #f5f5f5;
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+/* 页面头部 */
+.header {
+  background: white;
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.backBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 50%;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.backBtn:hover {
+  background: #e5e7eb;
+  border-color: #9ca3af;
+}
+
+.pageTitle {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.followBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 100px;
+  justify-content: center;
+}
+
+.followBtn:hover:not(:disabled) {
+  background: #2563eb;
+  transform: translateY(-1px);
+}
+
+.followBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.followBtn.following {
+  background: #10b981;
+}
+
+.followBtn.following:hover:not(:disabled) {
+  background: #059669;
+}
+
+/* 加载和错误状态 */
+.loading,
+.error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.loading {
+  color: #9ca3af;
+  font-size: 16px;
+}
+
+.error h3 {
+  margin: 0 0 16px 0;
+  color: #dc2626;
+  font-size: 18px;
+}
+
+.error button {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.error button:hover {
+  background: #2563eb;
+}
+
+/* 供应商信息区域 */
+.supplierInfo {
+  margin-bottom: 20px;
+}
+
+.infoCard {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.basicInfo {
+  display: flex;
+  gap: 24px;
+  padding: 24px;
+}
+
+.avatarSection {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 3px solid #e5e7eb;
+}
+
+.verifiedBadge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #10b981;
+  color: white;
+  border-radius: 50%;
+  padding: 4px;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.infoContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.nameSection {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.supplierName {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.type {
+  background: #dbeafe;
+  color: #1e40af;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.description {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  color: #4b5563;
+  line-height: 1.5;
+}
+
+.stats {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.statItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #6b7280;
+  background: #f9fafb;
+  padding: 8px 12px;
+  border-radius: 20px;
+}
+
+.bioSection {
+  padding: 24px;
+  border-top: 1px solid #e5e7eb;
+  background: #f8fafc;
+}
+
+.bioSection h3 {
+  margin: 0 0 12px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.bio {
+  margin: 0;
+  font-size: 14px;
+  color: #4b5563;
+  line-height: 1.6;
+}
+
+/* 软件列表区域 */
+.softwareSection {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 24px;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+  color: #1f2937;
+}
+
+.sectionHeader h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  flex: 1;
+}
+
+.count {
+  background: #3b82f6;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: #9ca3af;
+  text-align: center;
+}
+
+.empty h3 {
+  margin: 16px 0 8px 0;
+  font-size: 18px;
+  color: #6b7280;
+}
+
+.empty p {
+  margin: 0;
+  font-size: 14px;
+}
+
+/* 软件卡片 */
+.softwareList {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.softwareCard {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.softwareCard:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.15);
+  transform: translateY(-2px);
+}
+
+.cardContent {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 20px;
+  background: white;
+}
+
+.softwareIcon {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 2px solid #e5e7eb;
+  flex-shrink: 0;
+}
+
+.softwareInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  gap: 12px;
+}
+
+.softwareName {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.category {
+  background: #f3f4f6;
+  color: #6b7280;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.softwareDesc {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: #6b7280;
+  line-height: 1.4;
+}
+
+.details {
+  display: flex;
+  gap: 16px;
+}
+
+.version {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.cardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+}
+
+.price {
+  font-size: 16px;
+  font-weight: 600;
+  color: #dc2626;
+}
+
+.detailBtn {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.detailBtn:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .supplierPage {
+    padding: 12px;
+  }
+
+  .header {
+    padding: 16px 20px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .headerLeft {
+    gap: 12px;
+  }
+
+  .pageTitle {
+    font-size: 20px;
+  }
+
+  .followBtn {
+    padding: 8px 16px;
+    font-size: 13px;
+    min-width: 90px;
+  }
+
+  .basicInfo {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 16px;
+    padding: 20px;
+  }
+
+  .avatar {
+    width: 80px;
+    height: 80px;
+  }
+
+  .supplierName {
+    font-size: 24px;
+  }
+
+  .nameSection {
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .stats {
+    justify-content: center;
+    gap: 16px;
+  }
+
+  .statItem {
+    font-size: 13px;
+    padding: 6px 10px;
+  }
+
+  .bioSection {
+    padding: 20px;
+  }
+
+  .sectionHeader {
+    padding: 16px 20px;
+  }
+
+  .sectionHeader h2 {
+    font-size: 16px;
+  }
+
+  .softwareList {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .cardContent {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .softwareIcon {
+    width: 50px;
+    height: 50px;
+  }
+
+  .titleRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .softwareName {
+    font-size: 15px;
+  }
+
+  .cardFooter {
+    padding: 12px 16px;
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .price {
+    text-align: center;
+    font-size: 15px;
+  }
+
+  .detailBtn {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats {
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .statItem {
+    justify-content: center;
+  }
+}

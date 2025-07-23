@@ -351,3 +351,43 @@
     gap: 8px;
   }
 }
+
+/* 开发商身份下的粉丝卡片样式调整 */
+.fansCard.developerView {
+  padding: 20px;
+}
+
+.fansCard.developerView .fansInfo {
+  width: 100%;
+}
+
+/* 当没有操作按钮时，调整卡片的内边距和布局 */
+.fansCard:not(:has(.actions)) {
+  padding: 20px;
+}
+
+.fansCard:not(:has(.actions)) .fansInfo {
+  width: 100%;
+}
+
+/* 确保开发商视图下的统计信息居中显示 */
+.fansCard.noActions {
+  justify-content: center;
+  padding: 20px;
+}
+
+.fansCard.noActions .fansInfo {
+  width: 100%;
+  max-width: none;
+}
+
+/* 响应式设计调整 */
+@media (max-width: 768px) {
+  .fansCard.noActions {
+    padding: 16px;
+  }
+
+  .fansCard.noActions .fansInfo {
+    gap: 12px;
+  }
+}

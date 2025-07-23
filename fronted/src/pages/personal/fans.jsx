@@ -63,23 +63,29 @@ const Fans = () => {
     navigate('/personal');
   };
 
-  // 处理取消关注
+  // 处理取消关注（仅用户身份显示）
   const handleUnfollow = (item) => {
     console.log('取消关注:', item.name);
     // 这里实现取消关注逻辑
+    // 可以添加确认弹窗
+    if (window.confirm(`确定要取消关注 ${item.name} 吗？`)) {
+      // 调用API取消关注
+      // await unfollowSupplier(item.id);
+      // 更新列表或刷新数据
+    }
   };
 
-  // 处理查看详情
+  // 处理查看详情（仅用户身份显示）
   const handleViewProfile = (item) => {
     console.log('查看详情:', item.name);
-    // 这里实现跳转到开发商详情页逻辑
+    // 跳转到供应商详情页面
+    navigate(`/supplier/${item.id}`);
   };
 
   // 确保 userInfo 存在，并提供默认值
   const currentUserRole = userInfo?.role || 'user';
   const pageTitle = currentUserRole === 'developer' ? '我的粉丝' : '我的关注';
   const emptyText = currentUserRole === 'developer' ? '还没有粉丝关注你' : '你还没有关注任何开发商';
-  const actionText = currentUserRole === 'developer' ? '移除粉丝' : '取消关注';
 
   return (
     <div className={styles.fansPage}>
@@ -114,7 +120,10 @@ const Fans = () => {
         ) : (
           <div className={styles.fansList}>
             {fansList.map(item => (
-              <div key={item.id} className={styles.fansCard}>
+              <div
+                key={item.id}
+                className={`${styles.fansCard} ${currentUserRole === 'developer' ? styles.noActions : ''}`}
+              >
                 <div className={styles.fansInfo}>
                   <div className={styles.avatarSection}>
                     <img
@@ -147,26 +156,33 @@ const Fans = () => {
                       </div>
                       <div className={styles.statItem}>
                         <Calendar size={14} />
-                        <span>关注于 {item.followDate}</span>
+                        <span>
+                          {currentUserRole === 'developer' ? '关注时间' : '关注于'} {item.followDate}
+                        </span>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className={styles.actions}>
-                  <button
-                    className={styles.viewBtn}
-                    onClick={() => handleViewProfile(item)}
-                  >
-                    查看详情
-                  </button>
-                  <button
-                    className={styles.unfollowBtn}
-                    onClick={() => handleUnfollow(item)}
-                  >
-                    {actionText}
-                  </button>
-                </div>
+                {/* 根据用户身份条件渲染操作按钮 */}
+                {currentUserRole === 'user' && (
+                  <div className={styles.actions}>
+                    <button
+                      className={styles.viewBtn}
+                      onClick={() => handleViewProfile(item)}
+                    >
+                      查看详情
+                    </button>
+                    <button
+                      className={styles.unfollowBtn}
+                      onClick={() => handleUnfollow(item)}
+                    >
+                      取消关注
+                    </button>
+                  </div>
+                )}
+
+                {/* 开发商身份不显示任何操作按钮，只显示信息 */}
               </div>
             ))}
           </div>

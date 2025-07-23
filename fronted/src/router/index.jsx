@@ -17,9 +17,11 @@ import CheckDetail from "../pages/contorlPage/component/softdetail.jsx";
 import ShowSoft from "../pages/contorlPage/component/showSoft.jsx";
 import UserList from "../pages/contorlPage/component/userList.jsx";
 import CheckList from "../pages/contorlPage/component/CheckList.jsx";
-import SoftwareDetail from "../pages/detail/SoftwareDetail.jsx"; // 新增
+import SoftwareDetail from "../pages/detail/SoftwareDetail.jsx";
 import ManagerRouter from "../component/ProtectedRoute/manageRouter.jsx";
 import Moresoft from "../pages/home/component/moresoft.jsx";
+// 新增：供应商详情页面
+import SupplierProfile from "../pages/supplier/supplierProfile.jsx";
 
 export const router = createBrowserRouter([
   {
@@ -66,6 +68,11 @@ export const router = createBrowserRouter([
         //新的软件详情页面（统一的软件详情展示）
         path: "software/:id",
         element: <SoftwareDetail />,
+      },
+      {
+        //供应商详情页面（新增）
+        path: "supplier/:supplierId",
+        element: <SupplierProfile />,
       },
       {
         //更多软件
