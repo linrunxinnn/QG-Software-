@@ -16,6 +16,9 @@ import ControlPage from "../pages/contorlPage/controlPage.jsx";
 import CheckDetail from "../pages/contorlPage/component/softdetail.jsx";
 import ShowSoft from "../pages/contorlPage/component/commentSoft.jsx";
 import UserList from "../pages/contorlPage/component/userList.jsx";
+
+// 新增：供应商详情页面
+import SupplierProfile from "../pages/supplier/supplierProfile.jsx";
 import CheckList from "../pages/contorlPage/component/CheckSoftList.jsx";
 import SoftwareDetail from "../pages/detail/SoftwareDetail.jsx"; // 新增
 import ManagerRouter from "../component/ProtectedRoute/manageRouter.jsx";
@@ -67,6 +70,11 @@ export const router = createBrowserRouter([
         //新的软件详情页面（统一的软件详情展示）
         path: "software/:id",
         element: <SoftwareDetail />,
+      },
+      {
+        //供应商详情页面（新增）
+        path: "supplier/:supplierId",
+        element: <SupplierProfile />,
       },
       {
         //更多软件
