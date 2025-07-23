@@ -3,13 +3,20 @@ import MediumCard from "../../../component/software/medium_card";
 import SmallCard from "../../../component/software/small_card";
 import Gap from "../../../component/software/gap";
 import "./ShowSoft.css"
+import { useNavigate } from "react-router-dom";
 
 const ShowCard = () => {
+
+    //跳转到详情页
+    const navigate = useNavigate()
+    function todetail() {
+        navigate("navigate(`/software")
+    }
 
     return (
         <div className="ShowCard">
             <Gap />
-            <div className="Medium">
+            <div className="Medium" onClick={() => todetail()}>
                 <MediumCard></MediumCard>
                 <MediumCard></MediumCard>
                 <MediumCard></MediumCard>

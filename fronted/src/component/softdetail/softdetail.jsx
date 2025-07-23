@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Input, Button, Upload, Form, Switch, InputNumber, Image, Modal, message, Row, Col } from 'antd';
+import { Input, Button, Form, InputNumber, Modal, message, Row, Col, Select } from 'antd';
 import { UploadOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import { useParams } from 'react-router-dom';
 import styles from "./softdetail.module.css"
@@ -90,14 +90,31 @@ const CheckDetail = () => {
                         </Form.Item>
                     </Col>
                 </Row>
-                {/* 价格 */}
-                <Form.Item
-                    name="price"
-                    label="价格"
-                    rules={[{ required: true, message: '请输入软件价格' }]}
-                >
-                    <InputNumber min={0} step={0.01} />
-                </Form.Item>
+                <Row gutter={16}>
+                    <Col span={8}>
+                        <Form.Item
+                            name="price"
+                            label="价格"
+                            rules={[{ required: true, message: '请输入软件价格' }]}
+                        >
+                            <InputNumber min={0} step={0.01} />
+                        </Form.Item>
+                    </Col>
+                    <Col span={8}>
+                        <Form.Item
+                            name="sort"
+                            label="类型"
+                            rules={[{ required: true, message: '请输入软件类型' }]}
+                        >
+                            <Select placeholder="请选择软件类型">
+                                <Select.Option value="health">健康</Select.Option>
+                                <Select.Option value="education">教育</Select.Option>
+                                <Select.Option value="sports">运动</Select.Option>
+                                <Select.Option value="office">办公</Select.Option>
+                            </Select>
+                        </Form.Item>
+                    </Col>
+                </Row>
 
 
                 {/* 确认按钮 */}

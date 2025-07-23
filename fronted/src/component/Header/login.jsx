@@ -32,7 +32,7 @@ const LoginForm = ({ onSuccess }) => {
       const userData = {
         id: 1,
         username: "testUser",
-        role: 3,
+        role: 1,
       };
       // 返回的用户信息中有身份，如果身份为管理员则还要跳转到管理员页面
       if (userData.role === 3) {

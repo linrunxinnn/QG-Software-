@@ -19,6 +19,7 @@ import UserList from "../pages/contorlPage/component/userList.jsx";
 import CheckList from "../pages/contorlPage/component/CheckList.jsx";
 import SoftwareDetail from "../pages/detail/SoftwareDetail.jsx"; // 新增
 import ManagerRouter from "../component/ProtectedRoute/manageRouter.jsx";
+import Moresoft from "../pages/home/component/moresoft.jsx";
 
 export const router = createBrowserRouter([
   {
@@ -65,6 +66,11 @@ export const router = createBrowserRouter([
         //新的软件详情页面（统一的软件详情展示）
         path: "software/:id",
         element: <SoftwareDetail />,
+      },
+      {
+        //更多软件
+        path: "more",
+        element: <Moresoft />
       },
       {
         //动态页面（消息）
@@ -115,6 +121,7 @@ export const router = createBrowserRouter([
       {
         path: "comment",
         element: <ShowSoft />,
+        children: []
       },
       {
         path: "detail/:name",
