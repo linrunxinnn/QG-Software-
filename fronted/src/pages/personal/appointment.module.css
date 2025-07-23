@@ -42,6 +42,15 @@
   font-size: 24px;
   font-weight: 600;
   color: #1f2937;
+  flex: 1;
+  margin-left: 20px;
+}
+
+/* 头部右侧区域 */
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .statsInfo {
@@ -53,6 +62,27 @@
   background: #f9fafb;
   padding: 8px 16px;
   border-radius: 20px;
+}
+
+/* 全部按钮样式 */
+.viewAllBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.viewAllBtn:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
 }
 
 /* 内容区域 */
@@ -277,10 +307,22 @@
 
   .header {
     padding: 16px 20px;
+    flex-wrap: wrap;
+    gap: 12px;
   }
 
   .pageTitle {
     font-size: 20px;
+    margin-left: 12px;
+  }
+
+  .headerRight {
+    gap: 8px;
+  }
+
+  .viewAllBtn {
+    padding: 6px 12px;
+    font-size: 13px;
   }
 
   .content {

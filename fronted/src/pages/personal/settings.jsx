@@ -19,6 +19,7 @@ import styles from './settings.module.css';
 const Settings = () => {
   const navigate = useNavigate();
   const { userInfo } = useOutletContext();
+
   // 设置状态
   const [settings, setSettings] = useState({
     // 通知设置
@@ -45,6 +46,9 @@ const Settings = () => {
   });
 
   const [activeSection, setActiveSection] = useState('profile');
+  const [showHelpModal, setShowHelpModal] = useState(false);
+  const [showContactModal, setShowContactModal] = useState(false);
+  const [showAboutModal, setShowAboutModal] = useState(false);
 
   // 设置选项配置
   const settingSections = [
@@ -54,30 +58,30 @@ const Settings = () => {
       icon: <User size={20} />,
       description: '管理您的个人信息和头像'
     },
-    {
-      key: 'notifications',
-      title: '通知设置',
-      icon: <Bell size={20} />,
-      description: '设置通知偏好和提醒方式'
-    },
-    {
-      key: 'privacy',
-      title: '隐私安全',
-      icon: <Shield size={20} />,
-      description: '控制您的隐私和安全设置'
-    },
-    {
-      key: 'payment',
-      title: '支付管理',
-      icon: <CreditCard size={20} />,
-      description: '管理支付方式和账单信息'
-    },
-    {
-      key: 'application',
-      title: '应用设置',
-      icon: <Download size={20} />,
-      description: '自定义应用行为和偏好'
-    },
+    // {
+    //   key: 'notifications',
+    //   title: '通知设置',
+    //   icon: <Bell size={20} />,
+    //   description: '设置通知偏好和提醒方式'
+    // },
+    // {
+    //   key: 'privacy',
+    //   title: '隐私安全',
+    //   icon: <Shield size={20} />,
+    //   description: '控制您的隐私和安全设置'
+    // },
+    // {
+    //   key: 'payment',
+    //   title: '支付管理',
+    //   icon: <CreditCard size={20} />,
+    //   description: '管理支付方式和账单信息'
+    // },
+    // {
+    //   key: 'application',
+    //   title: '应用设置',
+    //   icon: <Download size={20} />,
+    //   description: '自定义应用行为和偏好'
+    // },
     {
       key: 'help',
       title: '帮助支持',
@@ -115,6 +119,21 @@ const Settings = () => {
   // 处理删除账户
   const handleDeleteAccount = () => {
     console.log('删除账户请求');
+  };
+
+  // 处理使用帮助
+  const handleShowHelp = () => {
+    setShowHelpModal(true);
+  };
+
+  // 处理联系客服
+  const handleShowContact = () => {
+    setShowContactModal(true);
+  };
+
+  // 处理关于我们
+  const handleShowAbout = () => {
+    setShowAboutModal(true);
   };
 
   // 渲染设置项
@@ -156,6 +175,25 @@ const Settings = () => {
     </select>
   );
 
+  // 渲染模态框
+  const renderModal = (show, onClose, title, content) => {
+    if (!show) return null;
+
+    return (
+      <div className={styles.modalOverlay} onClick={onClose}>
+        <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+          <div className={styles.modalHeader}>
+            <h3 className={styles.modalTitle}>{title}</h3>
+            <button className={styles.modalClose} onClick={onClose}>×</button>
+          </div>
+          <div className={styles.modalContent}>
+            {content}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   // 渲染设置内容
   const renderSettingContent = () => {
     switch (activeSection) {
@@ -191,139 +229,139 @@ const Settings = () => {
           </div>
         );
 
-      case 'notifications':
-        return (
-          <div className={styles.settingContent}>
-            <h3 className={styles.sectionTitle}>通知设置</h3>
-            {renderSettingItem(
-              '邮件通知',
-              '接收重要信息的邮件通知',
-              renderSwitch('emailNotifications')
-            )}
-            {renderSettingItem(
-              '推送通知',
-              '接收应用内推送消息',
-              renderSwitch('pushNotifications')
-            )}
-            {renderSettingItem(
-              '软件更新通知',
-              '软件有新版本时通知我',
-              renderSwitch('softwareUpdates')
-            )}
-            {renderSettingItem(
-              '促销邮件',
-              '接收优惠活动和促销信息',
-              renderSwitch('promotionalEmails')
-            )}
-          </div>
-        );
+      // case 'notifications':
+      //   return (
+      //     <div className={styles.settingContent}>
+      //       <h3 className={styles.sectionTitle}>通知设置</h3>
+      //       {renderSettingItem(
+      //         '邮件通知',
+      //         '接收重要信息的邮件通知',
+      //         renderSwitch('emailNotifications')
+      //       )}
+      //       {renderSettingItem(
+      //         '推送通知',
+      //         '接收应用内推送消息',
+      //         renderSwitch('pushNotifications')
+      //       )}
+      //       {renderSettingItem(
+      //         '软件更新通知',
+      //         '软件有新版本时通知我',
+      //         renderSwitch('softwareUpdates')
+      //       )}
+      //       {renderSettingItem(
+      //         '促销邮件',
+      //         '接收优惠活动和促销信息',
+      //         renderSwitch('promotionalEmails')
+      //       )}
+      //     </div>
+      //   );
 
-      case 'privacy':
-        return (
-          <div className={styles.settingContent}>
-            <h3 className={styles.sectionTitle}>隐私安全设置</h3>
-            {renderSettingItem(
-              '个人资料可见性',
-              '控制其他用户查看您资料的权限',
-              renderSelect('profileVisibility', [
-                { value: 'public', label: '公开' },
-                { value: 'friends', label: '仅关注的人' },
-                { value: 'private', label: '私密' }
-              ])
-            )}
-            {renderSettingItem(
-              '动态可见性',
-              '控制谁可以看到您的动态',
-              renderSelect('activityVisibility', [
-                { value: 'public', label: '公开' },
-                { value: 'friends', label: '仅关注的人' },
-                { value: 'private', label: '仅自己' }
-              ])
-            )}
-            {renderSettingItem(
-              '显示邮箱地址',
-              '在个人资料中显示邮箱',
-              renderSwitch('showEmail')
-            )}
-            {renderSettingItem(
-              '显示手机号码',
-              '在个人资料中显示手机号',
-              renderSwitch('showPhone')
-            )}
-            {renderSettingItem(
-              '两步验证',
-              '为账户添加额外的安全保护',
-              renderSwitch('twoFactorAuth')
-            )}
-            {renderSettingItem(
-              '登录通知',
-              '新设备登录时发送通知',
-              renderSwitch('loginNotifications')
-            )}
-          </div>
-        );
+      // case 'privacy':
+      //   return (
+      //     <div className={styles.settingContent}>
+      //       <h3 className={styles.sectionTitle}>隐私安全设置</h3>
+      //       {renderSettingItem(
+      //         '个人资料可见性',
+      //         '控制其他用户查看您资料的权限',
+      //         renderSelect('profileVisibility', [
+      //           { value: 'public', label: '公开' },
+      //           { value: 'friends', label: '仅关注的人' },
+      //           { value: 'private', label: '私密' }
+      //         ])
+      //       )}
+      //       {renderSettingItem(
+      //         '动态可见性',
+      //         '控制谁可以看到您的动态',
+      //         renderSelect('activityVisibility', [
+      //           { value: 'public', label: '公开' },
+      //           { value: 'friends', label: '仅关注的人' },
+      //           { value: 'private', label: '仅自己' }
+      //         ])
+      //       )}
+      //       {renderSettingItem(
+      //         '显示邮箱地址',
+      //         '在个人资料中显示邮箱',
+      //         renderSwitch('showEmail')
+      //       )}
+      //       {renderSettingItem(
+      //         '显示手机号码',
+      //         '在个人资料中显示手机号',
+      //         renderSwitch('showPhone')
+      //       )}
+      //       {renderSettingItem(
+      //         '两步验证',
+      //         '为账户添加额外的安全保护',
+      //         renderSwitch('twoFactorAuth')
+      //       )}
+      //       {renderSettingItem(
+      //         '登录通知',
+      //         '新设备登录时发送通知',
+      //         renderSwitch('loginNotifications')
+      //       )}
+      //     </div>
+      //   );
 
-      case 'payment':
-        return (
-          <div className={styles.settingContent}>
-            <h3 className={styles.sectionTitle}>支付管理</h3>
-            {renderSettingItem(
-              '支付方式',
-              '管理您的信用卡和支付账户',
-              <button className={styles.actionBtn}>管理</button>
-            )}
-            {renderSettingItem(
-              '账单历史',
-              '查看购买记录和发票',
-              <button className={styles.actionBtn}>查看</button>
-            )}
-            {renderSettingItem(
-              '自动续费',
-              '管理订阅服务的自动续费',
-              <button className={styles.actionBtn}>设置</button>
-            )}
-            {renderSettingItem(
-              '退款申请',
-              '申请订单退款或取消',
-              <button className={styles.actionBtn}>申请</button>
-            )}
-          </div>
-        );
+      // case 'payment':
+      //   return (
+      //     <div className={styles.settingContent}>
+      //       <h3 className={styles.sectionTitle}>支付管理</h3>
+      //       {renderSettingItem(
+      //         '支付方式',
+      //         '管理您的信用卡和支付账户',
+      //         <button className={styles.actionBtn}>管理</button>
+      //       )}
+      //       {renderSettingItem(
+      //         '账单历史',
+      //         '查看购买记录和发票',
+      //         <button className={styles.actionBtn}>查看</button>
+      //       )}
+      //       {renderSettingItem(
+      //         '自动续费',
+      //         '管理订阅服务的自动续费',
+      //         <button className={styles.actionBtn}>设置</button>
+      //       )}
+      //       {renderSettingItem(
+      //         '退款申请',
+      //         '申请订单退款或取消',
+      //         <button className={styles.actionBtn}>申请</button>
+      //       )}
+      //     </div>
+      //   );
 
-      case 'application':
-        return (
-          <div className={styles.settingContent}>
-            <h3 className={styles.sectionTitle}>应用设置</h3>
-            {renderSettingItem(
-              '主题模式',
-              '选择应用的外观主题',
-              renderSelect('theme', [
-                { value: 'system', label: '跟随系统' },
-                { value: 'light', label: '浅色模式' },
-                { value: 'dark', label: '深色模式' }
-              ])
-            )}
-            {renderSettingItem(
-              '语言',
-              '选择应用显示语言',
-              renderSelect('language', [
-                { value: 'zh-CN', label: '简体中文' },
-                { value: 'en-US', label: 'English' },
-                { value: 'ja-JP', label: '日本語' }
-              ])
-            )}
-            {renderSettingItem(
-              '自动下载',
-              '购买后自动开始下载',
-              renderSwitch('autoDownload')
-            )}
-            {renderSettingItem(
-              '下载路径',
-              '设置软件下载保存位置',
-              <button className={styles.actionBtn}>选择路径</button>
-            )}
-          </div>
-        );
+      // case 'application':
+      //   return (
+      //     <div className={styles.settingContent}>
+      //       <h3 className={styles.sectionTitle}>应用设置</h3>
+      //       {renderSettingItem(
+      //         '主题模式',
+      //         '选择应用的外观主题',
+      //         renderSelect('theme', [
+      //           { value: 'system', label: '跟随系统' },
+      //           { value: 'light', label: '浅色模式' },
+      //           { value: 'dark', label: '深色模式' }
+      //         ])
+      //       )}
+      //       {renderSettingItem(
+      //         '语言',
+      //         '选择应用显示语言',
+      //         renderSelect('language', [
+      //           { value: 'zh-CN', label: '简体中文' },
+      //           { value: 'en-US', label: 'English' },
+      //           { value: 'ja-JP', label: '日本語' }
+      //         ])
+      //       )}
+      //       {renderSettingItem(
+      //         '自动下载',
+      //         '购买后自动开始下载',
+      //         renderSwitch('autoDownload')
+      //       )}
+      //       {renderSettingItem(
+      //         '下载路径',
+      //         '设置软件下载保存位置',
+      //         <button className={styles.actionBtn}>选择路径</button>
+      //       )}
+      //     </div>
+      //   );
 
       case 'help':
         return (
@@ -331,23 +369,18 @@ const Settings = () => {
             <h3 className={styles.sectionTitle}>帮助与支持</h3>
             {renderSettingItem(
               '使用帮助',
-              '查看使用指南和常见问题',
-              <button className={styles.actionBtn}>查看</button>
+              '查看软件商场的使用指南和常见问题',
+              <button className={styles.actionBtn} onClick={handleShowHelp}>查看</button>
             )}
             {renderSettingItem(
               '联系客服',
               '遇到问题时联系我们的支持团队',
-              <button className={styles.actionBtn}>联系</button>
-            )}
-            {renderSettingItem(
-              '意见反馈',
-              '告诉我们您的建议和想法',
-              <button className={styles.actionBtn}>反馈</button>
+              <button className={styles.actionBtn} onClick={handleShowContact}>联系</button>
             )}
             {renderSettingItem(
               '关于我们',
-              '了解更多关于我们的信息',
-              <button className={styles.actionBtn}>查看</button>
+              '了解更多关于我们软件商城的信息',
+              <button className={styles.actionBtn} onClick={handleShowAbout}>查看</button>
             )}
           </div>
         );
@@ -415,6 +448,67 @@ const Settings = () => {
           </div>
         </div>
       </div>
+
+      {/* 使用帮助模态框 */}
+      {renderModal(
+        showHelpModal,
+        () => setShowHelpModal(false),
+        '软件商场使用帮助',
+        <div>
+          <h4>如何使用软件商场</h4>
+          <ul>
+            <li>浏览软件：在首页或分类页面中查找您需要的软件</li>
+            <li>搜索功能：使用搜索框快速找到特定软件</li>
+            <li>软件详情：点击软件查看详细信息、截图和用户评价</li>
+            <li>下载安装：点击下载按钮获取软件安装包</li>
+            <li>用户评价：查看其他用户的使用体验和评分</li>
+            <li>收藏功能：将喜欢的软件添加到收藏夹</li>
+          </ul>
+          <h4>常见问题</h4>
+          <ul>
+            <li>Q: 下载的软件如何安装？</li>
+            <li>A: 下载完成后，双击安装包按照提示进行安装</li>
+            <li>Q: 软件无法正常运行怎么办？</li>
+            <li>A: 请检查系统兼容性，或联系客服获取技术支持</li>
+          </ul>
+        </div>
+      )}
+
+      {/* 联系客服模态框 */}
+      {renderModal(
+        showContactModal,
+        () => setShowContactModal(false),
+        '联系客服',
+        <div>
+          <h4>客服联系方式</h4>
+          <p>如果您在使用过程中遇到任何问题，请通过以下方式联系我们：</p>
+          <div style={{ marginTop: '20px', padding: '15px', background: '#f8f9fa', borderRadius: '8px' }}>
+            <strong>QQ客服：468098@qq.com</strong>
+          </div>
+          <p style={{ marginTop: '15px', fontSize: '14px', color: '#666' }}>
+            工作时间：周一至周日 9:00-21:00<br />
+            我们会尽快回复您的问题，感谢您的耐心等待！
+          </p>
+        </div>
+      )}
+
+      {/* 关于我们模态框 */}
+      {renderModal(
+        showAboutModal,
+        () => setShowAboutModal(false),
+        '关于我们',
+        <div>
+          <h4>欢迎使用我们的软件应用商城</h4>
+          <p>我们是一个专业、好用的软件应用商城，致力于为用户提供优质的软件下载和使用体验。</p>
+
+          <h4>我们的承诺</h4>
+          <p>我们承诺为每一位用户提供最好的服务体验，不断优化产品功能，持续更新软件资源，让您的数字生活更加便捷高效。</p>
+
+          <p style={{ marginTop: '20px', fontSize: '14px', color: '#666' }}>
+            感谢您选择我们的软件商城！
+          </p>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Clock, Package, ShoppingBag, Edit3 } from 'lucide-react';
+import { ArrowLeft, Clock, Package, ShoppingBag, Edit3, Plus } from 'lucide-react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 import styles from './appointment.module.css';
 
@@ -101,11 +101,16 @@ const Appointment = () => {
     navigate('/personal');
   };
 
+  // 处理跳转到全部软件页面
+  const handleViewAll = () => {
+    navigate('/publish');
+  };
+
   // 处理软件详情/编辑点击
   const handleSoftwareClick = (software, type) => {
     if (userRole === 'developer') {
-      console.log('跳转到编辑页面:', software.name, software.id);
-      // 后续使用: navigate(`/developer/software/edit/${software.id}`);
+      // 跳转到编辑页面
+      navigate(`/publish/edit/${software.id}`);
     } else {
       console.log(`跳转到软件详情页面 (${type}):`, software.name, software.id);
       // 后续使用: navigate(`/software/detail/${software.id}`);
@@ -218,9 +223,18 @@ const Appointment = () => {
           <ArrowLeft size={20} />
         </button>
         <h1 className={styles.pageTitle}>{getPageTitle()}</h1>
-        <div className={styles.statsInfo}>
-          {userRole === 'developer' ? <Package size={16} /> : <Clock size={16} />}
-          <span>{getTotalCount()} 个{userRole === 'developer' ? '软件' : '项目'}</span>
+        <div className={styles.headerRight}>
+          <div className={styles.statsInfo}>
+            {userRole === 'developer' ? <Package size={16} /> : <Clock size={16} />}
+            <span>{getTotalCount()} 个{userRole === 'developer' ? '软件' : '项目'}</span>
+          </div>
+          {/* 开发商角色显示全部按钮 */}
+          {userRole === 'developer' && (
+            <button className={styles.viewAllBtn} onClick={handleViewAll}>
+              <Package size={16} />
+              全部
+            </button>
+          )}
         </div>
       </div>
 
