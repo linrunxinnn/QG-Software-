@@ -14,10 +14,11 @@ import EditPost from "../pages/publish/editPost.jsx";
 import CreatePost from "../pages/publish/createPost.jsx";
 import ControlPage from "../pages/contorlPage/controlPage.jsx";
 import CheckDetail from "../pages/contorlPage/component/softdetail.jsx";
-import ShowSoft from "../pages/contorlPage/component/showSoft.jsx"
-import UserList from "../pages/contorlPage/component/userList.jsx"
-import CheckList from "../pages/contorlPage/component/CheckList.jsx"
+import ShowSoft from "../pages/contorlPage/component/showSoft.jsx";
+import UserList from "../pages/contorlPage/component/userList.jsx";
+import CheckList from "../pages/contorlPage/component/CheckList.jsx";
 import SoftwareDetail from "../pages/detail/SoftwareDetail.jsx"; // 新增
+import ManagerRouter from "../component/ProtectedRoute/manageRouter.jsx";
 
 export const router = createBrowserRouter([
   {
@@ -93,12 +94,15 @@ export const router = createBrowserRouter([
         ],
       },
     ],
-
   },
   {
     //管理端路径
     path: "/manager",
-    element: <ControlPage />,
+    element: (
+      <ManagerRouter>
+        <ControlPage />
+      </ManagerRouter>
+    ),
     children: [
       {
         index: true,
@@ -114,9 +118,8 @@ export const router = createBrowserRouter([
       },
       {
         path: "detail/:name",
-        element: <CheckDetail />
-      }
-    ]
+        element: <CheckDetail />,
+      },
+    ],
   },
-
 ]);
