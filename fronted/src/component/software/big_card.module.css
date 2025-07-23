@@ -1,76 +1,75 @@
 .categorycard {
-    width: 87%;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 12px;
-    background: #fff;
-    margin-top: 10px;
+  width: 87%;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 12px;
+  background: #fff;
+  margin-top: 10px;
 }
 
-
 .categorytitle {
-    font-size: 16px;
-    font-weight: bold;
-    margin-bottom: 12px;
-    padding-left: 4px;
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 12px;
+  padding-left: 4px;
 }
 
 .divider {
-    height: 1px;
-    background: #ddd;
-    margin: 8px 0;
+  height: 1px;
+  background: #ddd;
+  margin: 8px 0;
 }
 
 .item {
-    display: flex;
-    align-items: center;
-    margin-bottom: 16px;
-    border-radius: 5px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+  border-radius: 5px;
 }
 
 .item:hover {
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-    transition: all 0.4s ease-in;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  transition: all 0.4s ease-in;
 }
 
 .itemimg {
-    width: 60px;
-    height: 60px;
-    background: #ddd;
-    border-radius: 4px;
-    margin-right: 12px;
+  width: 60px;
+  height: 60px;
+  background: #ddd;
+  border-radius: 4px;
+  margin-right: 12px;
 }
 
 /* 新增：项目信息容器，用于包裹名称和价格 */
 .iteminfo {
-    display: flex;
-    flex-direction: column;
-    margin-right: 12px;
-    flex: 1;
-    /* 让信息区域占满剩余空间 */
+  display: flex;
+  flex-direction: column;
+  margin-right: 12px;
+  flex: 1;
+  /* 让信息区域占满剩余空间 */
 }
 
 .itemname {
-    font-size: 14px;
-    margin-bottom: 4px;
-    /* 名称和价格之间留出间距 */
+  font-size: 14px;
+  margin-bottom: 4px;
+  /* 名称和价格之间留出间距 */
 }
 
 /* 新增：价格样式 */
 .itemprice {
-    font-size: 13px;
-    color: grey;
-    /* 红色表示价格，可根据UI调整 */
-    font-weight: 500;
+  font-size: 13px;
+  color: grey;
+  /* 红色表示价格，可根据UI调整 */
+  font-weight: 500;
 }
 
 .downloadbtn {
-    padding: 4px 8px;
-    background: white;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    cursor: pointer;
-    white-space: nowrap;
-    margin-right: 10px;
-    /* 防止按钮文字换行 */
+  padding: 4px 8px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+  margin-right: 10px;
+  /* 防止按钮文字换行 */
 }

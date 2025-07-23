@@ -25,6 +25,11 @@ const LoginForm = ({ onSuccess }) => {
       // setIsLoginModalVisible(false);
       message.success("登录成功");
       onSuccess(1); // 假设 userData 是从后端获取的用户数据
+      //返回的用户信息中有身份，如果身份为管理员则还要跳转到管理员页面
+      // const role = 3;
+      // if (role === 3) {
+      //   navigator("/manager");
+      // }
     } catch (error) {
       console.error("登录失败:", error);
       message.error("登录失败，请重试");
