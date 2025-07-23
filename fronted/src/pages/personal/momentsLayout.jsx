@@ -1,102 +1,81 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Heart, MessageCircle, Share, Clock, ShoppingCart, Users, Star } from 'lucide-react';
+import { ArrowLeft, Rocket, Package, AlertCircle, Plus, X, Calendar, FileText } from 'lucide-react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 import styles from './momentsLayout.module.css';
 
 const MomentsLayout = () => {
   const navigate = useNavigate();
   const { userInfo } = useOutletContext();
-  // 模拟动态数据
-  const [moments] = useState([
+
+  // 简化的动态数据
+  const [moments, setMoments] = useState([
     {
       id: 1,
-      type: 'purchase',
-      title: '购买了新软件',
-      content: '刚刚购买了 Adobe Photoshop 2024，期待体验新功能！这次更新加入了很多AI功能，应该会大大提升工作效率。',
+      type: 'release',
+      title: '新软件即将发布',
+      content: '我的最新作品《效率管理大师 Pro》即将在下周正式发布！经过6个月的精心开发，这款软件将为用户带来全新的工作效率体验。',
       software: {
-        name: 'Adobe Photoshop 2024',
+        name: '效率管理大师 Pro',
         icon: 'https://picsum.photos/50/50?random=1',
-        price: '¥998.00'
+        releaseDate: '2024-07-30',
+        version: 'v1.0'
       },
       timestamp: '2小时前',
-      likes: 15,
-      comments: 3,
-      liked: false
+      createdAt: '2024-07-23T10:00:00Z'
     },
     {
       id: 2,
-      type: 'follow',
-      title: '关注了新的开发商',
-      content: '关注了 JetBrains，他们的IDE产品真的很不错，特别是IntelliJ IDEA，用起来非常顺手。',
-      developer: {
-        name: 'JetBrains',
-        avatar: 'https://picsum.photos/50/50?random=2',
-        type: 'company'
+      type: 'update',
+      title: '软件重大更新发布',
+      content: '《设计师工具箱》v3.2版本正式发布！新增AI智能抠图功能、批量处理工具，性能提升40%。',
+      software: {
+        name: '设计师工具箱',
+        icon: 'https://picsum.photos/50/50?random=2',
+        version: 'v3.2',
+        features: ['AI智能抠图', '批量处理', '性能优化']
       },
       timestamp: '1天前',
-      likes: 8,
-      comments: 1,
-      liked: true
+      createdAt: '2024-07-22T14:30:00Z'
     },
     {
       id: 3,
-      type: 'reserve',
-      title: '预约了即将发布的软件',
-      content: '预约了 AutoCAD 2025，听说这次会有重大更新，增加了很多云端协作功能。',
+      type: 'development',
+      title: '开发进度更新',
+      content: '《AI写作助手》开发进度更新：核心AI算法已完成90%，UI界面设计完成85%，预计下个月进入内测阶段。',
       software: {
-        name: 'AutoCAD 2025',
-        icon: 'https://picsum.photos/50/50?random=3',
-        releaseDate: '2024-12-01'
+        name: 'AI写作助手',
+        icon: 'https://picsum.photos/50/50?random=5',
+        progress: 87,
+        phase: '开发中',
+        estimatedRelease: '2024-09-15'
       },
       timestamp: '3天前',
-      likes: 22,
-      comments: 7,
-      liked: false
-    },
-    {
-      id: 4,
-      type: 'review',
-      title: '发表了软件评价',
-      content: '使用Visual Studio Code已经一年了，真的是非常优秀的代码编辑器。插件生态丰富，性能也很好。强烈推荐给所有开发者！',
-      software: {
-        name: 'Visual Studio Code',
-        icon: 'https://picsum.photos/50/50?random=4',
-        rating: 5
-      },
-      timestamp: '5天前',
-      likes: 45,
-      comments: 12,
-      liked: true
-    },
-    {
-      id: 5,
-      type: 'share',
-      title: '分享了软件',
-      content: '发现了一个很不错的效率工具，推荐给大家试试。界面简洁，功能强大，价格也很合理。',
-      software: {
-        name: '效率大师 Pro',
-        icon: 'https://picsum.photos/50/50?random=5',
-        price: '¥68.00'
-      },
-      timestamp: '1周前',
-      likes: 18,
-      comments: 5,
-      liked: false
+      createdAt: '2024-07-20T09:15:00Z'
     }
   ]);
 
   const [loading, setLoading] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [createForm, setCreateForm] = useState({
+    type: 'release',
+    title: '',
+    content: '',
+    softwareName: '',
+    version: '',
+    features: '',
+    progress: '',
+    releaseDate: '',
+    estimatedRelease: ''
+  });
 
-  // 获取动态类型图标和颜色
+  // 获取动态类型配置
   const getMomentTypeConfig = (type) => {
     const configs = {
-      purchase: { icon: <ShoppingCart size={16} />, color: '#10b981', text: '购买' },
-      follow: { icon: <Users size={16} />, color: '#3b82f6', text: '关注' },
-      reserve: { icon: <Clock size={16} />, color: '#f59e0b', text: '预约' },
-      review: { icon: <Star size={16} />, color: '#ef4444', text: '评价' },
-      share: { icon: <Share size={16} />, color: '#8b5cf6', text: '分享' }
+      release: { icon: <Rocket size={16} />, color: '#10b981', text: '新品发布' },
+      update: { icon: <Package size={16} />, color: '#3b82f6', text: '版本更新' },
+      development: { icon: <AlertCircle size={16} />, color: '#06b6d4', text: '开发进度' }
     };
-    return configs[type] || configs['share'];
+    return configs[type] || configs['development'];
   };
 
   // 处理返回
@@ -104,31 +83,106 @@ const MomentsLayout = () => {
     navigate('/personal');
   };
 
-  // 处理点赞
-  const handleLike = (momentId) => {
-    console.log('点赞动态:', momentId);
+  // 打开创建动态弹窗
+  const handleCreateMoment = () => {
+    setShowCreateModal(true);
   };
 
-  // 处理评论
-  const handleComment = (momentId) => {
-    console.log('评论动态:', momentId);
+  // 关闭创建动态弹窗
+  const handleCloseModal = () => {
+    setShowCreateModal(false);
+    setCreateForm({
+      type: 'release',
+      title: '',
+      content: '',
+      softwareName: '',
+      version: '',
+      features: '',
+      progress: '',
+      releaseDate: '',
+      estimatedRelease: ''
+    });
   };
 
-  // 处理分享
-  const handleShare = (momentId) => {
-    console.log('分享动态:', momentId);
+  // 处理表单输入
+  const handleFormChange = (field, value) => {
+    setCreateForm(prev => ({
+      ...prev,
+      [field]: value
+    }));
   };
 
-  // 渲染星级评分
-  const renderStars = (rating) => {
-    return [...Array(5)].map((_, index) => (
-      <Star
-        key={index}
-        size={14}
-        fill={index < rating ? '#fbbf24' : 'none'}
-        color={index < rating ? '#fbbf24' : '#d1d5db'}
-      />
-    ));
+  // 提交创建动态
+  const handleSubmitMoment = async () => {
+    if (!createForm.title || !createForm.content || !createForm.softwareName) {
+      alert('请填写必填项');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      // 构建软件信息对象
+      const software = {
+        name: createForm.softwareName,
+        icon: `https://picsum.photos/50/50?random=${Date.now()}`, // 临时图标
+        version: createForm.version || undefined,
+        features: createForm.features ? createForm.features.split(',').map(f => f.trim()) : undefined,
+        progress: createForm.progress ? parseInt(createForm.progress) : undefined,
+        releaseDate: createForm.releaseDate || undefined,
+        estimatedRelease: createForm.estimatedRelease || undefined,
+        phase: createForm.type === 'development' ? '开发中' : undefined
+      };
+
+      // 创建新动态对象
+      const newMoment = {
+        id: Date.now(),
+        type: createForm.type,
+        title: createForm.title,
+        content: createForm.content,
+        software: software,
+        timestamp: '刚刚',
+        createdAt: new Date().toISOString()
+      };
+
+      // TODO: 这里应该调用后端API
+      // const response = await fetch('/api/moments', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //     'Authorization': `Bearer ${userToken}`
+      //   },
+      //   body: JSON.stringify(newMoment)
+      // });
+      // const savedMoment = await response.json();
+
+      // 暂时添加到本地状态
+      setMoments(prev => [newMoment, ...prev]);
+
+      handleCloseModal();
+      alert('动态创建成功！');
+
+    } catch (error) {
+      console.error('创建动态失败:', error);
+      alert('创建动态失败，请重试');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 渲染进度条
+  const renderProgress = (progress) => {
+    return (
+      <div className={styles.progressContainer}>
+        <div className={styles.progressBar}>
+          <div
+            className={styles.progressFill}
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+        <span className={styles.progressText}>{progress}%</span>
+      </div>
+    );
   };
 
   return (
@@ -138,22 +192,26 @@ const MomentsLayout = () => {
         <button className={styles.backBtn} onClick={handleBack}>
           <ArrowLeft size={20} />
         </button>
-        <h1 className={styles.pageTitle}>我的动态</h1>
-        <div className={styles.statsInfo}>
-          <Clock size={16} />
-          <span>{moments.length} 条动态</span>
-        </div>
+        <h1 className={styles.pageTitle}>开发动态</h1>
+        <button className={styles.createBtn} onClick={handleCreateMoment}>
+          <Plus size={16} />
+          <span>创建动态</span>
+        </button>
       </div>
 
       {/* 动态内容 */}
       <div className={styles.content}>
-        {loading ? (
+        {loading && !showCreateModal ? (
           <div className={styles.loading}>加载中...</div>
         ) : moments.length === 0 ? (
           <div className={styles.empty}>
-            <Clock size={48} />
-            <h3>暂无动态</h3>
-            <p>开始使用软件，创建你的第一条动态吧！</p>
+            <Rocket size={48} />
+            <h3>暂无开发动态</h3>
+            <p>发布你的第一个软件，开始记录开发历程吧！</p>
+            <button className={styles.emptyCreateBtn} onClick={handleCreateMoment}>
+              <Plus size={16} />
+              创建第一个动态
+            </button>
           </div>
         ) : (
           <div className={styles.momentsList}>
@@ -197,63 +255,55 @@ const MomentsLayout = () => {
                         <div className={styles.softwareInfo}>
                           <h4 className={styles.softwareName}>{moment.software.name}</h4>
                           <div className={styles.softwareMeta}>
-                            {moment.software.price && (
-                              <span className={styles.price}>{moment.software.price}</span>
+                            {/* 版本信息 */}
+                            {moment.software.version && (
+                              <span className={styles.version}>版本: {moment.software.version}</span>
                             )}
+
+                            {/* 发布日期 */}
                             {moment.software.releaseDate && (
-                              <span className={styles.releaseDate}>发布时间: {moment.software.releaseDate}</span>
+                              <span className={styles.releaseDate}>
+                                <Calendar size={12} />
+                                发布: {moment.software.releaseDate}
+                              </span>
                             )}
-                            {moment.software.rating && (
-                              <div className={styles.rating}>
-                                {renderStars(moment.software.rating)}
+
+                            {/* 预计发布日期 */}
+                            {moment.software.estimatedRelease && (
+                              <span className={styles.estimatedRelease}>
+                                <Calendar size={12} />
+                                预计: {moment.software.estimatedRelease}
+                              </span>
+                            )}
+
+                            {/* 开发阶段 */}
+                            {moment.software.phase && (
+                              <span className={styles.phase}>阶段: {moment.software.phase}</span>
+                            )}
+
+                            {/* 开发进度 */}
+                            {moment.software.progress && (
+                              <div className={styles.progressWrapper}>
+                                <span className={styles.progressLabel}>开发进度</span>
+                                {renderProgress(moment.software.progress)}
+                              </div>
+                            )}
+
+                            {/* 功能列表 */}
+                            {moment.software.features && (
+                              <div className={styles.features}>
+                                <span className={styles.featuresLabel}>新功能:</span>
+                                {moment.software.features.map((feature, index) => (
+                                  <span key={index} className={styles.featureTag}>
+                                    {feature}
+                                  </span>
+                                ))}
                               </div>
                             )}
                           </div>
                         </div>
                       </div>
                     )}
-
-                    {/* 开发商信息卡片 */}
-                    {moment.developer && (
-                      <div className={styles.developerCard}>
-                        <img
-                          src={moment.developer.avatar}
-                          alt={moment.developer.name}
-                          className={styles.developerAvatar}
-                        />
-                        <div className={styles.developerInfo}>
-                          <h4 className={styles.developerName}>{moment.developer.name}</h4>
-                          <span className={styles.developerType}>
-                            {moment.developer.type === 'company' ? '企业开发商' : '个人开发者'}
-                          </span>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* 动态操作 */}
-                  <div className={styles.momentActions}>
-                    <button
-                      className={`${styles.actionBtn} ${moment.liked ? styles.liked : ''}`}
-                      onClick={() => handleLike(moment.id)}
-                    >
-                      <Heart size={16} fill={moment.liked ? '#ef4444' : 'none'} />
-                      <span>{moment.likes}</span>
-                    </button>
-                    <button
-                      className={styles.actionBtn}
-                      onClick={() => handleComment(moment.id)}
-                    >
-                      <MessageCircle size={16} />
-                      <span>{moment.comments}</span>
-                    </button>
-                    <button
-                      className={styles.actionBtn}
-                      onClick={() => handleShare(moment.id)}
-                    >
-                      <Share size={16} />
-                      <span>分享</span>
-                    </button>
                   </div>
                 </div>
               );
@@ -261,6 +311,162 @@ const MomentsLayout = () => {
           </div>
         )}
       </div>
+
+      {/* 创建动态弹窗 */}
+      {showCreateModal && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modal}>
+            <div className={styles.modalHeader}>
+              <h2 className={styles.modalTitle}>创建开发动态</h2>
+              <button className={styles.closeBtn} onClick={handleCloseModal}>
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className={styles.modalContent}>
+              <form className={styles.createForm}>
+                {/* 动态类型 */}
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>动态类型 *</label>
+                  <select
+                    className={styles.formSelect}
+                    value={createForm.type}
+                    onChange={(e) => handleFormChange('type', e.target.value)}
+                  >
+                    <option value="release">新品发布</option>
+                    <option value="update">版本更新</option>
+                    <option value="development">开发进度</option>
+                  </select>
+                </div>
+
+                {/* 动态标题 */}
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>动态标题 *</label>
+                  <input
+                    type="text"
+                    className={styles.formInput}
+                    placeholder="请输入动态标题"
+                    value={createForm.title}
+                    onChange={(e) => handleFormChange('title', e.target.value)}
+                  />
+                </div>
+
+                {/* 动态内容 */}
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>动态内容 *</label>
+                  <textarea
+                    className={styles.formTextarea}
+                    placeholder="详细描述你的开发动态..."
+                    rows={4}
+                    value={createForm.content}
+                    onChange={(e) => handleFormChange('content', e.target.value)}
+                  />
+                </div>
+
+                {/* 软件名称 */}
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>软件名称 *</label>
+                  <input
+                    type="text"
+                    className={styles.formInput}
+                    placeholder="请输入软件名称"
+                    value={createForm.softwareName}
+                    onChange={(e) => handleFormChange('softwareName', e.target.value)}
+                  />
+                </div>
+
+                {/* 版本号 */}
+                {(createForm.type === 'release' || createForm.type === 'update') && (
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>版本号</label>
+                    <input
+                      type="text"
+                      className={styles.formInput}
+                      placeholder="如: v1.0, v2.1.3"
+                      value={createForm.version}
+                      onChange={(e) => handleFormChange('version', e.target.value)}
+                    />
+                  </div>
+                )}
+
+                {/* 新功能 */}
+                {createForm.type === 'update' && (
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>新功能</label>
+                    <input
+                      type="text"
+                      className={styles.formInput}
+                      placeholder="多个功能用逗号分隔，如: 新增登录, 优化性能"
+                      value={createForm.features}
+                      onChange={(e) => handleFormChange('features', e.target.value)}
+                    />
+                  </div>
+                )}
+
+                {/* 开发进度 */}
+                {createForm.type === 'development' && (
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>开发进度 (%)</label>
+                    <input
+                      type="number"
+                      className={styles.formInput}
+                      placeholder="0-100"
+                      min="0"
+                      max="100"
+                      value={createForm.progress}
+                      onChange={(e) => handleFormChange('progress', e.target.value)}
+                    />
+                  </div>
+                )}
+
+                {/* 发布日期 */}
+                {createForm.type === 'release' && (
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>发布日期</label>
+                    <input
+                      type="date"
+                      className={styles.formInput}
+                      value={createForm.releaseDate}
+                      onChange={(e) => handleFormChange('releaseDate', e.target.value)}
+                    />
+                  </div>
+                )}
+
+                {/* 预计发布日期 */}
+                {createForm.type === 'development' && (
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>预计发布日期</label>
+                    <input
+                      type="date"
+                      className={styles.formInput}
+                      value={createForm.estimatedRelease}
+                      onChange={(e) => handleFormChange('estimatedRelease', e.target.value)}
+                    />
+                  </div>
+                )}
+              </form>
+            </div>
+
+            <div className={styles.modalFooter}>
+              <button
+                type="button"
+                className={styles.cancelBtn}
+                onClick={handleCloseModal}
+              >
+                取消
+              </button>
+              <button
+                type="button"
+                className={styles.submitBtn}
+                onClick={handleSubmitMoment}
+                disabled={loading}
+              >
+                {loading ? '创建中...' : '发布动态'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

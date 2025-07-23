@@ -5,7 +5,9 @@ import {
   ShoppingCart,
   Clock,
   Edit3,
-  Settings
+  Settings,
+  X,
+  Send
 } from 'lucide-react';
 import { useNavigate, Outlet, useLocation } from 'react-router-dom';
 import styles from './personal.module.css';
@@ -16,17 +18,15 @@ const Personal = () => {
   const followingContentRef = useRef(null);
 
   // 用户数据
-  const [userInfo] = useState({
+  const [userInfo, setUserInfo] = useState({
     id: 1,
     username: '张三',
     avatar: 'https://picsum.photos/120/120?random=1',
-    role: 'user', // 'admin', 'user', 'developer'
+    role: 'developer', // 'admin', 'user', 'developer'
     email: 'zhangsan@example.com',
-    phone: '138****8888',
     bio: '热爱技术，专注于软件开发和用户体验设计。喜欢探索新技术，分享开发经验。',
     followingCount: 128,
     followerCount: 256,
-    joinDate: '2023-05-15'
   });
 
   // 统计数据
@@ -35,6 +35,15 @@ const Personal = () => {
     reservedCount: 3,
     totalSpent: '¥2,850'
   });
+
+  // 弹窗状态
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [upgradeForm, setUpgradeForm] = useState({
+    reason: '',
+    experience: '',
+    portfolio: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // 获取身份标签颜色和文本
   const getRoleConfig = (role) => {
@@ -46,9 +55,40 @@ const Personal = () => {
     return configs[role] || configs['user'];
   };
 
-  // 处理编辑资料
+  // 处理编辑资料 - 显示升级弹窗
   const handleEditProfile = () => {
-    console.log('编辑资料');
+    if (userInfo.role === 'user') {
+      setShowUpgradeModal(true);
+    } else {
+      console.log('编辑资料');
+    }
+  };
+
+  // 处理升级申请表单提交
+  const handleUpgradeSubmit = async (e) => {
+    e.preventDefault();
+    if (!upgradeForm.reason.trim()) {
+      alert('请填写申请理由');
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // 模拟API调用
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      // 这里应该调用实际的API
+      console.log('升级申请提交：', upgradeForm);
+
+      alert('申请已提交，我们会在3-5个工作日内审核您的申请');
+      setShowUpgradeModal(false);
+      setUpgradeForm({ reason: '', experience: '', portfolio: '' });
+    } catch (error) {
+      alert('提交失败，请稍后重试');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // 处理设置
@@ -73,26 +113,13 @@ const Personal = () => {
 
   // 处理tab点击
   const handleTabClick = (tabKey, path) => {
-    if (tabKey === '' && (location.pathname === '/personal' || location.pathname === '/personal/')) {
-      // 如果已经在主页面，点击"我的关注"tab就滚动到内容区域
-      scrollToFollowing();
-    } else if (tabKey === '') {
-      // 如果不在主页面，先导航到主页面，然后滚动
-      navigate('/personal');
-      // 使用setTimeout确保导航完成后再滚动
-      setTimeout(() => {
-        scrollToFollowing();
-      }, 100);
-    } else {
-      // 其他tab正常跳转
-      navigate(path);
-    }
+    navigate(path);
   };
 
   // 检查是否在主页面（显示导航卡片）
   const isMainPage = location.pathname === '/personal' || location.pathname === '/personal/';
 
-  // Tab 配置
+  // Tab 配置 - 根据用户身份动态调整
   const tabs = [
     {
       key: '',
@@ -104,11 +131,12 @@ const Personal = () => {
       key: 'momentsLayout',
       label: '动态',
       icon: <User size={16} />,
-      path: '/personal/momentsLayout'
+      path: '/personal/momentsLayout',
+      showForDeveloper: true // 标记这个tab需要开发商身份
     },
     {
       key: 'appointment',
-      label: '已预约',
+      label: '软件详情',
       icon: <Clock size={16} />,
       path: '/personal/appointment'
     },
@@ -132,7 +160,86 @@ const Personal = () => {
 
   return (
     <div className={styles.personalPage}>
-      {/* 用户信息头部 - 固定在主页面 */}
+      {/* 升级为开发商弹窗 */}
+      {showUpgradeModal && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modalContent}>
+            <div className={styles.modalHeader}>
+              <h3>申请成为软件开发商</h3>
+              <button
+                className={styles.closeBtn}
+                onClick={() => setShowUpgradeModal(false)}
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <form onSubmit={handleUpgradeSubmit} className={styles.upgradeForm}>
+              <div className={styles.formGroup}>
+                <label>申请理由 *</label>
+                <textarea
+                  value={upgradeForm.reason}
+                  onChange={(e) => setUpgradeForm({
+                    ...upgradeForm,
+                    reason: e.target.value
+                  })}
+                  placeholder="请详细说明您申请成为软件开发商的理由..."
+                  rows={4}
+                  required
+                />
+              </div>
+              <div className={styles.formGroup}>
+                <label>开发经验</label>
+                <textarea
+                  value={upgradeForm.experience}
+                  onChange={(e) => setUpgradeForm({
+                    ...upgradeForm,
+                    experience: e.target.value
+                  })}
+                  placeholder="请简述您的软件开发经验（选填）"
+                  rows={3}
+                />
+              </div>
+              <div className={styles.formGroup}>
+                <label>作品集链接</label>
+                <input
+                  type="url"
+                  value={upgradeForm.portfolio}
+                  onChange={(e) => setUpgradeForm({
+                    ...upgradeForm,
+                    portfolio: e.target.value
+                  })}
+                  placeholder="https://your-portfolio.com（选填）"
+                />
+              </div>
+              <div className={styles.formActions}>
+                <button
+                  type="button"
+                  className={styles.cancelBtn}
+                  onClick={() => setShowUpgradeModal(false)}
+                >
+                  取消
+                </button>
+                <button
+                  type="submit"
+                  className={styles.submitBtn}
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? (
+                    <>提交中...</>
+                  ) : (
+                    <>
+                      <Send size={16} />
+                      提交申请
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* 用户信息头部 */}
       <div className={styles.userHeader}>
         <div className={styles.userInfo}>
           <img
@@ -157,13 +264,12 @@ const Personal = () => {
                   {userInfo.role === 'developer' ? userInfo.followerCount : userInfo.followingCount}
                 </strong>
               </span>
-              <span className={styles.stat}>加入时间: {userInfo.joinDate}</span>
             </div>
           </div>
           <div className={styles.userActions}>
             <button className={styles.actionBtn} onClick={handleEditProfile}>
               <Edit3 size={16} />
-              编辑资料
+              {userInfo.role === 'user' ? '升级为开发商' : '编辑资料'}
             </button>
             <button className={styles.actionBtn} onClick={handleSettings}>
               <Settings size={16} />
@@ -218,7 +324,12 @@ const Personal = () => {
             </div>
             <div className={styles.navContent}>
               <h3 className={styles.navTitle}>动态</h3>
-              <p className={styles.navDesc}>查看我的最新动态和活动记录</p>
+              <p className={styles.navDesc}>
+                {userInfo.role === 'developer'
+                  ? '查看我的最新动态和活动记录'
+                  : '暂无动态，升级为开发商后可发布动态'
+                }
+              </p>
             </div>
           </div>
 
@@ -237,7 +348,7 @@ const Personal = () => {
         </div>
       )}
 
-      {/* 我的关注内容区域 - 添加ref引用 */}
+      {/* 我的关注内容区域 */}
       {isMainPage && (
         <div ref={followingContentRef} className={styles.followingContent}>
           <Outlet context={{ userInfo, statistics }} />
@@ -248,7 +359,24 @@ const Personal = () => {
       {!isMainPage && (
         <div className={styles.contentSection}>
           <div className={styles.tabContentWrapper}>
-            <Outlet context={{ userInfo, statistics }} />
+            {/* 如果是动态页面且用户不是开发商，显示提示 */}
+            {activeTab === 'momentsLayout' && userInfo.role !== 'developer' ? (
+              <div className={styles.emptyState}>
+                <div className={styles.emptyIcon}>
+                  <User size={48} />
+                </div>
+                <h3>暂无动态</h3>
+                <p>只有软件开发商可以发布动态，申请成为开发商后即可使用此功能。</p>
+                <button
+                  className={styles.upgradePromptBtn}
+                  onClick={() => setShowUpgradeModal(true)}
+                >
+                  申请成为开发商
+                </button>
+              </div>
+            ) : (
+              <Outlet context={{ userInfo, statistics }} />
+            )}
           </div>
         </div>
       )}

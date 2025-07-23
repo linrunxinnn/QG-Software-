@@ -253,7 +253,7 @@
 .dangerZone {
   margin-top: 40px;
   border-top: 2px solid #fee2e2;
-  padding-top: 24px;
+  padding: 24px;
 }
 
 .dangerTitle {

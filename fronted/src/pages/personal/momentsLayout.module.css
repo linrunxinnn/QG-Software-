@@ -42,17 +42,28 @@
   font-size: 24px;
   font-weight: 600;
   color: #1f2937;
+  flex: 1;
+  text-align: center;
 }
 
-.statsInfo {
+.createBtn {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #6b7280;
+  background: #10b981;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
   font-size: 14px;
-  background: #f9fafb;
-  padding: 8px 16px;
-  border-radius: 20px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.createBtn:hover {
+  background: #059669;
+  transform: translateY(-1px);
 }
 
 /* 内容区域 */
@@ -82,6 +93,7 @@
   height: 400px;
   color: #9ca3af;
   text-align: center;
+  padding: 40px;
 }
 
 .empty h3 {
@@ -91,8 +103,28 @@
 }
 
 .empty p {
-  margin: 0;
+  margin: 0 0 24px 0;
   font-size: 14px;
+}
+
+.emptyCreateBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #10b981;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.emptyCreateBtn:hover {
+  background: #059669;
+  transform: translateY(-1px);
 }
 
 /* 动态列表 */
@@ -183,12 +215,12 @@
 /* 软件信息卡片 */
 .softwareCard {
   display: flex;
-  align-items: center;
-  gap: 12px;
+  align-items: flex-start;
+  gap: 16px;
   background: #f8fafc;
   border: 1px solid #e2e8f0;
   border-radius: 12px;
-  padding: 16px;
+  padding: 20px;
   margin-top: 12px;
   transition: all 0.2s ease;
 }
@@ -199,133 +231,298 @@
 }
 
 .softwareIcon {
-  width: 48px;
-  height: 48px;
-  border-radius: 8px;
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
   object-fit: cover;
   border: 1px solid #e5e7eb;
+  flex-shrink: 0;
 }
 
 .softwareInfo {
   flex: 1;
+  min-width: 0;
 }
 
 .softwareName {
-  margin: 0 0 4px 0;
-  font-size: 14px;
+  margin: 0 0 8px 0;
+  font-size: 16px;
   font-weight: 600;
   color: #1f2937;
 }
 
 .softwareMeta {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.price {
-  font-size: 14px;
-  font-weight: 600;
-  color: #dc2626;
-}
-
-.releaseDate {
+/* 信息标签 */
+.version,
+.releaseDate,
+.estimatedRelease,
+.phase {
   font-size: 12px;
   color: #6b7280;
+  background: #f3f4f6;
+  padding: 4px 8px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  width: fit-content;
 }
 
-.rating {
+.releaseDate,
+.estimatedRelease {
+  color: #059669;
+  background: #d1fae5;
+}
+
+.phase {
+  color: #0891b2;
+  background: #cffafe;
+}
+
+/* 进度条 */
+.progressWrapper {
   display: flex;
-  gap: 2px;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
 }
 
-/* 开发商信息卡片 */
-.developerCard {
+.progressLabel {
+  font-size: 12px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.progressContainer {
   display: flex;
   align-items: center;
-  gap: 12px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 16px;
-  margin-top: 12px;
-  transition: all 0.2s ease;
+  gap: 8px;
 }
 
-.developerCard:hover {
-  border-color: #10b981;
-  background: #f0fdf4;
-}
-
-.developerAvatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #e5e7eb;
-}
-
-.developerInfo {
+.progressBar {
   flex: 1;
+  height: 6px;
+  background: #e5e7eb;
+  border-radius: 3px;
+  overflow: hidden;
 }
 
-.developerName {
-  margin: 0 0 4px 0;
-  font-size: 14px;
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6 0%, #10b981 100%);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.progressText {
+  font-size: 11px;
+  color: #6b7280;
+  font-weight: 600;
+  min-width: 32px;
+}
+
+/* 功能标签 */
+.features {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.featuresLabel {
+  font-size: 12px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.featureTag {
+  background: #dbeafe;
+  color: #1e40af;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+/* 创建动态弹窗 */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modal {
+  background: white;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.modalTitle {
+  margin: 0;
+  font-size: 18px;
   font-weight: 600;
   color: #1f2937;
 }
 
-.developerType {
-  font-size: 12px;
-  color: #6b7280;
+.closeBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
   background: #f3f4f6;
-  padding: 2px 8px;
-  border-radius: 12px;
-  display: inline-block;
-}
-
-/* 动态操作 */
-.momentActions {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  padding: 16px 24px;
-  background: #f8fafc;
-  border-top: 1px solid #f1f5f9;
-}
-
-.actionBtn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: none;
   border: none;
+  border-radius: 50%;
   color: #6b7280;
-  font-size: 14px;
   cursor: pointer;
   transition: all 0.2s;
-  padding: 8px 12px;
+}
+
+.closeBtn:hover {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.modalContent {
+  padding: 24px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.createForm {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.formLabel {
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.formInput,
+.formSelect,
+.formTextarea {
+  padding: 12px 16px;
+  border: 1px solid #d1d5db;
   border-radius: 8px;
+  font-size: 14px;
+  color: #1f2937;
+  background: white;
+  transition: all 0.2s;
 }
 
-.actionBtn:hover {
-  background: rgba(59, 130, 246, 0.1);
-  color: #3b82f6;
+.formInput:focus,
+.formSelect:focus,
+.formTextarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-.actionBtn.liked {
-  color: #ef4444;
+.formTextarea {
+  resize: vertical;
+  min-height: 100px;
+  font-family: inherit;
 }
 
-.actionBtn.liked:hover {
-  background: rgba(239, 68, 68, 0.1);
-  color: #dc2626;
+.formSelect {
+  cursor: pointer;
 }
 
-.actionBtn span {
-  margin-left: 4px;
+.modalFooter {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 20px 24px;
+  border-top: 1px solid #e5e7eb;
+  background: #f9fafb;
+}
+
+.cancelBtn {
+  padding: 10px 20px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: white;
+  color: #6b7280;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cancelBtn:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.submitBtn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background: #10b981;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 100px;
+}
+
+.submitBtn:hover:not(:disabled) {
+  background: #059669;
+}
+
+.submitBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* 响应式设计 */
@@ -347,14 +544,22 @@
     font-size: 20px;
   }
 
+  .createBtn {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  .createBtn span {
+    display: none;
+  }
+
   .momentsList {
     padding: 16px;
     gap: 16px;
   }
 
   .momentHeader,
-  .momentContent,
-  .momentActions {
+  .momentContent {
     padding: 16px;
   }
 
@@ -368,18 +573,78 @@
     align-self: flex-end;
   }
 
-  .momentActions {
-    justify-content: space-around;
-  }
-
-  .softwareCard,
-  .developerCard {
+  .softwareCard {
     flex-direction: column;
     align-items: flex-start;
-    gap: 8px;
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .softwareIcon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .softwareName {
+    font-size: 15px;
   }
 
   .softwareMeta {
-    justify-content: flex-start;
+    gap: 6px;
+  }
+
+  .features {
+    gap: 4px;
+  }
+
+  .featureTag {
+    font-size: 10px;
+    padding: 2px 6px;
+  }
+
+  .progressContainer {
+    gap: 6px;
+  }
+
+  .progressText {
+    min-width: 28px;
+    font-size: 10px;
+  }
+
+  .version,
+  .releaseDate,
+  .estimatedRelease,
+  .phase {
+    font-size: 11px;
+    padding: 3px 6px;
+  }
+
+  .modalOverlay {
+    padding: 12px;
+  }
+
+  .modal {
+    max-height: 95vh;
+  }
+
+  .modalHeader,
+  .modalContent,
+  .modalFooter {
+    padding: 16px;
+  }
+
+  .createForm {
+    gap: 16px;
+  }
+
+  .modalFooter {
+    flex-direction: column-reverse;
+    gap: 8px;
+  }
+
+  .cancelBtn,
+  .submitBtn {
+    width: 100%;
+    justify-content: center;
   }
 }

@@ -58,11 +58,9 @@
 /* 内容区域 */
 .content {
   margin: 20px;
-  background: white;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  min-height: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .loading {
@@ -72,6 +70,43 @@
   height: 300px;
   color: #9ca3af;
   font-size: 16px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 区域样式 */
+.section {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 24px;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+  color: #1f2937;
+}
+
+.sectionHeader h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  flex: 1;
+}
+
+.count {
+  background: #3b82f6;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
 }
 
 .empty {
@@ -79,7 +114,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 400px;
+  padding: 60px 20px;
   color: #9ca3af;
   text-align: center;
 }
@@ -95,54 +130,48 @@
   font-size: 14px;
 }
 
-/* 预约软件列表 */
-.appointmentList {
+/* 软件列表 */
+.softwareList {
   padding: 24px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
 }
 
-.appointmentCard {
+.softwareCard {
   background: #f9fafb;
   border: 1px solid #e5e7eb;
-  border-radius: 16px;
+  border-radius: 12px;
   overflow: hidden;
   transition: all 0.3s ease;
 }
 
-.appointmentCard:hover {
+.softwareCard:hover {
   border-color: #3b82f6;
   box-shadow: 0 8px 25px rgba(59, 130, 246, 0.15);
   transform: translateY(-2px);
 }
 
-.cardHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 24px;
-  background: white;
-  border-bottom: 1px solid #f1f5f9;
-}
-
-.softwareInfo {
+.cardContent {
   display: flex;
   align-items: center;
   gap: 16px;
-  flex: 1;
+  padding: 20px;
+  background: white;
 }
 
 .softwareIcon {
   width: 60px;
   height: 60px;
-  border-radius: 12px;
+  border-radius: 8px;
   object-fit: cover;
   border: 2px solid #e5e7eb;
+  flex-shrink: 0;
 }
 
-.basicInfo {
+.softwareInfo {
   flex: 1;
+  min-width: 0;
 }
 
 .titleRow {
@@ -154,208 +183,83 @@
 
 .softwareName {
   margin: 0;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
   color: #1f2937;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.badges {
-  display: flex;
-  gap: 8px;
-}
-
-.priorityBadge,
 .statusBadge {
   padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 12px;
+  border-radius: 12px;
+  font-size: 11px;
   font-weight: 500;
-}
-
-.statusBadge {
   border: 1px solid currentColor;
+  white-space: nowrap;
 }
 
-.developerInfo {
+.details {
   display: flex;
-  align-items: center;
-  gap: 16px;
+  flex-direction: column;
+  gap: 4px;
 }
 
+.category,
+.version,
 .developer,
-.category {
-  font-size: 14px;
+.releaseDate,
+.purchaseDate {
+  font-size: 13px;
   color: #6b7280;
 }
 
-.category {
+.stats {
+  display: flex;
+  gap: 16px;
+  margin-top: 4px;
+}
+
+.stats span {
+  font-size: 12px;
+  color: #6b7280;
   background: #f3f4f6;
   padding: 2px 8px;
-  border-radius: 12px;
-}
-
-.cardActions {
-  display: flex;
-  gap: 8px;
-}
-
-.notifyBtn,
-.cancelBtn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border: 1px solid #d1d5db;
   border-radius: 8px;
-  background: #f9fafb;
-  color: #6b7280;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.notifyBtn:hover,
-.cancelBtn:hover {
-  border-color: #9ca3af;
-  background: #f3f4f6;
-}
-
-.notifyBtn.active {
-  background: #3b82f6;
-  border-color: #3b82f6;
-  color: white;
-}
-
-.cancelBtn:hover {
-  background: #fef2f2;
-  border-color: #fecaca;
-  color: #dc2626;
-}
-
-.cardBody {
-  padding: 24px;
-  background: white;
-}
-
-.description {
-  margin: 0 0 20px 0;
-  color: #4b5563;
-  line-height: 1.6;
-  font-size: 14px;
-}
-
-.versionInfo {
-  display: flex;
-  gap: 24px;
-  margin-bottom: 20px;
-}
-
-.versionItem {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.label {
-  font-size: 13px;
-  color: #9ca3af;
-}
-
-.version {
-  font-size: 13px;
-  color: #1f2937;
-  font-weight: 500;
-  background: #f3f4f6;
-  padding: 4px 8px;
-  border-radius: 6px;
-}
-
-.features {
-  margin-bottom: 20px;
-}
-
-.featuresLabel {
-  font-size: 13px;
-  color: #6b7280;
-  margin-bottom: 8px;
-  display: block;
-}
-
-.featuresList {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.featureTag {
-  background: #eff6ff;
-  color: #1d4ed8;
-  padding: 4px 12px;
-  border-radius: 16px;
-  font-size: 12px;
-  font-weight: 500;
-  border: 1px solid #bfdbfe;
 }
 
 .cardFooter {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 24px;
+  padding: 16px 20px;
   background: #f8fafc;
-  border-top: 1px solid #f1f5f9;
-}
-
-.timeInfo {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.timeItem {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 13px;
-  color: #6b7280;
-}
-
-.countdown {
-  font-size: 14px;
-  color: #f59e0b;
-  font-weight: 500;
-  margin-top: 4px;
-}
-
-.countdown strong {
-  color: #d97706;
-}
-
-.priceInfo {
-  display: flex;
-  align-items: center;
-  gap: 16px;
+  border-top: 1px solid #e2e8f0;
 }
 
 .price {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
   color: #dc2626;
 }
 
-.viewDetailBtn {
+.actionBtn {
   background: #3b82f6;
   color: white;
   border: none;
-  padding: 8px 20px;
+  padding: 8px 16px;
   border-radius: 8px;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
-.viewDetailBtn:hover {
+.actionBtn:hover {
   background: #2563eb;
   transform: translateY(-1px);
 }
@@ -379,35 +283,60 @@
     font-size: 20px;
   }
 
-  .appointmentList {
+  .content {
+    gap: 16px;
+  }
+
+  .sectionHeader {
+    padding: 16px 20px;
+  }
+
+  .sectionHeader h2 {
+    font-size: 16px;
+  }
+
+  .softwareList {
     padding: 16px;
-    gap: 16px;
+    gap: 12px;
   }
 
-  .cardHeader,
-  .cardBody,
-  .cardFooter {
+  .cardContent {
     padding: 16px;
+    gap: 12px;
   }
 
-  .cardHeader {
+  .softwareIcon {
+    width: 50px;
+    height: 50px;
+  }
+
+  .titleRow {
     flex-direction: column;
-    align-items: stretch;
-    gap: 16px;
+    align-items: flex-start;
+    gap: 8px;
   }
 
-  .cardActions {
-    justify-content: flex-end;
+  .softwareName {
+    font-size: 15px;
   }
 
   .cardFooter {
+    padding: 12px 16px;
     flex-direction: column;
+    gap: 12px;
     align-items: stretch;
-    gap: 16px;
   }
 
-  .versionInfo {
-    flex-direction: column;
+  .price {
+    text-align: center;
+    font-size: 15px;
+  }
+
+  .actionBtn {
+    justify-content: center;
+  }
+
+  .stats {
     gap: 12px;
   }
 }
