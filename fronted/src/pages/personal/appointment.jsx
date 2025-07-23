@@ -1,87 +1,99 @@
-import React, { useState } from 'react';
-import { ArrowLeft, Clock, Calendar, Bell, X } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ArrowLeft, Clock, Package, ShoppingBag, Edit3 } from 'lucide-react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 import styles from './appointment.module.css';
 
 const Appointment = () => {
   const navigate = useNavigate();
-  const { userInfo, statistics } = useOutletContext();
-  // 模拟预约软件数据
-  const [appointmentList, setAppointmentList] = useState([
-    {
-      id: 1,
-      name: 'AutoCAD 2025',
-      icon: 'https://picsum.photos/80/80?random=4',
-      developer: 'Autodesk',
-      description: '业界领先的CAD设计软件新版本，增加了更多AI辅助功能和云端协作特性。',
-      currentVersion: 'v2024.2',
-      newVersion: 'v2025.1',
-      reserveDate: '2024-07-20',
-      expectedReleaseDate: '2024-12-01',
-      price: '¥1,680.00',
-      status: 'waiting', // waiting, coming_soon, released, cancelled
-      priority: 'high', // high, medium, low
-      notifyEnabled: true,
-      category: 'CAD设计',
-      features: ['AI智能建模', '云端协作', '增强渲染', '移动端支持']
-    },
-    {
-      id: 2,
-      name: 'Figma Enterprise 2024',
-      icon: 'https://picsum.photos/80/80?random=5',
-      developer: 'Figma Inc.',
-      description: '新一代UI/UX设计工具企业版，提供更强大的团队协作和管理功能。',
-      currentVersion: 'v116.7',
-      newVersion: 'v2024.1',
-      reserveDate: '2024-07-18',
-      expectedReleaseDate: '2024-11-15',
-      price: '¥380.00/月',
-      status: 'coming_soon',
-      priority: 'medium',
-      notifyEnabled: true,
-      category: 'UI设计',
-      features: ['高级协作', '企业管理', 'API集成', '高级组件库']
-    },
-    {
-      id: 3,
-      name: 'Adobe Creative Suite 2025',
-      icon: 'https://picsum.photos/80/80?random=6',
-      developer: 'Adobe Inc.',
-      description: 'Adobe全套创意工具包2025版本，集成了最新的AI技术和云端服务。',
-      currentVersion: 'v2024.1',
-      newVersion: 'v2025.1',
-      reserveDate: '2024-07-15',
-      expectedReleaseDate: '2025-02-01',
-      price: '¥2,880.00',
-      status: 'waiting',
-      priority: 'high',
-      notifyEnabled: false,
-      category: '创意设计',
-      features: ['AI创作助手', '跨应用协作', '云端同步', '移动端集成']
-    }
-  ]);
+  const { userInfo } = useOutletContext();
 
-  const [loading, setLoading] = useState(false);
+  // 用户角色：'user' 或 'developer'
+  const userRole = userInfo?.role || 'user';
+
+  const [reservedList, setReservedList] = useState([]);
+  const [purchasedList, setPurchasedList] = useState([]);
+  const [mySoftwareList, setMySoftwareList] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // 获取数据
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        if (userRole === 'developer') {
+          // 获取开发商的软件列表
+          // const response = await api.getMySoftwareList();
+          // setMySoftwareList(response.data);
+
+          // 临时模拟数据
+          setTimeout(() => {
+            setMySoftwareList([
+              {
+                id: 1,
+                name: 'PhotoMaster Pro',
+                icon: 'https://picsum.photos/60/60?random=1',
+                category: '图像处理',
+                version: 'v3.2.1',
+                price: 299.00,
+                status: 'published', // published, draft, reviewing
+                reservations: 156,
+                sales: 89
+              }
+            ]);
+            setLoading(false);
+          }, 1000);
+        } else {
+          // 获取用户的预约和购买列表
+          // const [reservedRes, purchasedRes] = await Promise.all([
+          //   api.getReservedSoftware(),
+          //   api.getPurchasedSoftware()
+          // ]);
+          // setReservedList(reservedRes.data);
+          // setPurchasedList(purchasedRes.data);
+
+          // 临时模拟数据
+          setTimeout(() => {
+            setReservedList([
+              {
+                id: 1,
+                name: 'AutoCAD 2025',
+                icon: 'https://picsum.photos/60/60?random=2',
+                developer: 'Autodesk',
+                price: 1680.00,
+                reserveDate: '2024-07-20',
+                expectedReleaseDate: '2024-12-01'
+              }
+            ]);
+            setPurchasedList([
+              {
+                id: 2,
+                name: 'Figma Enterprise',
+                icon: 'https://picsum.photos/60/60?random=3',
+                developer: 'Figma Inc.',
+                price: 380.00,
+                purchaseDate: '2024-07-18'
+              }
+            ]);
+            setLoading(false);
+          }, 1000);
+        }
+      } catch (error) {
+        console.error('获取数据失败:', error);
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [userRole]);
 
   // 获取状态配置
   const getStatusConfig = (status) => {
     const configs = {
-      waiting: { text: '等待发布', color: '#f59e0b', bgColor: '#fef3c7' },
-      coming_soon: { text: '即将发布', color: '#3b82f6', bgColor: '#dbeafe' },
-      released: { text: '已发布', color: '#10b981', bgColor: '#d1fae5' },
-      cancelled: { text: '已取消', color: '#ef4444', bgColor: '#fee2e2' }
+      published: { text: '已发布', color: '#10b981', bgColor: '#d1fae5' },
+      draft: { text: '草稿', color: '#f59e0b', bgColor: '#fef3c7' },
+      reviewing: { text: '审核中', color: '#3b82f6', bgColor: '#dbeafe' }
     };
-    return configs[status] || configs['waiting'];
-  };
-
-  // 获取优先级配置
-  const getPriorityConfig = (priority) => {
-    const configs = {
-      high: { text: '高', color: '#ef4444' },
-      medium: { text: '中', color: '#f59e0b' },
-      low: { text: '低', color: '#10b981' }
-    };
-    return configs[priority] || configs['medium'];
+    return configs[status] || configs.draft;
   };
 
   // 处理返回
@@ -89,37 +101,114 @@ const Appointment = () => {
     navigate('/personal');
   };
 
-  // 计算剩余天数
-  const getDaysUntilRelease = (releaseDate) => {
-    const today = new Date();
-    const release = new Date(releaseDate);
-    const diffTime = release - today;
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays > 0 ? diffDays : 0;
+  // 处理软件详情/编辑点击
+  const handleSoftwareClick = (software, type) => {
+    if (userRole === 'developer') {
+      console.log('跳转到编辑页面:', software.name, software.id);
+      // 后续使用: navigate(`/developer/software/edit/${software.id}`);
+    } else {
+      console.log(`跳转到软件详情页面 (${type}):`, software.name, software.id);
+      // 后续使用: navigate(`/software/detail/${software.id}`);
+    }
   };
 
-  // 处理取消预约
-  const handleCancelAppointment = (id) => {
-    setAppointmentList(appointmentList.map(item =>
-      item.id === id ? { ...item, status: 'cancelled' } : item
-    ));
-    console.log('取消预约:', id);
+  // 渲染软件卡片
+  const renderSoftwareCard = (software, type = '') => (
+    <div key={software.id} className={styles.softwareCard}>
+      <div className={styles.cardContent}>
+        <img
+          src={software.icon}
+          alt={software.name}
+          className={styles.softwareIcon}
+        />
+        <div className={styles.softwareInfo}>
+          <div className={styles.titleRow}>
+            <h3 className={styles.softwareName}>{software.name}</h3>
+            {userRole === 'developer' && (
+              <span
+                className={styles.statusBadge}
+                style={{
+                  color: getStatusConfig(software.status).color,
+                  backgroundColor: getStatusConfig(software.status).bgColor
+                }}
+              >
+                {getStatusConfig(software.status).text}
+              </span>
+            )}
+          </div>
+
+          <div className={styles.details}>
+            {userRole === 'developer' ? (
+              <>
+                <span className={styles.category}>{software.category}</span>
+                <span className={styles.version}>版本: {software.version}</span>
+                <div className={styles.stats}>
+                  <span>预约: {software.reservations}</span>
+                  <span>销售: {software.sales}</span>
+                </div>
+              </>
+            ) : (
+              <>
+                <span className={styles.developer}>开发商: {software.developer}</span>
+                {type === 'reserved' && software.expectedReleaseDate && (
+                  <span className={styles.releaseDate}>
+                    预计发布: {software.expectedReleaseDate}
+                  </span>
+                )}
+                {type === 'purchased' && software.purchaseDate && (
+                  <span className={styles.purchaseDate}>
+                    购买时间: {software.purchaseDate}
+                  </span>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className={styles.cardFooter}>
+        <span className={styles.price}>¥{software.price}</span>
+        <button
+          className={styles.actionBtn}
+          onClick={() => handleSoftwareClick(software, type)}
+        >
+          {userRole === 'developer' ? (
+            <>
+              <Edit3 size={14} />
+              编辑
+            </>
+          ) : (
+            '查看详情'
+          )}
+        </button>
+      </div>
+    </div>
+  );
+
+  const getPageTitle = () => {
+    return userRole === 'developer' ? '我的软件' : '我的预约';
   };
 
-  // 处理通知设置
-  const handleToggleNotify = (id) => {
-    setAppointmentList(appointmentList.map(item =>
-      item.id === id ? { ...item, notifyEnabled: !item.notifyEnabled } : item
-    ));
+  const getTotalCount = () => {
+    if (userRole === 'developer') {
+      return mySoftwareList.length;
+    }
+    return reservedList.length + purchasedList.length;
   };
 
-  // 处理查看详情
-  const handleViewDetail = (item) => {
-    console.log('查看详情:', item.name);
-  };
-
-  // 过滤已取消的预约
-  const activeAppointments = appointmentList.filter(item => item.status !== 'cancelled');
+  if (loading) {
+    return (
+      <div className={styles.appointmentPage}>
+        <div className={styles.header}>
+          <button className={styles.backBtn} onClick={handleBack}>
+            <ArrowLeft size={20} />
+          </button>
+          <h1 className={styles.pageTitle}>{getPageTitle()}</h1>
+        </div>
+        <div className={styles.loading}>加载中...</div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.appointmentPage}>
@@ -128,142 +217,81 @@ const Appointment = () => {
         <button className={styles.backBtn} onClick={handleBack}>
           <ArrowLeft size={20} />
         </button>
-        <h1 className={styles.pageTitle}>已预约软件</h1>
+        <h1 className={styles.pageTitle}>{getPageTitle()}</h1>
         <div className={styles.statsInfo}>
-          <Clock size={16} />
-          <span>{activeAppointments.length} 个预约</span>
+          {userRole === 'developer' ? <Package size={16} /> : <Clock size={16} />}
+          <span>{getTotalCount()} 个{userRole === 'developer' ? '软件' : '项目'}</span>
         </div>
       </div>
 
       {/* 内容区域 */}
       <div className={styles.content}>
-        {loading ? (
-          <div className={styles.loading}>加载中...</div>
-        ) : activeAppointments.length === 0 ? (
-          <div className={styles.empty}>
-            <Clock size={48} />
-            <h3>暂无预约</h3>
-            <p>还没有预约任何软件，去软件商店看看吧！</p>
+        {userRole === 'developer' ? (
+          // 开发商视图：我的软件
+          <div className={styles.section}>
+            <div className={styles.sectionHeader}>
+              <Package size={20} />
+              <h2>我的软件</h2>
+              <span className={styles.count}>{mySoftwareList.length}</span>
+            </div>
+
+            {mySoftwareList.length === 0 ? (
+              <div className={styles.empty}>
+                <Package size={48} />
+                <h3>暂无软件</h3>
+                <p>还没有发布任何软件，去创建一个吧！</p>
+              </div>
+            ) : (
+              <div className={styles.softwareList}>
+                {mySoftwareList.map(software => renderSoftwareCard(software))}
+              </div>
+            )}
           </div>
         ) : (
-          <div className={styles.appointmentList}>
-            {activeAppointments.map(item => {
-              const statusConfig = getStatusConfig(item.status);
-              const priorityConfig = getPriorityConfig(item.priority);
-              const daysLeft = getDaysUntilRelease(item.expectedReleaseDate);
+          // 用户视图：已预约和已购买
+          <>
+            {/* 已预约软件 */}
+            <div className={styles.section}>
+              <div className={styles.sectionHeader}>
+                <Clock size={20} />
+                <h2>已预约软件</h2>
+                <span className={styles.count}>{reservedList.length}</span>
+              </div>
 
-              return (
-                <div key={item.id} className={styles.appointmentCard}>
-                  <div className={styles.cardHeader}>
-                    <div className={styles.softwareInfo}>
-                      <img
-                        src={item.icon}
-                        alt={item.name}
-                        className={styles.softwareIcon}
-                      />
-                      <div className={styles.basicInfo}>
-                        <div className={styles.titleRow}>
-                          <h3 className={styles.softwareName}>{item.name}</h3>
-                          <div className={styles.badges}>
-                            <span
-                              className={styles.priorityBadge}
-                              style={{ color: priorityConfig.color }}
-                            >
-                              {priorityConfig.text}优先级
-                            </span>
-                            <span
-                              className={styles.statusBadge}
-                              style={{
-                                color: statusConfig.color,
-                                backgroundColor: statusConfig.bgColor
-                              }}
-                            >
-                              {statusConfig.text}
-                            </span>
-                          </div>
-                        </div>
-                        <div className={styles.developerInfo}>
-                          <span className={styles.developer}>开发商: {item.developer}</span>
-                          <span className={styles.category}>{item.category}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className={styles.cardActions}>
-                      <button
-                        className={`${styles.notifyBtn} ${item.notifyEnabled ? styles.active : ''}`}
-                        onClick={() => handleToggleNotify(item.id)}
-                        title={item.notifyEnabled ? '关闭通知' : '开启通知'}
-                      >
-                        <Bell size={16} />
-                      </button>
-                      <button
-                        className={styles.cancelBtn}
-                        onClick={() => handleCancelAppointment(item.id)}
-                        title="取消预约"
-                      >
-                        <X size={16} />
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className={styles.cardBody}>
-                    <p className={styles.description}>{item.description}</p>
-
-                    <div className={styles.versionInfo}>
-                      <div className={styles.versionItem}>
-                        <span className={styles.label}>当前版本:</span>
-                        <span className={styles.version}>{item.currentVersion}</span>
-                      </div>
-                      <div className={styles.versionItem}>
-                        <span className={styles.label}>预约版本:</span>
-                        <span className={styles.version}>{item.newVersion}</span>
-                      </div>
-                    </div>
-
-                    <div className={styles.features}>
-                      <span className={styles.featuresLabel}>新功能:</span>
-                      <div className={styles.featuresList}>
-                        {item.features.map((feature, index) => (
-                          <span key={index} className={styles.featureTag}>
-                            {feature}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className={styles.cardFooter}>
-                    <div className={styles.timeInfo}>
-                      <div className={styles.timeItem}>
-                        <Calendar size={14} />
-                        <span>预约时间: {item.reserveDate}</span>
-                      </div>
-                      <div className={styles.timeItem}>
-                        <Clock size={14} />
-                        <span>预计发布: {item.expectedReleaseDate}</span>
-                      </div>
-                      {daysLeft > 0 && (
-                        <div className={styles.countdown}>
-                          还有 <strong>{daysLeft}</strong> 天
-                        </div>
-                      )}
-                    </div>
-
-                    <div className={styles.priceInfo}>
-                      <span className={styles.price}>{item.price}</span>
-                      <button
-                        className={styles.viewDetailBtn}
-                        onClick={() => handleViewDetail(item)}
-                      >
-                        查看详情
-                      </button>
-                    </div>
-                  </div>
+              {reservedList.length === 0 ? (
+                <div className={styles.empty}>
+                  <Clock size={48} />
+                  <h3>暂无预约</h3>
+                  <p>还没有预约任何软件，去软件商店看看吧！</p>
                 </div>
-              );
-            })}
-          </div>
+              ) : (
+                <div className={styles.softwareList}>
+                  {reservedList.map(software => renderSoftwareCard(software, 'reserved'))}
+                </div>
+              )}
+            </div>
+
+            {/* 已购买软件 */}
+            <div className={styles.section}>
+              <div className={styles.sectionHeader}>
+                <ShoppingBag size={20} />
+                <h2>已购买软件</h2>
+                <span className={styles.count}>{purchasedList.length}</span>
+              </div>
+
+              {purchasedList.length === 0 ? (
+                <div className={styles.empty}>
+                  <ShoppingBag size={48} />
+                  <h3>暂无购买</h3>
+                  <p>还没有购买任何软件</p>
+                </div>
+              ) : (
+                <div className={styles.softwareList}>
+                  {purchasedList.map(software => renderSoftwareCard(software, 'purchased'))}
+                </div>
+              )}
+            </div>
+          </>
         )}
       </div>
     </div>
