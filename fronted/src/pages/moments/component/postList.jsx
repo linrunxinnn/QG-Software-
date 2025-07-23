@@ -19,14 +19,14 @@ export default function PostList() {
       src: "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
     },
     {
-      id: 1,
+      id: 2,
       title: "Card title",
       description: "This is the description",
       avatar: qg,
       src: "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
     },
     {
-      id: 1,
+      id: 3,
       title: "Card title",
       description: "This is the description",
       avatar: qg,
