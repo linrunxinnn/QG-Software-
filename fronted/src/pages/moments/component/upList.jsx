@@ -17,15 +17,6 @@ export default function UpList({ onChange }) {
     { id: 8, name: "商户8", imgSrc: "../../../assets/qg.png" },
     { id: 9, name: "商户9", imgSrc: "../../../assets/qg.png" },
     { id: 10, name: "商户10", imgSrc: "../../../assets/qg.png" },
-    { id: 2, name: "商户2", imgSrc: "../../../assets/qg.png" },
-    { id: 3, name: "商户3", imgSrc: "../../../assets/qg.png" },
-    { id: 4, name: "商户4", imgSrc: "../../../assets/qg.png" },
-    { id: 5, name: "商户5", imgSrc: "../../../assets/qg.png" },
-    { id: 6, name: "商户6", imgSrc: "../../../assets/qg.png" },
-    { id: 7, name: "商户7", imgSrc: "../../../assets/qg.png" },
-    { id: 8, name: "商户8", imgSrc: "../../../assets/qg.png" },
-    { id: 9, name: "商户9", imgSrc: "../../../assets/qg.png" },
-    { id: 10, name: "商户10", imgSrc: "../../../assets/qg.png" },
   ];
 
   const [currentIndex, setCurrentIndex] = useState(1);

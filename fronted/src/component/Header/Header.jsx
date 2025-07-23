@@ -8,7 +8,9 @@ import {
   Button,
   Dropdown,
   Tabs,
+  Tooltip,
   message, // 添加 message 导入
+  AutoComplete,
 } from "antd";
 import {
   SearchOutlined,
@@ -18,6 +20,7 @@ import {
   SettingOutlined,
   LogoutOutlined,
   HomeOutlined,
+  FileOutlined,
 } from "@ant-design/icons";
 import styles from "./Header.module.css";
 import qgLogo from "../../assets/qg.png";
@@ -40,6 +43,8 @@ const Header = () => {
   const [loginForm] = Form.useForm();
   const [registerForm] = Form.useForm();
   const [resetForm] = Form.useForm();
+  //搜索栏结果
+  const [searchResult, setSearchResult] = useState([]);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -97,14 +102,26 @@ const Header = () => {
   const userInfo = {
     name: "张三",
     avatar: qgLogo,
+    role: 1,
   };
 
   // 铃铛点击处理
   const handleNotificationClick = () => {
-    console.log("点击铃铛，跳转到消息页面");
-    navigate("/moments");
+    if (!isLoggedIn) {
+      message.warning("请先登录");
+      return;
+    } else {
+      navigate("/moments");
+    }
+
     // 点击后可以将未读状态设为已读
     setHasUnreadNotifications(true);
+  };
+
+  // 发布按钮点击处理
+  const handlePublishClick = () => {
+    console.log("点击发布按钮，跳转到发布页面");
+    navigate("/publish");
   };
 
   // 首页点击处理
@@ -137,19 +154,21 @@ const Header = () => {
     // 重置倒计时
   };
 
-  //查询
+  const mockSearch = (value) => {
+    // 模拟接口请求
+    if (!value) return [];
+    return ["QQ", "微信", "钉钉", "飞书", "微信读书"]
+      .filter((item) => item.toLowerCase().includes(value.toLowerCase()))
+      .map((item) => ({ value: item }));
+  };
+
+  const LiveSearch = () => {
+    const [options, setOptions] = useState([]);
+  };
+
   const handleSearch = (value) => {
-    if (!value) {
-      setOptions([]);
-      return;
-    }
-    // 模拟异步获取结果
-    const mockResult = [
-      { value: "软件1" },
-      { value: "软件2" },
-      { value: "软件3" },
-    ].filter((item) => item.value.includes(value));
-    setOptions(mockResult);
+    const results = mockSearch(value); // 替换为实际接口
+    setOptions(results);
   };
 
   const handleSelect = (value) => {
@@ -208,18 +227,35 @@ const Header = () => {
 
         {/* 中间：搜索栏 */}
         <div className={styles.center}>
-          <Search
-            placeholder="搜索软件名称..."
-            allowClear
-            enterButton={<SearchOutlined />}
-            size="middle"
+          <AutoComplete
+            options={options}
+            style={{ width: 400 }}
+            onSelect={handleSelect}
             onSearch={handleSearch}
-            className={styles.searchInput}
-          />
+          >
+            <Input
+              size="middle"
+              placeholder="搜索软件名称..."
+              prefix={<SearchOutlined />}
+              allowClear
+            />
+          </AutoComplete>
         </div>
 
         {/* 右侧：通知、头像用户名、登录 */}
         <div className={styles.right}>
+          {
+            //发布按键，如果是软件提供商的话显示
+            //如果未登录，则不显示，已登录则如果是软件提供商则显示
+            isLoggedIn && userInfo.role === 1 && (
+              <Tooltip title="发布">
+                <FileOutlined
+                  className={styles.publish}
+                  onClick={handlePublishClick}
+                />
+              </Tooltip>
+            )
+          }
           {/* 通知铃铛 - 简化版，只显示小红点 */}
           <Badge dot={!hasUnreadNotifications} className={styles.notification}>
             <BellOutlined
