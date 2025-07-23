@@ -2,20 +2,26 @@ import BigCard from "../../../component/software/big_card";
 import MediumCard from "../../../component/software/medium_card";
 import SmallCard from "../../../component/software/small_card";
 import Gap from "../../../component/software/gap";
-import "./ShowSoft.css"
+import "./commentSoft.css"
+import { useNavigate } from "react-router-dom";
 
-const ShowCard = () => {
+const ShowCommentCard = () => {
+
+    const navigate = useNavigate()
+    function tocomment() {
+        navigate("detail")
+    }
 
     return (
         <>
             <Gap />
-            <div className="Medium">
+            <div className="Medium" onClick={() => tocomment()}>
                 <MediumCard></MediumCard>
                 <MediumCard></MediumCard>
                 <MediumCard></MediumCard>
             </div>
             <Gap />
-            <div className="Small">
+            <div className="Small" onClick={() => tocomment()}>
                 <SmallCard></SmallCard>
                 <SmallCard></SmallCard>
                 <SmallCard></SmallCard>
@@ -25,7 +31,7 @@ const ShowCard = () => {
                 <SmallCard></SmallCard>
                 <SmallCard></SmallCard>
             </div>
-            <div className="Big">
+            <div className="Big" onClick={() => tocomment()}>
                 <BigCard></BigCard>
                 <BigCard></BigCard>
             </div>
@@ -33,4 +39,4 @@ const ShowCard = () => {
     )
 }
 
-export default ShowCard
+export default ShowCommentCard
