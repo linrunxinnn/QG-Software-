@@ -398,7 +398,7 @@ const SoftwareDetail = () => {
           </Select>
           <div className={styles.bindInfo}>
             <p className={styles.bindNote}>
-              * 每个软件最多可绑定5台设备<br />
+              * 每个软件最多可绑定3台设备<br />
               * 绑定后可在对应设备上激活使用
             </p>
           </div>

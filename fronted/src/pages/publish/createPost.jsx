@@ -1,9 +1,10 @@
 import React from "react";
+import Softdetail from "../../component/softdetail/softdetail"
+
 export default function CreatePost() {
   return (
     <div>
-      <h1>Create Post Page</h1>
-      {/* Additional content can be added here */}
+      <Softdetail></Softdetail>
     </div>
   );
 }
