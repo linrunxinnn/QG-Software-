@@ -26,7 +26,7 @@ const Personal = () => {
     id: 1,
     username: '张三',
     avatar: 'https://picsum.photos/120/120?random=1',
-    role: 'user', // 'admin', 'user', 'developer'
+    role: 'developer', // 'admin', 'user', 'developer'
     email: 'zhangsan@example.com',
     bio: '热爱技术，专注于软件开发和用户体验设计。喜欢探索新技术，分享开发经验。',
     followingCount: 128,
@@ -60,13 +60,9 @@ const Personal = () => {
     return configs[role] || configs['user'];
   };
 
-  // 处理编辑资料 - 显示升级弹窗
-  const handleEditProfile = () => {
-    if (userInfo.role === 'user') {
-      setShowUpgradeModal(true);
-    } else {
-      console.log('编辑资料');
-    }
+  // 处理升级申请 - 只有普通用户可以看到此按钮
+  const handleUpgradeToDeveloper = () => {
+    setShowUpgradeModal(true);
   };
 
   // 处理文件上传
@@ -425,10 +421,13 @@ const Personal = () => {
             </div>
           </div>
           <div className={styles.userActions}>
-            <button className={styles.actionBtn} onClick={handleEditProfile}>
-              <Edit3 size={16} />
-              {userInfo.role === 'user' ? '升级为开发商' : '编辑资料'}
-            </button>
+            {/* 只有普通用户才显示升级为开发商按钮 */}
+            {userInfo.role === 'user' && (
+              <button className={styles.actionBtn} onClick={handleUpgradeToDeveloper}>
+                <Edit3 size={16} />
+                升级为开发商
+              </button>
+            )}
             <button className={styles.actionBtn} onClick={handleSettings}>
               <Settings size={16} />
               设置
