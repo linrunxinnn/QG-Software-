@@ -30,6 +30,7 @@ import LoginForm from "./login.jsx";
 import RegisterForm from "./register.jsx";
 import ResetForm from "./reset.jsx";
 import { logout } from "../../store/slice/userSlice.js";
+import { mainSearch } from "../../api/service/mainApi.js";
 
 const { Search } = Input;
 
@@ -162,21 +163,42 @@ const Header = () => {
     // 重置倒计时
   };
 
-  const mockSearch = (value) => {
-    // 模拟接口请求
-    if (!value) return [];
-    return ["QQ", "微信", "钉钉", "飞书", "微信读书"]
-      .filter((item) => item.toLowerCase().includes(value.toLowerCase()))
-      .map((item) => ({ value: item }));
-  };
+  // const mockSearch = (value) => {
+  //   console.log("模拟搜索:", value);
+  //   // 模拟接口请求
+  //   if (!value) return [];
+  //   // return ["QQ", "微信", "钉钉", "飞书", "微信读书"]
 
-  const LiveSearch = () => {
-    const [options, setOptions] = useState([]);
-  };
+  //   return value.map((item) => ({ value: item }));
+  // };
 
-  const handleSearch = (value) => {
-    const results = mockSearch(value); // 替换为实际接口
-    setOptions(results);
+  // const LiveSearch = () => {
+  //   const [options, setOptions] = useState([]);
+  // };
+
+  const handleSearch = async (value) => {
+    console.log("搜索关键词:", value);
+    try {
+      const response = await mainSearch(value);
+      const resultList = response.data || [];
+      console.log("搜索结果:", resultList);
+
+      // 转成 AutoComplete 所需格式
+      const formattedOptions = resultList.map((item) => ({
+        value: item.id, // select 后回传的值
+        label: (
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <span style={{ fontWeight: "bold" }}>{item.name}</span>
+            <span style={{ fontSize: 12, color: "#888" }}>{item.info}</span>
+          </div>
+        ),
+      }));
+
+      setOptions(formattedOptions);
+    } catch (err) {
+      console.error("搜索失败:", err);
+      setOptions([]);
+    }
   };
 
   const handleSelect = (value) => {

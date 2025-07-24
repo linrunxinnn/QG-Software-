@@ -43,7 +43,7 @@ const RegisterForm = ({ onSuccess }) => {
     }
 
     try {
-      const res = await sendCode({ email });
+      const res = await sendCode(email);
       message.success(`验证码已发送到 ${email}`);
       setCountdown(60);
     } catch (error) {
@@ -58,6 +58,7 @@ const RegisterForm = ({ onSuccess }) => {
         message.warning("两次输入的密码不一致，请重新输入");
         return;
       }
+      console.log("注册表单提交:", values);
       const result = await dispatch(registerUser(values)).unwrap();
       onSuccess(1);
       message.success("注册成功");

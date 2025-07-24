@@ -12,19 +12,21 @@ export const loginPassword = async (credentials) => {
   const response = await api.get("/users/password", {
     params: credentials,
   });
-  console.log("登录结果:", response.data);
   return response.data;
 };
 
 export const loginCode = async (credentials) => {
-  const response = await api.post("/users/code", credentials);
+  const response = await api.get("/users/code", {
+    params: credentials,
+  });
+  console.log("登录结果:", response.data);
   return response.data;
 };
 
 export const register = async (userData) => {
-  console.log("注册用户数据:", userData);
   const response = await api.post("/users/register", {
-    params: userData,
+    code: userData.code,
+    user: { email: userData.email, password: userData.password },
   });
   return response.data;
 };
@@ -32,8 +34,16 @@ export const register = async (userData) => {
 //发送验证码
 export const sendCode = async (email) => {
   console.log("发送验证码到:", email);
-  const response = await api.post("/users/sendCodeByEmail", {
-    params: email,
+  const response = await api.get("/users/sendCodeByEmail", {
+    params: { email },
+  });
+  return response.data;
+};
+
+//重设密码
+export const resetPassword = async (email, newPassword) => {
+  const response = await api.post("/users/resetPassword", {
+    params: { email, newPassword },
   });
   return response.data;
 };

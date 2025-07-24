@@ -36,6 +36,7 @@ export const loginUserByCode = createAsyncThunk(
 export const registerUser = createAsyncThunk(
   "/users/register", //注册用户API
   async (userData, { rejectWithValue }) => {
+    console.log("注册用户数据:", userData);
     try {
       const data = await register(userData);
       return data;
@@ -126,9 +127,9 @@ const userSlice = createSlice({
         state.token = action.payload.token;
         state.role = action.payload.role;
         state.error = null;
-        localStorage.setItem("user", JSON.stringify(action.payload.user));
-        localStorage.setItem("token", action.payload.token);
-        localStorage.setItem("role", action.payload.role);
+        localStorage.setItem("user", JSON.stringify(action.payload.data.user));
+        localStorage.setItem("token", action.payload.data.token);
+        localStorage.setItem("role", action.payload.data.user.role);
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
