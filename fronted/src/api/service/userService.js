@@ -7,3 +7,9 @@ import api from "../index.js";
 //1.异步action，比如在userSlice.js中创建一个thunk函数中要使用
 //2.在组件的dispatch中使用
 //3.其他需要使用api的地方
+export const login = (username, password) => {
+  return request.post("/auth/login", {
+    username,
+    password,
+  });
+};
