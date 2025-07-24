@@ -29,6 +29,7 @@
   -ms-overflow-style: none;
   padding-bottom: 4px;
 }
+
 .mainContainer::-webkit-scrollbar {
   display: none;
 }
@@ -56,6 +57,7 @@
     transform: scale(1.2);
     transition: transform 0.3s ease;
   }
+
   .text {
     color: #1890ff;
     font-weight: bold;

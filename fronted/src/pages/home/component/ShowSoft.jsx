@@ -10,7 +10,7 @@ const ShowCard = () => {
     //跳转到详情页
     const navigate = useNavigate()
     function todetail() {
-        navigate("navigate(`/software")
+        navigate("software/10")
     }
 
     return (
@@ -23,7 +23,7 @@ const ShowCard = () => {
 
             </div>
             <Gap />
-            <div className="Small">
+            <div className="Small" onClick={() => todetail()}>
                 <SmallCard></SmallCard>
                 <SmallCard></SmallCard>
                 <SmallCard></SmallCard>
@@ -33,7 +33,7 @@ const ShowCard = () => {
                 <SmallCard></SmallCard>
                 <SmallCard></SmallCard>
             </div>
-            <div className="Big">
+            <div className="Big" onClick={() => todetail()}>
                 <BigCard></BigCard>
                 <BigCard></BigCard>
             </div>
