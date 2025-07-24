@@ -1,30 +1,49 @@
 import React from 'react';
 import styles from './big_card.module.css';
 
-const BigCard = () => {
+const BigCard = ({ sort, titles, prices, images }) => {
     return (
         <div className={styles.categorycard}>
-            <div className={styles.categorytitle}>类别2</div>
+            <div className={styles.categorytitles}>{sort}</div>
             <div className={styles.divider}></div>
             {/* 第一个项目：新增价格区域 */}
             <div className={styles.item}>
-                <div className={styles.itemimg}></div>
+                <div className={styles.itemimg}>
+                    <img
+                        style={
+                            {
+                                width: "100%",
+                                height: "100%"
+                            }
+                        }
+                        src={images[0]} alt="picture" />
+                </div>
                 <div className={styles.iteminfo}>
-                    <div className={styles.itemname}>名称</div>
-                    <div className={styles.itemprice}>¥19.90</div>
+                    <div className={styles.itemname}>{titles[0]}</div>
+                    <div className={styles.itemprice}>{prices[0]}</div>
                 </div>
                 <button className={styles.downloadbtn}>下载</button>
             </div>
             <div className={styles.divider}></div>
             {/* 第二个项目：新增价格区域 */}
             <div className={styles.item}>
-                <div className={styles.itemimg}></div>
+                <div className={styles.itemimg}>
+                    <img
+                        style={
+                            {
+                                width: "100%",
+                                height: "100%"
+                            }
+                        }
+                        src={images[1]} alt="picture" />
+                </div>
                 <div className={styles.iteminfo}>
-                    <div className={styles.itemname}>名称</div>
-                    <div className={styles.itemprice}>¥29.90</div>
+                    <div className={styles.itemname}>{titles[1]}</div>
+                    <div className={styles.itemprice}>{prices[1]}</div>
                 </div>
                 <button className={styles.downloadbtn}>下载</button>
             </div>
+            <div className={styles.divider}></div>
         </div>
     );
 };
