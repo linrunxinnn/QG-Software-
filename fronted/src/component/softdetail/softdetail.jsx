@@ -2,21 +2,24 @@ import React, { useState } from 'react';
 import { Input, Button, Form, InputNumber, Modal, message, Row, Col, Select } from 'antd';
 import { UploadOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import { useParams } from 'react-router-dom';
-import styles from "./softdetail.module.css"
-import Load from "./load.jsx"
+import styles from "./softdetail.module.css";
+import Load from "./load.jsx";
+import axios from 'axios'; // 引入axios
+import { submitSoftwareData } from "../../api/service/userService"
 
 const CheckDetail = () => {
     const { name } = useParams();  // 获取路由中的动态参数 name来拉取信息
-
-
-    // 是否驳回
     const [isRejected, setIsRejected] = useState(false);
     const [form] = Form.useForm();
 
     // 提交表单处理函数
-    const onSubmit = (values) => {
-        console.log('Submitted values:', values);
-        message.success('软件信息已更新');
+    const onSubmit = async (values, name) => {
+        const result = await submitSoftwareData(values, name);
+        if (result.success) {
+            message.success(result.message);
+        } else {
+            message.error(result.message);
+        }
     };
 
     // 驳回申请
@@ -32,26 +35,14 @@ const CheckDetail = () => {
             },
         });
     };
-    //从后台拉取
-    const software = {
-        name: '示例软件',
-        description: '这是一个很棒的软件。',
-        proofMaterials: [],
-        package: [],
-        preSale: true,
-        price: 199.99,
-        cover: [],
-    };
-
 
     return (
-        <div className={styles.softwareDetailContainer}> {/* 使用 CSS Modules 中的类名 */}
+        <div className={styles.softwareDetailContainer}>
             <h2>软件详细信息</h2>
 
             <Form
                 form={form}
                 layout="vertical"
-                initialValues={software}
                 onFinish={onSubmit}
             >
                 {/* 软件名称 */}
@@ -63,33 +54,26 @@ const CheckDetail = () => {
                     <Input />
                 </Form.Item>
 
-                {/* 软件描述 */}
+
+                {/* 软件介绍 */}
                 <Form.Item
-                    name="description"
-                    label="软件描述"
-                    rules={[{ required: true, message: '请输入软件描述' }]}
+                    name="introduction"
+                    label="软件介绍"
+                    rules={[{ required: true, message: '请输入软件介绍' }]}
                 >
-                    <Input.TextArea rows={10} />
+                    <Input.TextArea rows={5} />
                 </Form.Item>
 
-                {/* 组织文件上传组件 */}
-                <Row gutter={16}>
-                    <Col span={8}>
-                        <Form.Item label="软件佐证材料">
-                            <Load />
-                        </Form.Item>
-                    </Col>
-                    <Col span={8}>
-                        <Form.Item label="软件包">
-                            <Load />
-                        </Form.Item>
-                    </Col>
-                    <Col span={8}>
-                        <Form.Item label="软件封面">
-                            <Load />
-                        </Form.Item>
-                    </Col>
-                </Row>
+                {/* 软件版本 */}
+                <Form.Item
+                    name="version"
+                    label="版本号"
+                    rules={[{ required: true, message: '请输入软件版本号' }]}
+                >
+                    <Input />
+                </Form.Item>
+
+                {/* 软件价格 */}
                 <Row gutter={16}>
                     <Col span={8}>
                         <Form.Item
@@ -100,9 +84,11 @@ const CheckDetail = () => {
                             <InputNumber min={0} step={0.01} />
                         </Form.Item>
                     </Col>
+
+                    {/* 软件类型 */}
                     <Col span={8}>
                         <Form.Item
-                            name="sort"
+                            name="type"
                             label="类型"
                             rules={[{ required: true, message: '请输入软件类型' }]}
                         >
@@ -116,18 +102,36 @@ const CheckDetail = () => {
                     </Col>
                 </Row>
 
+                {/* 上传文件 */}
+                <Row gutter={16}>
+                    <Col span={8}>
+                        <Form.Item label="软件封面" name="picture">
+                            <Load value={form.getFieldValue('picture')} onChange={(newFileList) => form.setFieldsValue({ picture: newFileList })} />
+                        </Form.Item>
+                    </Col>
+                    <Col span={8}>
+                        <Form.Item label="软件包" name="file">
+                            <Load value={form.getFieldValue('file')} onChange={(newFileList) => form.setFieldsValue({ file: newFileList })} />
+                        </Form.Item>
+                    </Col>
+                    <Col span={8}>
+                        <Form.Item label="佐证材料" name="proof">
+                            <Load value={form.getFieldValue('proof')} onChange={(newFileList) => form.setFieldsValue({ proof: newFileList })} />
+                        </Form.Item>
+                    </Col>
+                </Row>
 
                 {/* 确认按钮 */}
                 <Form.Item>
                     <Button type="primary" htmlType="submit">
-                        发布
+                        提交
                     </Button>
                     <Button
                         style={{ marginLeft: '10px' }}
-                        onClick={() => setEditable(!editable)}
+                        onClick={handleReject}
                         icon={<CloseCircleOutlined />}
                     >
-                        取消发布
+                        取消
                     </Button>
                 </Form.Item>
             </Form>
