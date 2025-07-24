@@ -210,3 +210,56 @@ export const fetchstatusAPI = async () => {
         throw error;
     }
 }
+
+//获取用户申请成为开发商的接口
+export const fetchApplyAPI = async (setApplications) => {
+    try {
+        const path = "/applyDevelopers";
+        // 使用封装好的 api.get 来获取数据
+        const response = await api.get(path);  // 假设返回包含id、reason和material的数组
+        const applicationsData = response.data;
+
+        // 根据id查询name并合并数据
+
+        const fetchNames = applicationsData.map(async (app) => {
+            try {
+                const nameResponse = await api.get(`/api/getNameById?id=${app.id}`);
+                return {
+                    ...app,
+                    name: nameResponse.data.name,  // 合并name字段
+                };
+            } catch (error) {
+                console.error(`查询ID为${app.id}的name失败:`, error);
+                return { ...app, name: '未知' };  // 如果查询失败，返回默认值
+            }
+        });
+
+        // 等待所有查询完成
+        const allApps = await Promise.all(fetchNames);
+        return allApps;  // 更新状态
+
+    } catch (error) {
+        console.error('获取数据失败:', error);
+    }
+}
+export const fetchAdmitAPI = async (id) => {
+    const path = "/applyDevelopers/updateStatus"
+    try {
+        const response = await api.post(`/${path}${id}`)
+        return response.message;  // 返回格式化后的数据
+    } catch (error) {
+        console.error('请求失败:', error);
+        throw error;
+    }
+}
+
+export const fetchBanAPI = async (id) => {
+    const path = "/applyDevelopers/updateStatus"
+    try {
+        const response = await api.post(`/${path}${id}`)
+        return response.message;  // 返回格式化后的数据
+    } catch (error) {
+        console.error('请求失败:', error);
+        throw error;
+    }
+}

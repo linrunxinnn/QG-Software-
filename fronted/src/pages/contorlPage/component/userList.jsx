@@ -1,15 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { Input, Button, List, Modal, message, Avatar, Badge } from 'antd';
+import { Input, Button, List, Modal, message, Avatar, Badge, Row, Col, Collapse } from 'antd';
 import { LockOutlined, SearchOutlined } from '@ant-design/icons';
 import { BellOutlined } from "@ant-design/icons";
 import { fetchAccountAPI } from "../../../api/service/userService"
 import { fetchstatusAPI } from "../../../api/service/userService"
+import { fetchApplyAPI } from "../../../api/service/userService"
+
+import { fetchBanAPI } from "../../../api/service/userService"
+import { fetchAdmitAPI } from "../../../api/service/userService"
 
 const UserList = () => {
     //渲染的数据
     const [users, setUsers] = useState([])
     const [searchQuery, setSearchQuery] = useState('');
     const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
+    const [expandedRow, setexpandedRow] = useState(null);
+    const [Application, setApplication] = useState([
+        { name: 'Meryam', reason: '申请理由1', material: '佐证材料1' },
+        { name: 'John', reason: '申请理由2', material: '佐证材料2' },
+        // 你可以添加更多的用户
+    ])
     // 更新搜索框的值
     const handleSearchChange = (e) => {
         setSearchQuery(e.target.value);
@@ -32,6 +42,10 @@ const UserList = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const showModal = () => {
         setIsModalOpen(true);
+        useEffect(() => {
+            setApplication(fetchApplyAPI());
+        }, []);
+
     };
     const handleOk = () => {
         setIsModalOpen(false);
@@ -39,6 +53,12 @@ const UserList = () => {
     const handleCancel = () => {
         setIsModalOpen(false);
     };
+
+    //控制弹窗内部的进一步展开
+    const handleExpandToggle = (name) => {
+        setexpandedRow(expandedRow === name ? null : name);
+    };
+
 
     //初次挂载时自动获取数据
     const fetchUsers = async () => {
@@ -57,6 +77,26 @@ const UserList = () => {
     useEffect(() => {
         fetchUsers();
     }, []);
+
+
+    const admit = async (id) => {
+        try {
+            const response = await fetchAdmitAPI(id);
+        } catch (error) {
+            console.error("获取用户数据失败", error);
+            message.error("获取用户数据失败");
+        }
+    }
+
+    const Ban = async (id) => {
+        try {
+            const response = await fetchBanAPI(id);
+        } catch (error) {
+            console.error("获取用户数据失败", error);
+            message.error("获取用户数据失败");
+        }
+    }
+
 
 
     // // 虚拟数据
@@ -143,16 +183,50 @@ const UserList = () => {
                     </List.Item>
                 )}
             />
+            {/* 弹窗 */}
             <Modal
                 title="用户的申请"
-                closable={{ 'aria-label': 'Custom Close Button' }}
                 open={isModalOpen}
                 onOk={handleOk}
                 onCancel={handleCancel}
             >
-                <div>用户名:</div><span></span>
-                <div>申请材料：</div>
+                <div>
+                    {Application.map((apply) => (
+                        <div key={apply.name}>
+                            <Row justify="space-between" align="middle">
+                                <Col flex="1" style={{ marginLeft: 20 }}>
+                                    <span>{apply.name}</span>
+                                </Col>
+                                <Col>
+                                    <Button
+                                        type="primary"
+                                        onClick={() => handleExpandToggle(apply.name)}
+                                    >
+                                        {expandedRow === apply.name ? '收起' : '查看详情'}
+                                    </Button>
+                                </Col>
+                            </Row>
 
+                            {expandedRow === apply.name && (
+                                <Collapse bordered={false}>
+                                    <Collapse.Panel header="申请" key="1">
+                                        <div>
+                                            <h3>申请理由</h3>
+                                            <div>{apply.reason}</div>
+
+                                            <h3>佐证材料</h3>
+                                            <div>
+                                                <img src={apply.material} alt={`material-${apply.name}`} style={{ maxWidth: '100%' }} />
+                                            </div>
+                                            <Button onClick={() => admit(apply.id)} >同意</Button>
+                                            <Button onClick={() => Ban(apply.id)}>取消</Button>
+                                        </div>
+                                    </Collapse.Panel>
+                                </Collapse>
+                            )}
+                        </div>
+                    ))}
+                </div>
             </Modal>
         </div>
     );
