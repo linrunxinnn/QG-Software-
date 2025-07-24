@@ -1,51 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Table, Tag, Menu, Layout } from 'antd';
-// import './App.css';  // 你可以将样式写在外部文件中
 import { useNavigate } from 'react-router-dom';
+import { fetchSortCheckAPI } from '../../../api/service/userService';
 
 const { Header, Content } = Layout;
 
-// 示例数据：待审核软件的列表
-const softwareData = [
-    {
-        key: '1',
-        name: 'Software 1',
-        category: 'Productivity',
-        publisher: 'Company A',
-        status: 'Pending',
-    },
-    {
-        key: '2',
-        name: 'Software 2',
-        category: 'Utility',
-        publisher: 'Company B',
-        status: 'Reviewed',
-    },
-    {
-        key: '3',
-        name: 'Software 3',
-        category: 'Entertainment',
-        publisher: 'Company C',
-        status: 'Pending',
-    },
-    {
-        key: '4',
-        name: 'Software 4',
-        category: 'Security',
-        publisher: 'Company D',
-        status: 'Reviewed',
-    },
-];
-
 const SoftwareList = () => {
+    const [data, setData] = useState([]);  // 存储返回的数据
     const [selectedStatus, setSelectedStatus] = useState('All');  // 默认显示全部
+    const navigate = useNavigate();
 
-    // 过滤数据函数
+    // 获取所有软件数据并格式化
+    useEffect(() => {
+        const fetchAllCheck = async () => {
+            try {
+                const allData = await fetchSortCheckAPI();
+                // 格式化后的数据合并成一个数组
+                setData(allData.flat());
+            } catch (error) {
+                console.error('获取数据失败:', error);
+            }
+        };
+        fetchAllCheck();
+    }, []);
+
+    // 过滤数据函数，根据 selectedStatus 来过滤
     const filterSoftware = () => {
         if (selectedStatus === 'All') {
-            return softwareData;
+            return data;  // 如果是“全部”，返回所有数据
         }
-        return softwareData.filter((software) => software.status === selectedStatus);
+        return data.filter((software) => {
+            if (selectedStatus === 'Reviewed') {
+                return software.status === '1';  // 已审核
+            }
+            return software.status === '0';  // 待审核
+        });
     };
 
     // 表格的列配置
@@ -57,8 +46,8 @@ const SoftwareList = () => {
         },
         {
             title: '类别',
-            dataIndex: 'category',
-            key: 'category',
+            dataIndex: 'type',
+            key: 'type',
         },
         {
             title: '发布者',
@@ -70,8 +59,8 @@ const SoftwareList = () => {
             dataIndex: 'status',
             key: 'status',
             render: (status) => (
-                <Tag color={status === 'Pending' ? 'orange' : 'green'}>
-                    {status}
+                <Tag color={status === '0' ? 'orange' : 'green'}>
+                    {status === '0' ? '待审核' : '已审核'}
                 </Tag>
             ),
         },
@@ -82,13 +71,9 @@ const SoftwareList = () => {
         setSelectedStatus(e.key);  // 更新选择的状态
     };
 
-    const navigate = useNavigate()
-
-
-    //跳转到审核页面详情
+    // 跳转到审核页面详情
     const handleRowClick = (softwareName) => {
-        // 跳转到软件的详情页面
-        navigate(`detail/${softwareName}`);
+        navigate(`detail/${softwareName}`);  // 跳转到软件的详情页面
     };
 
     return (
@@ -110,10 +95,10 @@ const SoftwareList = () => {
                 </div>
                 <Table
                     columns={columns}
-                    dataSource={filterSoftware()}//这里就是数据来源
+                    dataSource={filterSoftware()}  // 使用过滤后的数据
                     pagination={false}  // 可以根据需求启用分页
                     onRow={(record) => ({
-                        onClick: () => handleRowClick(record.name),  // 点击行时触发
+                        onClick: () => handleRowClick(record.name),  // 点击行时触发，record对应的是当前行的所有信息
                     })}
                 />
             </Content>
