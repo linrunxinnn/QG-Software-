@@ -41,14 +41,14 @@ const CommentSection = ({
   const [total, setTotal] = useState(0);
   const [pageSize] = useState(10);
 
-  // 模拟用户权限数据
-  const [userPermissions] = useState({
-    hasPurchased: true, // 是否已购买
-    isAdmin: false, // 是否管理员
-    userId: 'user123',
-    username: '测试用户',
-    avatar: 'https://picsum.photos/40/40?random=1'
-  });
+  // 从props获取用户权限信息，并提供默认值
+  const userPermissions = {
+    hasPurchased: userInfo.hasPurchased || false,
+    isAdmin: userInfo.isAdmin || false,
+    userId: userInfo.userId || 'guest',
+    username: userInfo.username || '游客',
+    avatar: userInfo.avatar || null
+  };
 
   // 模拟评论数据
   useEffect(() => {
@@ -225,7 +225,7 @@ const CommentSection = ({
         </div>
       </div>
 
-      {/* 发表评论区域 */}
+      {/* 发表评论区域 - 根据购买状态显示 */}
       {userPermissions.hasPurchased ? (
         <Card className={styles.commentForm} size="small">
           <div className={styles.userInfo}>
@@ -235,7 +235,7 @@ const CommentSection = ({
               size={40}
             />
             <span className={styles.username}>{userPermissions.username}</span>
-            {/* <Tag color="green" size="small">已购买</Tag> */}
+            <Tag color="green" size="small">已购买</Tag>
           </div>
 
           <div className={styles.formContent}>
@@ -281,9 +281,9 @@ const CommentSection = ({
             <div className={styles.promptText}>
               <span>购买软件后即可参与评论</span>
             </div>
-            <Button type="primary" size="small">
-              立即购买
-            </Button>
+            <div className={styles.promptNote}>
+              您可以查看其他用户的评论来了解软件的使用体验
+            </div>
           </div>
         </Card>
       )}
@@ -312,7 +312,9 @@ const CommentSection = ({
                       <span className={styles.commentUsername}>
                         {comment.username}
                       </span>
-                     
+                      {comment.isPurchased && (
+                        <Tag color="green" size="small">已购买</Tag>
+                      )}
                     </div>
                     <div className={styles.commentTime}>
                       {formatTime(comment.createTime)}
