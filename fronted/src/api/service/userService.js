@@ -185,3 +185,28 @@ export const fetchUpdateAPI = async (versionId) => {
         throw error;  // 抛出错误以便外部捕获
     }
 };
+
+//获取所有账户信息的接口
+export const fetchAccountAPI = async () => {
+    const path = "/admins"
+    try {
+        const response = await api.get(`/${path}`)
+
+        return response.data;  // 返回格式化后的数据
+    } catch (error) {
+        console.error('请求失败:', error);
+        throw error;
+    }
+}
+
+//冻结账户的接口
+export const fetchstatusAPI = async () => {
+    const path = "/bans"
+    try {
+        const response = await api.post(`/${path}`)
+        return response.message;  // 返回格式化后的数据
+    } catch (error) {
+        console.error('请求失败:', error);
+        throw error;
+    }
+}

@@ -4,7 +4,9 @@ import SmallCard from "../../../component/software/small_card";
 import Gap from "../../../component/software/gap";
 import "./commentSoft.css"
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { fetchSortFromAPI } from '../../../api/service/userService';  // 引入封装好的请求函数
+
 
 const ShowCommentCard = () => {
 
