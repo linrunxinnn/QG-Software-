@@ -29,6 +29,7 @@ import { useDispatch, useSelector } from "react-redux";
 import LoginForm from "./login.jsx";
 import RegisterForm from "./register.jsx";
 import ResetForm from "./reset.jsx";
+import { logout } from "../../store/slice/userSlice.js";
 
 const { Search } = Input;
 
@@ -59,6 +60,7 @@ const Header = () => {
           onSuccess={(userData) => {
             setIsLoggedIn(true);
             setIsLoginModalVisible(false);
+            handleModalClose();
           }}
         />
       ),
@@ -71,6 +73,7 @@ const Header = () => {
           onSuccess={(userData) => {
             setIsLoggedIn(true);
             setIsLoginModalVisible(false);
+            handleModalClose();
           }}
         />
       ),
@@ -139,9 +142,8 @@ const Header = () => {
   // 登出处理
   const handleLogout = () => {
     setIsLoggedIn(false);
+    dispatch(logout());
     message.success("退出登录成功");
-    console.log("用户登出");
-    // 使用redux中暴露的logout方法清除用户信息
   };
 
   // Tab切换处理

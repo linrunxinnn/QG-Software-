@@ -8,11 +8,28 @@ import api from "../index.js";
 //2.在组件的dispatch中使用
 //3.其他需要使用api的地方
 
-export const login = (username, password) => {
-  return request.post("/auth/login", {
-    username,
-    password,
+export const loginPassword = async (credentials) => {
+  const response = await api.get("/users/password", {
+    params: credentials,
   });
+  console.log("登录结果:", response.data);
+  return response.data;
+};
+
+export const loginCode = async (credentials) => {
+  const response = await api.post("/users/code", credentials);
+  return response.data;
+};
+
+export const register = async (userData) => {
+  const response = await api.post("/users/register", userData);
+  return response.data;
+};
+
+//发送验证码
+export const sendCode = async (email) => {
+  const response = await api.post("/users/sendCodeByEmail", { email });
+  return response.data;
 };
 
 //这个是展示不同类别的软件的接口

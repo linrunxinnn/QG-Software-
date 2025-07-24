@@ -2,9 +2,11 @@ import React, { use, useState } from "react";
 import { Button, Form, Input, message, Typography, Space } from "antd";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { setUser } from "../../store/slice/userSlice.js";
-import spi from "../../api/index.js"
-
+import { sendCode } from "../../api/service/userService.js";
+import {
+  loginUserByPassword,
+  loginUserByCode,
+} from "../../store/slice/userSlice.js";
 const { Text } = Typography;
 
 // const layout = {
@@ -24,34 +26,36 @@ const LoginForm = ({ onSuccess }) => {
 
   // 登录处理
   const handleLogin = async (values) => {
+    console.log("登录表单提交:", values);
     try {
-      // TODO: 后续接入后端登录接口，记得要区分是什么方式登录
-      message.success("登录成功");
-      onSuccess(1); // 假设 userData 是从后端获取的用户数据
-      //把用户的信息存储到redux中
-      const userData = {
-        id: 1,
-        username: "testUser",
-        role: 2,
-      };
-      // 返回的用户信息中有身份，如果身份为管理员则还要跳转到管理员页面
-      if (userData.role === 3) {
-        navigator("/manager");
+      if (loginType === "password") {
+        const result = await dispatch(loginUserByPassword(values)).unwrap();
+        onSuccess();
+        message.success("登录成功");
+        // 返回的用户信息中有身份，如果身份为管理员则还要跳转到管理员页面
+        if (result.role === 3) {
+          navigator("/manager");
+        }
+      } else {
+        const result = await dispatch(loginUserByCode(values)).unwrap();
+        console.log("登录结果:", result);
+        if (loginUserByCode.fulfilled.match(result)) {
+          onSuccess(result.payload); // 调用成功回调
+          // console.log("登录成功", result.payload);
+        } else if (loginUserByCode.rejected.match(result)) {
+          console.log("登录失败", result.payload);
+        }
+        // 返回的用户信息中有身份，如果身份为管理员则还要跳转到管理员页面
+        if (result.role === 3) {
+          navigator("/manager");
+        }
       }
-      dispatch(setUser(userData));
+
+      message.success("登录成功");
     } catch (error) {
       console.error("登录失败:", error);
       message.error("登录失败，请重试");
     }
-  };
-
-  const handleSendCode = async () => {
-    const email = form.getFieldValue("email");
-    if (!email) {
-      return message.warning("请先输入邮箱");
-    }
-    // TODO: 调用发送验证码接口
-    message.success(`验证码已发送至 ${email}`);
   };
 
   const handleGetCode = async () => {
@@ -63,8 +67,7 @@ const LoginForm = ({ onSuccess }) => {
       }
       form.validateFields(["email"]);
       setCodeLoading(true);
-      // 模拟发送验证码
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const result = await sendCode(email);
       message.success("验证码已发送");
       setCountdown(60);
       const timer = setInterval(() => {
