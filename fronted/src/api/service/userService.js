@@ -22,13 +22,19 @@ export const loginCode = async (credentials) => {
 };
 
 export const register = async (userData) => {
-  const response = await api.post("/users/register", userData);
+  console.log("注册用户数据:", userData);
+  const response = await api.post("/users/register", {
+    params: userData,
+  });
   return response.data;
 };
 
 //发送验证码
 export const sendCode = async (email) => {
-  const response = await api.post("/users/sendCodeByEmail", { email });
+  console.log("发送验证码到:", email);
+  const response = await api.post("/users/sendCodeByEmail", {
+    params: email,
+  });
   return response.data;
 };
 

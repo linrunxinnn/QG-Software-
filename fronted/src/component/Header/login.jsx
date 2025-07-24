@@ -38,20 +38,13 @@ const LoginForm = ({ onSuccess }) => {
         }
       } else {
         const result = await dispatch(loginUserByCode(values)).unwrap();
-        console.log("登录结果:", result);
-        if (loginUserByCode.fulfilled.match(result)) {
-          onSuccess(result.payload); // 调用成功回调
-          // console.log("登录成功", result.payload);
-        } else if (loginUserByCode.rejected.match(result)) {
-          console.log("登录失败", result.payload);
-        }
+        onSuccess();
+        message.success("登录成功");
         // 返回的用户信息中有身份，如果身份为管理员则还要跳转到管理员页面
         if (result.role === 3) {
           navigator("/manager");
         }
       }
-
-      message.success("登录成功");
     } catch (error) {
       console.error("登录失败:", error);
       message.error("登录失败，请重试");
@@ -79,8 +72,10 @@ const LoginForm = ({ onSuccess }) => {
           return prev - 1;
         });
       }, 1000);
-    } catch {
+    } catch (error) {
       // 验证失败不处理
+      message.error("验证码发送失败，请检查邮箱是否正确");
+      console.error(error);
     } finally {
       setCodeLoading(false);
     }

@@ -47,6 +47,12 @@ const Header = () => {
   //搜索栏结果
   const [searchResult, setSearchResult] = useState([]);
 
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      setIsLoggedIn(true);
+    }
+  }, []);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
