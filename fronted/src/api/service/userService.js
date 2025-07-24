@@ -1,4 +1,5 @@
 //这里用来创建用户登录，注册，获取用户信息等相关的API
+import { version } from "react";
 import api from "../index.js";
 
 //等后台api准备好后确定
@@ -121,7 +122,7 @@ export const submitSoftwareData = async (values, name) => {
 
 //这个是查看开发商发布过的软件的接口
 export const fetchPublishSortAPI = async (authorId) => {
-    const path = "/selectLastRecordsPerName";
+    const path = "/softwares/selectLastRecordsPerName";
     try {
         // 使用 axios 发送 GET 请求，带上 authorId
         const response = await api.get(`/${path}/${authorId}`);
@@ -141,9 +142,9 @@ export const fetchPublishSortAPI = async (authorId) => {
     }
 };
 
-//这个是查看开发商发布过的软件的接口
-export const fetchSoftvVersionAPI = async (softname) => {
-    const path = "";
+//这个是查看开发商发布过的软件版本的接口
+export const fetchSoftVersionAPI = async (softname) => {
+    const path = "/softwares/SearchSoftwareVersion";
     try {
         // 使用 axios 发送 GET 请求，带上 softname
         const response = await api.get(`/${path}/${softname}`);
@@ -153,10 +154,32 @@ export const fetchSoftvVersionAPI = async (softname) => {
         const formattedData = result.map(item => ({
             picture: item.picture,         // 图片字段
             name: item.name,               // 名称字段
-            published_time: item.published_time // 发布时间字段
+            published_time: item.published_time, // 发布时间字段
+            versionId: item.id,
+            introduction: item.introduction,
+            price: item.price,
         }));
 
         return formattedData;  // 返回格式化后的数据
+    } catch (error) {
+        console.error('请求失败:', error);
+        throw error;  // 抛出错误以便外部捕获
+    }
+};
+
+//这个是软件开发商修改完版本信息后修改发送的更新信息
+export const fetchUpdateAPI = async (versionId) => {
+    const path = "/softwares/SearchSoftware";
+    try {
+        const requestBody = {
+            versionId,
+            ...updateData
+        };
+        const response = await api.post(`${path}`, requestBody);
+        const result = response.message;  // Get the response data
+        // 格式化数据，将返回的字段存入 formattedData
+
+        return result;  // 返回格式化后的数据
     } catch (error) {
         console.error('请求失败:', error);
         throw error;  // 抛出错误以便外部捕获

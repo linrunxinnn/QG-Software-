@@ -4,7 +4,7 @@ import { DownOutlined, UpOutlined } from '@ant-design/icons';
 import styles from './showList.module.css';
 import { useNavigate } from "react-router-dom";
 import { fetchPublishSortAPI } from "../../api/service/userService";
-import { fetchSoftvVersionAPI } from "../../api/service/userService";
+import { fetchSoftVersionAPI } from "../../api/service/userService";
 
 const { Panel } = Collapse;
 const { Text } = Typography;
@@ -38,12 +38,18 @@ const SoftwareList = () => {
         {
           picture: "version1.jpg",
           version: "v1.0",
-          published_time: "2025-07-20 12:00:00"
+          published_time: "2025-07-20 12:00:00",
+          versionId: "1",
+          introduction: "垃圾接口",
+          price: "无价之宝",
         },
         {
           picture: "version2.jpg",
           version: "v1.1",
-          published_time: "2025-07-22 09:00:00"
+          published_time: "2025-07-22 09:00:00",
+          versionId: "2",
+          introduction: "垃圾接口",
+          price: "无价之宝",
         }
       ]
     )
@@ -64,21 +70,25 @@ const SoftwareList = () => {
   //获取版本信息的函数
   const getVersion = async (softwarename) => {
     try {
-      const data = await fetchSoftvVersionAPI(softwarename);
+      const data = await fetchSoftVersionAPI(softwarename);
       setVersionData(data);  // 更新组件状态
     } catch (error) {
       console.error("获取数据失败:", error);
     }
   };
 
+  //处理列表折叠
   const handleExpandToggle = (id) => {
     setExpandedRow(expandedRow === id ? null : id);
     getVersion()
   };
 
   const navigate = useNavigate();
-  function createsoft() {
-    navigate("create");
+  function createsoft(Id, intro, price) {
+    navigate("editor", {
+      state: { Id, intro, price },
+    });
+
   }
 
   return (
@@ -117,7 +127,7 @@ const SoftwareList = () => {
                           <Text strong>{version.version}</Text>
                           <div>{version.published_time}</div>
                         </div>
-                        <Button type="link" onClick={() => createsoft()}>修改版本信息</Button>
+                        <Button type="link" onClick={() => createsoft(version.versionId, version.introduction, version.price)}>修改版本信息</Button>
                       </div>
                     </li>
                   ))}
