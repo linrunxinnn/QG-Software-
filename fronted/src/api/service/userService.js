@@ -36,14 +36,14 @@ export const fetchSortCheckAPI = async () => {
     try {
         // 使用 axios 发送 GET 请求
         const response = await api.get(path);
-        const result = response;  // axios 返回的数据位于 `data` 字段中
+        const result = response.data;  // axios 返回的数据位于 `data` 字段中
 
         // 定义一个获取发布者名称的函数
         const fetchPublisherName = async (authorId) => {
             try {
                 // 使用 axios 发送 GET 请求获取发布者信息
                 const publisherResponse = await api.get(`/publishers/${authorId}`);
-                const publisherData = publisherResponse;  // 返回数据位于 `data` 字段中
+                const publisherData = publisherResponse.data;  // 返回数据位于 `data` 字段中
                 return publisherData.name;  // 假设返回的数据中包含 'name' 字段
             } catch (error) {
                 console.error('获取发布者信息失败:', error);
@@ -72,6 +72,7 @@ export const fetchSortCheckAPI = async () => {
 
 //这个是提交软件申请表的接口
 export const submitSoftwareData = async (values, name) => {
+    console.log(values.picture)
     const softwareData = {
         software: {
             authorId: name, // 假设这个值是固定的
@@ -81,14 +82,16 @@ export const submitSoftwareData = async (values, name) => {
             type: values.type,
             name: values.name,
         },
-        picture: values.picture,  // 图片文件
-        file: values.file,        // 安装包文件
+        picture: values.picture[0],  // 图片文件
+        file: values.file[0],        // 安装包文件
     };
-
+    const headers = {
+        'Content-Type': 'multipart/form-data'
+    }
     try {
         const path = "/softwares/addSoftware"
         // 向后台发送第一个 POST 请求，提交软件信息
-        const softwareResponse = await api.post(path, softwareData);
+        const softwareResponse = await api.post(path, softwareData, { headers });
 
         // 假设后台返回的 response.data 中有 softwareId
         const softwareId = softwareResponse.data.softwareId;
@@ -115,3 +118,47 @@ export const submitSoftwareData = async (values, name) => {
         return { success: false, message: '提交失败' };
     }
 }
+
+//这个是查看开发商发布过的软件的接口
+export const fetchPublishSortAPI = async (authorId) => {
+    const path = "/selectLastRecordsPerName";
+    try {
+        // 使用 axios 发送 GET 请求，带上 authorId
+        const response = await api.get(`/${path}/${authorId}`);
+        const result = response.data;  // axios 返回的数据位于 `data` 字段中
+
+        // 格式化数据，将返回的字段存入 formattedData
+        const formattedData = result.map(item => ({
+            picture: item.picture,         // 图片字段
+            name: item.name,               // 名称字段
+            published_time: item.published_time // 发布时间字段
+        }));
+
+        return formattedData;  // 返回格式化后的数据
+    } catch (error) {
+        console.error('请求失败:', error);
+        throw error;  // 抛出错误以便外部捕获
+    }
+};
+
+//这个是查看开发商发布过的软件的接口
+export const fetchSoftvVersionAPI = async (softname) => {
+    const path = "";
+    try {
+        // 使用 axios 发送 GET 请求，带上 softname
+        const response = await api.get(`/${path}/${softname}`);
+        const result = response.data;  // axios 返回的数据位于 `data` 字段中
+
+        // 格式化数据，将返回的字段存入 formattedData
+        const formattedData = result.map(item => ({
+            picture: item.picture,         // 图片字段
+            name: item.name,               // 名称字段
+            published_time: item.published_time // 发布时间字段
+        }));
+
+        return formattedData;  // 返回格式化后的数据
+    } catch (error) {
+        console.error('请求失败:', error);
+        throw error;  // 抛出错误以便外部捕获
+    }
+};

@@ -14,6 +14,8 @@ const CheckDetail = () => {
 
     // 提交表单处理函数
     const onSubmit = async (values, name) => {
+        console.log(values);
+
         const result = await submitSoftwareData(values, name);
         if (result.success) {
             message.success(result.message);

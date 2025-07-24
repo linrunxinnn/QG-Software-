@@ -67,13 +67,14 @@ const Load = ({ value, onChange }) => {
                     message.success(`${file.name} 文件已删除`);
                 }}
                 accept="image/*,application/pdf" // 允许上传图片和PDF文件
+                beforeUpload={() => false} // 阻止文件自动上传(破组件的自动上传)
+
             >
                 {uploadButton}
             </Upload>
 
             {/* 文件预览弹窗 */}
             <Modal
-                visible={previewOpen}
                 footer={null}
                 onCancel={() => {
                     setPreviewOpen(false);
