@@ -4,7 +4,6 @@ import { UploadOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import { useParams } from 'react-router-dom';
 import styles from "./softdetail.module.css";
 import Load from "./load.jsx";
-import axios from 'axios'; // 引入axios
 import { submitSoftwareData } from "../../api/service/userService"
 
 const CheckDetail = () => {
@@ -14,6 +13,8 @@ const CheckDetail = () => {
 
     // 提交表单处理函数
     const onSubmit = async (values, name) => {
+        console.log(values);
+
         const result = await submitSoftwareData(values, name);
         if (result.success) {
             message.success(result.message);
