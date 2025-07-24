@@ -26,7 +26,7 @@ const Personal = () => {
     id: 1,
     username: '张三',
     avatar: 'https://picsum.photos/120/120?random=1',
-    role: 'developer', // 'admin', 'user', 'developer'
+    role: 'user', // 'admin', 'user', 'developer'
     email: 'zhangsan@example.com',
     bio: '热爱技术，专注于软件开发和用户体验设计。喜欢探索新技术，分享开发经验。',
     followingCount: 128,

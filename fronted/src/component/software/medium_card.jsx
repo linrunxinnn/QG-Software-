@@ -4,25 +4,25 @@ import { Avatar, Card } from 'antd';
 import "./medium_card.css"
 
 const { Meta } = Card;
-const MediumCard = () => (
+const MediumCard = ({ image, title, price }) => (
     <Card
         style={{ width: '90%' }}
         //cover是用于展示图片封面的
         cover={
             <img
                 alt="example"
-                src="https://picsum.photos/600/400?random=4"
+                src={image}
             />
         }
         className='Card'
     >
         {/* 这是标签页 */}
         <Meta
-            title="Soft"
+            title={title}
             //可以往description里面插入内容
             description={
                 <>
-                    <span>Price</span>
+                    <span>¥{price}</span>
                     <button style={
                         {
                             float: "right",

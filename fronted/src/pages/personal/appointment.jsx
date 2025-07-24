@@ -36,8 +36,6 @@ const Appointment = () => {
                 version: 'v3.2.1',
                 price: 299.00,
                 status: 'published', // published, draft, reviewing
-                reservations: 156,
-                sales: 89
               }
             ]);
             setLoading(false);
@@ -148,8 +146,6 @@ const Appointment = () => {
                 <span className={styles.category}>{software.category}</span>
                 <span className={styles.version}>版本: {software.version}</span>
                 <div className={styles.stats}>
-                  <span>预约: {software.reservations}</span>
-                  <span>销售: {software.sales}</span>
                 </div>
               </>
             ) : (

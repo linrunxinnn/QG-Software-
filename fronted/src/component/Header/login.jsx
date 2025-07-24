@@ -3,6 +3,7 @@ import { Button, Form, Input, message, Typography, Space } from "antd";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setUser } from "../../store/slice/userSlice.js";
+import spi from "../../api/index.js"
 
 const { Text } = Typography;
 
@@ -27,7 +28,6 @@ const LoginForm = ({ onSuccess }) => {
       // TODO: 后续接入后端登录接口，记得要区分是什么方式登录
       message.success("登录成功");
       onSuccess(1); // 假设 userData 是从后端获取的用户数据
-
       //把用户的信息存储到redux中
       const userData = {
         id: 1,

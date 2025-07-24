@@ -6,6 +6,144 @@
   min-height: 100vh;
 }
 
+/* 加载和错误状态 */
+.loadingContainer,
+.errorContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+}
+
+.loading,
+.error {
+  font-size: 16px;
+  color: #666;
+}
+
+.error {
+  color: #ff4d4f;
+}
+
+/* 开发商信息区域 */
+.developerSection {
+  margin-bottom: 30px;
+}
+
+.developerCard {
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(24, 144, 255, 0.1);
+}
+
+.developerInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.developerBasic {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+}
+
+.developerAvatar {
+  flex-shrink: 0;
+  border: 2px solid #f0f0f0;
+}
+
+.developerDetails {
+  flex: 1;
+  min-width: 0;
+}
+
+.developerName {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.verifiedBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  background: #10b981;
+  color: white;
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.developerMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 6px;
+}
+
+.developerType {
+  background: #dbeafe;
+  color: #1e40af;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  align-self: flex-start;
+}
+
+.developerStats {
+  font-size: 13px;
+  color: #666;
+}
+
+.developerDesc {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.followBtn {
+  flex-shrink: 0;
+  padding: 8px 24px;
+  height: auto;
+  border-radius: 20px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.followBtn.following {
+  background: #f0f0f0;
+  border-color: #d9d9d9;
+  color: #666;
+}
+
+.followBtn.following:hover {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #dc2626;
+}
+
+.followBtn:not(.following) {
+  background: linear-gradient(135deg, #1890ff 0%, #40a9ff 100%);
+  border: none;
+  box-shadow: 0 2px 8px rgba(24, 144, 255, 0.2);
+}
+
+.followBtn:not(.following):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.3);
+}
+
 /* 头部基本信息区域 */
 .headerSection {
   background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
@@ -54,7 +192,8 @@
   line-height: 1.2;
 }
 
-.installBtn {
+.installBtn,
+.purchaseBtn {
   padding: 12px 32px;
   height: auto;
   border-radius: 25px;
@@ -66,13 +205,15 @@
   transition: all 0.3s ease;
 }
 
-.installBtn:hover:not(:disabled) {
+.installBtn:hover:not(:disabled),
+.purchaseBtn:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(24, 144, 255, 0.4);
   background: linear-gradient(135deg, #40a9ff 0%, #1890ff 100%);
 }
 
-.installBtn:disabled {
+.installBtn:disabled,
+.purchaseBtn:disabled {
   background: #f5f5f5;
   color: #bfbfbf;
   cursor: not-allowed;
@@ -89,6 +230,7 @@
   display: flex;
   align-items: center;
   gap: 16px;
+  flex-wrap: wrap;
 }
 
 .currentPrice {
@@ -99,6 +241,11 @@
 
 .statusBadge {
   font-size: 14px;
+  font-weight: 500;
+}
+
+.purchasedTag {
+  font-size: 12px;
   font-weight: 500;
 }
 
@@ -394,6 +541,21 @@
 }
 
 @media (max-width: 768px) {
+  .developerInfo {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .developerBasic {
+    align-self: stretch;
+  }
+
+  .followBtn {
+    align-self: stretch;
+    text-align: center;
+  }
+
   .headerSection {
     padding: 24px;
   }
@@ -464,6 +626,16 @@
     padding: 12px;
   }
 
+  .developerBasic {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .developerMeta {
+    gap: 4px;
+  }
+
   .headerSection {
     padding: 20px;
   }
@@ -481,7 +653,8 @@
     font-size: 20px;
   }
 
-  .installBtn {
+  .installBtn,
+  .purchaseBtn {
     padding: 10px 20px;
     font-size: 14px;
   }
