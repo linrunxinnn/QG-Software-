@@ -41,6 +41,7 @@ const Header = () => {
   const [activeTab, setActiveTab] = useState("login");
   const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
   const [options, setOptions] = useState([]);
+  const [userInfo, setUserInfo] = useState({});
   // 三个表单实例
   const [loginForm] = Form.useForm();
   const [registerForm] = Form.useForm();
@@ -51,6 +52,7 @@ const Header = () => {
   useEffect(() => {
     if (localStorage.getItem("token")) {
       setIsLoggedIn(true);
+      setUserInfo(JSON.parse(localStorage.getItem("user")));
     }
   }, []);
 
@@ -109,11 +111,11 @@ const Header = () => {
   };
 
   // 模拟用户信息
-  const userInfo = {
-    name: "张三",
-    avatar: qgLogo,
-    role: 1,
-  };
+  // const userInfo = {
+  //   name: "张三",
+  //   avatar: qgLogo,
+  //   role: 1,
+  // };
 
   // 铃铛点击处理
   const handleNotificationClick = () => {
