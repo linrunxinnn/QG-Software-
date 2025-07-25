@@ -78,6 +78,12 @@ const userSlice = createSlice({
     clearError: (state) => {
       state.error = null;
     },
+    getUserInfo: (state, action) => {
+      const { user, token, role } = action.payload;
+      state.user = user;
+      state.token = token;
+      state.role = role;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -138,5 +144,5 @@ const userSlice = createSlice({
   },
 });
 
-export const { logout, clearError, setUser } = userSlice.actions;
+export const { logout, clearError, setUser, getUserInfo } = userSlice.actions;
 export default userSlice.reducer;
