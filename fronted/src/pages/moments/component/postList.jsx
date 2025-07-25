@@ -9,30 +9,33 @@ import { Avatar, Card } from "antd";
 const { Meta } = Card;
 import qg from "../../../assets/qg.png";
 
-export default function PostList() {
-  const items = [
-    {
-      id: 1,
-      title: "Card title",
-      description: "This is the description",
-      avatar: qg,
-      src: "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
-    },
-    {
-      id: 2,
-      title: "Card title",
-      description: "This is the description",
-      avatar: qg,
-      src: "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
-    },
-    {
-      id: 3,
-      title: "Card title",
-      description: "This is the description",
-      avatar: qg,
-      src: "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
-    },
-  ];
+export default function PostList({ index, cuurrentPostList }) {
+  const items = cuurrentPostList || [];
+  console.log("当前帖子列表:", cuurrentPostList);
+  console.log("传递的index:", index);
+  // const items = [
+  //   {
+  //     id: 1,
+  //     title: "Card title",
+  //     description: "This is the description",
+  //     avatar: qg,
+  //     src: "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
+  //   },
+  //   {
+  //     id: 2,
+  //     title: "Card title",
+  //     description: "This is the description",
+  //     avatar: qg,
+  //     src: "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
+  //   },
+  //   {
+  //     id: 3,
+  //     title: "Card title",
+  //     description: "This is the description",
+  //     avatar: qg,
+  //     src: "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
+  //   },
+  // ];
 
   //点击卡片后根据id跳转到对应的详情页
   const handleCardClick = (id) => {
@@ -47,14 +50,10 @@ export default function PostList() {
         <Card
           key={item.id}
           className={style.card}
-          cover={<img src={item.src} />}
+          cover={<img src={item.picture} />}
           onClick={() => handleCardClick(item.id)}
         >
-          <Meta
-            avatar={<Avatar src={item.avatar} />}
-            title={item.title}
-            description={item.description}
-          />
+          <Meta title={item.name} description={item.introduction} />
         </Card>
       ))}
     </div>

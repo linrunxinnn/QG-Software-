@@ -5,22 +5,11 @@ import { Avatar, Button } from "antd";
 import { LeftOutlined, RightOutlined, UserOutlined } from "@ant-design/icons";
 import qg from "../../../assets/qg.png";
 
-export default function UpList({ onChange }) {
-  const mockUsers = [
-    { id: 1, name: "商户1", imgSrc: "../../../assets/qg.png" },
-    { id: 2, name: "商户2", imgSrc: "../../../assets/qg.png" },
-    { id: 3, name: "商户3", imgSrc: "../../../assets/qg.png" },
-    { id: 4, name: "商户4", imgSrc: "../../../assets/qg.png" },
-    { id: 5, name: "商户5", imgSrc: "../../../assets/qg.png" },
-    { id: 6, name: "商户6", imgSrc: "../../../assets/qg.png" },
-    { id: 7, name: "商户7", imgSrc: "../../../assets/qg.png" },
-    { id: 8, name: "商户8", imgSrc: "../../../assets/qg.png" },
-    { id: 9, name: "商户9", imgSrc: "../../../assets/qg.png" },
-    { id: 10, name: "商户10", imgSrc: "../../../assets/qg.png" },
-  ];
-
+export default function UpList({ info, onChange, index }) {
+  const mockUsers = info;
+  const [selectedUserId, setSelectedUserId] = useState(index);
+  console.log("Selected user ID在父组件:", selectedUserId);
   const [currentIndex, setCurrentIndex] = useState(1);
-  const [selectedUserId, setSelectedUserId] = useState(mockUsers[0]?.id); // 默认选中第一个用户
   const containerRef = useRef(null);
   const slideDistance = 140; // 每次滑动的距离
   const [maxIndex, setMaxIndex] = useState(0);
@@ -91,7 +80,7 @@ export default function UpList({ onChange }) {
               onClick={() => handleUserClick(item.id)}
             >
               <div className={style.itemImg}>
-                <Avatar size="large" src={item.imgSrc} />
+                <Avatar size="large" src={item.avatar} />
               </div>
               <div className={style.text}>{item.name}</div>
             </div>

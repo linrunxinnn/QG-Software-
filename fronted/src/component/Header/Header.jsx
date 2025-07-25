@@ -29,6 +29,8 @@ import { useDispatch, useSelector } from "react-redux";
 import LoginForm from "./login.jsx";
 import RegisterForm from "./register.jsx";
 import ResetForm from "./reset.jsx";
+import { logout } from "../../store/slice/userSlice.js";
+import { mainSearch } from "../../api/service/mainApi.js";
 
 const { Search } = Input;
 
@@ -39,12 +41,20 @@ const Header = () => {
   const [activeTab, setActiveTab] = useState("login");
   const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
   const [options, setOptions] = useState([]);
+  const [userInfo, setUserInfo] = useState({});
   // 三个表单实例
   const [loginForm] = Form.useForm();
   const [registerForm] = Form.useForm();
   const [resetForm] = Form.useForm();
   //搜索栏结果
   const [searchResult, setSearchResult] = useState([]);
+
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      setIsLoggedIn(true);
+      setUserInfo(JSON.parse(localStorage.getItem("user")));
+    }
+  }, []);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -59,6 +69,7 @@ const Header = () => {
           onSuccess={(userData) => {
             setIsLoggedIn(true);
             setIsLoginModalVisible(false);
+            handleModalClose();
           }}
         />
       ),
@@ -71,6 +82,7 @@ const Header = () => {
           onSuccess={(userData) => {
             setIsLoggedIn(true);
             setIsLoginModalVisible(false);
+            handleModalClose();
           }}
         />
       ),
@@ -99,11 +111,11 @@ const Header = () => {
   };
 
   // 模拟用户信息
-  const userInfo = {
-    name: "张三",
-    avatar: qgLogo,
-    role: 1,
-  };
+  // const userInfo = {
+  //   name: "张三",
+  //   avatar: qgLogo,
+  //   role: 1,
+  // };
 
   // 铃铛点击处理
   const handleNotificationClick = () => {
@@ -139,9 +151,8 @@ const Header = () => {
   // 登出处理
   const handleLogout = () => {
     setIsLoggedIn(false);
+    dispatch(logout());
     message.success("退出登录成功");
-    console.log("用户登出");
-    // 使用redux中暴露的logout方法清除用户信息
   };
 
   // Tab切换处理
@@ -154,21 +165,42 @@ const Header = () => {
     // 重置倒计时
   };
 
-  const mockSearch = (value) => {
-    // 模拟接口请求
-    if (!value) return [];
-    return ["QQ", "微信", "钉钉", "飞书", "微信读书"]
-      .filter((item) => item.toLowerCase().includes(value.toLowerCase()))
-      .map((item) => ({ value: item }));
-  };
+  // const mockSearch = (value) => {
+  //   console.log("模拟搜索:", value);
+  //   // 模拟接口请求
+  //   if (!value) return [];
+  //   // return ["QQ", "微信", "钉钉", "飞书", "微信读书"]
 
-  const LiveSearch = () => {
-    const [options, setOptions] = useState([]);
-  };
+  //   return value.map((item) => ({ value: item }));
+  // };
 
-  const handleSearch = (value) => {
-    const results = mockSearch(value); // 替换为实际接口
-    setOptions(results);
+  // const LiveSearch = () => {
+  //   const [options, setOptions] = useState([]);
+  // };
+
+  const handleSearch = async (value) => {
+    console.log("搜索关键词:", value);
+    try {
+      const response = await mainSearch(value);
+      const resultList = response.data || [];
+      console.log("搜索结果:", resultList);
+
+      // 转成 AutoComplete 所需格式
+      const formattedOptions = resultList.map((item) => ({
+        value: item.id, // select 后回传的值
+        label: (
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <span style={{ fontWeight: "bold" }}>{item.name}</span>
+            <span style={{ fontSize: 12, color: "#888" }}>{item.info}</span>
+          </div>
+        ),
+      }));
+
+      setOptions(formattedOptions);
+    } catch (err) {
+      console.error("搜索失败:", err);
+      setOptions([]);
+    }
   };
 
   const handleSelect = (value) => {
