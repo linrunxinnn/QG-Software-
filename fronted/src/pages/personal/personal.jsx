@@ -14,6 +14,8 @@ import {
 } from 'lucide-react';
 import { useNavigate, Outlet, useLocation } from 'react-router-dom';
 import styles from './personal.module.css';
+// 导入新创建的API服务
+import { applyToDeveloper } from '../../api/service/applyDeveloperService.js';
 
 const Personal = () => {
   const navigate = useNavigate();
@@ -145,7 +147,7 @@ const Personal = () => {
     return '📁';
   };
 
-  // 处理升级申请表单提交
+  // 处理升级申请表单提交 - 更新为使用真实API
   const handleUpgradeSubmit = async (e) => {
     e.preventDefault();
     if (!upgradeForm.reason.trim()) {
@@ -156,39 +158,47 @@ const Personal = () => {
     setIsSubmitting(true);
 
     try {
-      // 模拟API调用
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // 准备API调用数据 - 只传必需的3个参数
+      const applyData = {
+        userId: userInfo.id,
+        reason: upgradeForm.reason,
+        supportingFiles: upgradeForm.supportingFiles
+        // 暂时注释掉其他字段
+        // experience: upgradeForm.experience,
+        // portfolio: upgradeForm.portfolio,
+      };
 
-      // 这里应该调用实际的API，包括文件上传
-      const formData = new FormData();
-      formData.append('reason', upgradeForm.reason);
-      formData.append('experience', upgradeForm.experience);
-      formData.append('portfolio', upgradeForm.portfolio);
+      // 调用真实的API
+      const response = await applyToDeveloper(applyData);
 
-      // 添加佐证文件
-      upgradeForm.supportingFiles.forEach((fileObj, index) => {
-        formData.append(`supportingFiles[${index}]`, fileObj.file);
-      });
-
-      console.log('升级申请提交：', {
-        ...upgradeForm,
-        supportingFiles: upgradeForm.supportingFiles.map(f => ({
-          name: f.name,
-          size: f.size,
-          type: f.type
-        }))
-      });
-
-      alert('申请已提交，我们会在3-5个工作日内审核您的申请');
-      setShowUpgradeModal(false);
-      setUpgradeForm({
-        reason: '',
-        experience: '',
-        portfolio: '',
-        supportingFiles: []
-      });
+      // 检查响应状态
+      if (response.code === 0) {
+        alert('申请已提交，我们会在3-5个工作日内审核您的申请');
+        setShowUpgradeModal(false);
+        setUpgradeForm({
+          reason: '',
+          experience: '',
+          portfolio: '',
+          supportingFiles: []
+        });
+      } else {
+        alert(response.msg || '申请提交失败，请稍后重试');
+      }
     } catch (error) {
-      alert('提交失败，请稍后重试');
+      console.error('申请提交失败:', error);
+
+      // 根据错误类型显示不同的错误信息
+      if (error.response) {
+        // 服务器返回了错误响应
+        const errorMsg = error.response.data?.msg || '申请提交失败';
+        alert(`提交失败: ${errorMsg}`);
+      } else if (error.request) {
+        // 请求发送失败
+        alert('网络连接失败，请检查网络连接后重试');
+      } else {
+        // 其他错误
+        alert('申请提交失败，请稍后重试');
+      }
     } finally {
       setIsSubmitting(false);
     }
