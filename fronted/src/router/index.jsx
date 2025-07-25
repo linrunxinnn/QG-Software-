@@ -79,7 +79,7 @@ export const router = createBrowserRouter([
       },
       {
         //更多软件
-        path: "more",
+        path: "more/:type",
         element: <Moresoft />,
       },
       {

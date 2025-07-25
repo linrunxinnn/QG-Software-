@@ -13,6 +13,13 @@ const ShowCommentCard = () => {
     console.log("跳转到评论页面，ID:", id);
     navigate(`/software/${id}`);
   }
+  const typeMap = {
+    1: "健康",
+    2: "教育",
+    3: "运动",
+    4: "办公",
+    5: "更多",
+  };
 
   const [data, setData] = useState([]); // 存储返回的数据
   //要连接时再注释掉
@@ -107,7 +114,7 @@ const ShowCommentCard = () => {
       {/* 第一组卡片 - 健康 */}
       {data.length > 0 && (
         <div>
-          <Gap sort={"健康"} />
+          <Gap sort={typeMap[1]} sortId={1} />
           <div className="Medium">
             {data[0].map((item) => (
               <MediumCard
@@ -125,7 +132,7 @@ const ShowCommentCard = () => {
       {/* 第二组卡片 - 教育 */}
       {data.length > 1 && (
         <div>
-          <Gap sort={"教育"} />
+          <Gap sort={typeMap[2]} sortId={2} />
           <div className="Small">
             {data[1].map((item) => (
               <SmallCard
@@ -144,7 +151,7 @@ const ShowCommentCard = () => {
       {data.length > 2 && (
         <div className="Big">
           <BigCard
-            sort={"运动"}
+            sort={typeMap[3]}
             titles={data[2].map((item) => item.name)}
             prices={data[2].map((item) => item.price)}
             images={data[2].map((item) => item.picture)}
@@ -152,7 +159,7 @@ const ShowCommentCard = () => {
             onClick={tocomment}
           />
           <BigCard
-            sort={"办公"}
+            sort={typeMap[4]}
             titles={data[3].map((item) => item.name)}
             prices={data[3].map((item) => item.price)}
             images={data[3].map((item) => item.picture)}
