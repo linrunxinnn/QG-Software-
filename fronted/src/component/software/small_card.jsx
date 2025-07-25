@@ -1,9 +1,9 @@
 import React from "react";
 import "./small_card.css"; // 样式文件同步更新
 
-const SmallCard = ({ image, title, price }) => {
+const SmallCard = ({ image, title, price, id, onClick }) => {
   return (
-    <div className="card">
+    <div className="card" id={id} onClick={() => onClick(id)}>
       <div className="card-img">
         <img
           style={{

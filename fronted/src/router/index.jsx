@@ -62,9 +62,10 @@ export const router = createBrowserRouter([
         ],
       },
       {
-        //软件详情页面（一个开发商版，一个用户版，用户版再分为已购未购）
-        path: "detail/:id",
-        element: <Detail />,
+        //软件详情页面（一个开发商版，一个用户版，用户版再分为已购未购）\
+        //! 禁用
+        // path: "detail/:id",
+        // element: <Detail />,
       },
       {
         //新的软件详情页面（统一的软件详情展示）
@@ -79,7 +80,7 @@ export const router = createBrowserRouter([
       {
         //更多软件
         path: "more",
-        element: <Moresoft />
+        element: <Moresoft />,
       },
       {
         //动态页面（消息）
@@ -109,7 +110,7 @@ export const router = createBrowserRouter([
           {
             path: "editor",
             element: <EditorDetail />,
-          }
+          },
         ],
       },
     ],
@@ -134,16 +135,16 @@ export const router = createBrowserRouter([
       {
         path: "comment",
         element: <ShowSoft />,
-        children: []
+        children: [],
       },
       {
         path: "comment/detail",
-        element: <CommentSection />
+        element: <CommentSection />,
       },
       {
         path: "detail/:name",
         element: <CheckDetail />,
-      }
+      },
     ],
   },
 ]);

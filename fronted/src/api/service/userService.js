@@ -13,6 +13,7 @@ export const loginPassword = async (credentials) => {
   const response = await api.get("/users/password", {
     params: credentials,
   });
+  console.log("登录结果:", response.data);
   return response.data;
 };
 
@@ -62,6 +63,7 @@ export const fetchSortFromAPI = async (type) => {
       picture: item.picture,
       name: item.name,
       price: item.price,
+      id: item.id,
     }));
 
     return formattedData;
