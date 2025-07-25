@@ -80,6 +80,38 @@
   font-size: 16px;
 }
 
+/* 错误状态样式 */
+.error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  color: #dc2626;
+  text-align: center;
+  padding: 20px;
+}
+
+.error p {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+}
+
+.error button {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.error button:hover {
+  background: #2563eb;
+}
+
 .empty {
   display: flex;
   flex-direction: column;
@@ -194,15 +226,7 @@
 
 /* 修复描述文本的显示问题 */
 .description {
-  margin: 0 8 12px 0;
-  font-size: 14px;
-  color: #6b7280;
-  line-height: 1.4;
-}
-
-/* 描述文本的基本样式和兼容性省略效果 */
-.description {
-  margin: 0 8px 12px 0;
+  margin: 0 0 12px 0;
   font-size: 14px;
   color: #6b7280;
   line-height: 1.4;
@@ -271,7 +295,7 @@
   color: white;
 }
 
-.viewBtn:hover {
+.viewBtn:hover:not(:disabled) {
   background: #2563eb;
   transform: translateY(-1px);
 }
@@ -282,10 +306,18 @@
   border: 1px solid #d1d5db;
 }
 
-.unfollowBtn:hover {
+.unfollowBtn:hover:not(:disabled) {
   background: #fef2f2;
   color: #dc2626;
   border-color: #fecaca;
+}
+
+/* 禁用状态 */
+.viewBtn:disabled,
+.unfollowBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
 }
 
 /* 响应式设计 */

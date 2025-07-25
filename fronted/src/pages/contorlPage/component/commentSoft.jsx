@@ -4,7 +4,9 @@ import SmallCard from "../../../component/software/small_card";
 import Gap from "../../../component/software/gap";
 import "./commentSoft.css"
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { fetchSortFromAPI } from '../../../api/service/userService';  // 引入封装好的请求函数
+
 
 const ShowCommentCard = () => {
 
@@ -31,6 +33,32 @@ const ShowCommentCard = () => {
         };
         fetchAllSort();
     }, []);
+
+    //虚拟数据
+    useEffect(() =>
+        //示例数据
+        setData([
+            // 健康
+            [
+                { picture: "https://picsum.photos/600/400?random=3", name: "产品1", price: "99.99" },
+                { picture: "https://picsum.photos/600/400?random=3", name: "产品2", price: "199.99" }
+            ],
+            // 教育
+            [
+                { picture: "https://picsum.photos/600/400?random=3", name: "产品1", price: "99.99" },
+                { picture: "https://picsum.photos/600/400?random=3", name: "产品2", price: "199.99" }
+            ],
+            // 运动
+            [
+                { picture: "https://picsum.photos/600/400?random=3", name: "产品1", price: "99.99" },
+                { picture: "https://picsum.photos/600/400?random=3", name: "产品2", price: "199.99" }
+            ],
+            // 办公
+            [
+                { picture: "https://picsum.photos/600/400?random=3", name: "产品1", price: "99.99" },
+                { picture: "https://picsum.photos/600/400?random=3", name: "产品2", price: "199.99" }
+            ]
+        ]), []);
 
 
 

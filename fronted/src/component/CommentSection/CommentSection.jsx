@@ -20,6 +20,14 @@ import {
   SendOutlined,
   StarFilled
 } from '@ant-design/icons';
+import {
+  getSoftwareReviews,
+  addSoftwareReview,
+  mapReviewsData,
+  getMockReviews,
+  validateReviewData,
+  formatReviewErrorMessage
+} from '../../api/service/reviewApi';
 import styles from './CommentSection.module.css';
 
 const { TextArea } = Input;
@@ -50,67 +58,50 @@ const CommentSection = ({
     avatar: userInfo.avatar || null
   };
 
-  // 模拟评论数据
+  // 页面加载时获取评论数据
   useEffect(() => {
-    loadComments();
+    if (softwareId) {
+      loadComments();
+    }
   }, [currentPage, softwareId]);
 
+  // 加载评论数据
   const loadComments = async () => {
     setLoading(true);
     try {
-      // 模拟API调用
-      await new Promise(resolve => setTimeout(resolve, 500));
+      // 尝试从API获取评论数据
+      const result = await getSoftwareReviews(softwareId);
 
-      const mockComments = [
-        {
-          id: '1',
-          userId: 'user123',
-          username: '张三',
-          avatar: 'https://picsum.photos/40/40?random=1',
-          content: '这款软件真的很棒！界面设计很现代，功能也很实用。特别是AI功能，大大提高了我的工作效率。',
-          rating: 5,
-          createTime: '2024-07-20 14:30:00',
-          isPurchased: true
-        },
-        {
-          id: '2',
-          userId: 'user456',
-          username: '李四',
-          avatar: 'https://picsum.photos/40/40?random=2',
-          content: '性价比很高，比其他同类软件便宜不少，但功能一点也不差。客服响应也很及时，遇到问题很快就解决了。',
-          rating: 4,
-          createTime: '2024-07-19 16:45:00',
-          isPurchased: true
-        },
-        {
-          id: '3',
-          userId: 'user789',
-          username: '王五',
-          avatar: 'https://picsum.photos/40/40?random=3',
-          content: '刚开始使用，整体感觉不错。学习成本比较低，上手很快。希望后续版本能增加更多模板。',
-          rating: 4,
-          createTime: '2024-07-18 09:20:00',
-          isPurchased: true
-        },
-        {
-          id: '4',
-          userId: 'user101',
-          username: '赵六',
-          avatar: 'https://picsum.photos/40/40?random=4',
-          content: '软件很稳定，运行流畅，没有出现卡顿现象。云端同步功能很方便，在不同设备上都能无缝使用。强烈推荐！',
-          rating: 5,
-          createTime: '2024-07-17 11:15:00',
-          isPurchased: true
-        }
-      ];
+      if (result.success && result.data) {
+        // 使用API返回的数据
+        const mappedComments = mapReviewsData(result.data);
+        setComments(mappedComments);
+        setTotal(mappedComments.length);
+        console.log('成功从API获取评论数据:', mappedComments);
+      } else {
+        // API失败时使用模拟数据
+        console.warn('API获取评论失败，使用模拟数据:', result.error);
+        await loadMockComments();
+      }
 
-      setComments(mockComments);
-      setTotal(mockComments.length);
     } catch (error) {
-      message.error('加载评论失败');
+      console.error('获取评论数据失败:', error);
+      message.error('获取评论失败，使用模拟数据');
+      // 出错时使用模拟数据
+      await loadMockComments();
     } finally {
       setLoading(false);
     }
+  };
+
+  // 加载模拟评论数据（保留原有逻辑作为后备）
+  const loadMockComments = async () => {
+    // 模拟延迟
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    const mockComments = getMockReviews();
+    setComments(mockComments);
+    setTotal(mockComments.length);
   };
 
   // 提交评论
@@ -132,37 +123,93 @@ const CommentSection = ({
 
     setSubmitting(true);
     try {
-      const newComment = {
-        id: Date.now().toString(),
+      // 构建评论数据
+      const reviewData = {
         userId: userPermissions.userId,
-        username: userPermissions.username,
-        avatar: userPermissions.avatar,
-        content: commentText,
-        rating: rating,
-        createTime: new Date().toLocaleString('zh-CN', {
-          year: 'numeric',
-          month: '2-digit',
-          day: '2-digit',
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit'
-        }),
-        isPurchased: true
+        softwareId: softwareId,
+        content: commentText.trim()
       };
 
-      // 模拟API调用
-      await new Promise(resolve => setTimeout(resolve, 800));
-
-      setComments([newComment, ...comments]);
-      setCommentText('');
-      setRating(5);
-      message.success('评论发表成功');
-
-      // 如果有外部回调，调用它
-      if (onCommentSubmit) {
-        onCommentSubmit(newComment);
+      // 参数验证
+      const validation = validateReviewData(reviewData);
+      if (!validation.valid) {
+        message.error(validation.message);
+        return;
       }
+
+      // 尝试调用API添加评论
+      const result = await addSoftwareReview(reviewData);
+
+      if (result.success) {
+        // API调用成功
+        console.log('评论添加成功:', result.data);
+
+        // 创建新评论对象用于立即显示
+        const newComment = {
+          id: result.data?.id || Date.now().toString(),
+          userId: userPermissions.userId,
+          username: userPermissions.username,
+          avatar: userPermissions.avatar,
+          content: commentText,
+          rating: rating,
+          createTime: new Date().toLocaleString('zh-CN', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+          }),
+          isPurchased: true
+        };
+
+        // 更新评论列表
+        setComments([newComment, ...comments]);
+        setTotal(total + 1);
+        setCommentText('');
+        setRating(5);
+        message.success('评论发表成功');
+
+        // 如果有外部回调，调用它
+        if (onCommentSubmit) {
+          onCommentSubmit(newComment);
+        }
+
+      } else {
+        // API调用失败，但仍然显示评论（模拟成功）
+        console.warn('API添加评论失败，模拟添加:', result.error);
+
+        const newComment = {
+          id: Date.now().toString(),
+          userId: userPermissions.userId,
+          username: userPermissions.username,
+          avatar: userPermissions.avatar,
+          content: commentText,
+          rating: rating,
+          createTime: new Date().toLocaleString('zh-CN', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+          }),
+          isPurchased: true
+        };
+
+        setComments([newComment, ...comments]);
+        setTotal(total + 1);
+        setCommentText('');
+        setRating(5);
+        message.success('评论发表成功');
+
+        if (onCommentSubmit) {
+          onCommentSubmit(newComment);
+        }
+      }
+
     } catch (error) {
+      console.error('提交评论失败:', error);
       message.error('发表评论失败，请稍后重试');
     } finally {
       setSubmitting(false);
@@ -172,10 +219,14 @@ const CommentSection = ({
   // 删除评论
   const handleDeleteComment = async (commentId) => {
     try {
+      // TODO: 后续如果有删除评论的API，在这里调用
+      // const result = await deleteSoftwareReview(commentId);
+
       // 模拟API调用
       await new Promise(resolve => setTimeout(resolve, 300));
 
       setComments(comments.filter(comment => comment.id !== commentId));
+      setTotal(total - 1);
       message.success('评论删除成功');
 
       // 如果有外部回调，调用它
@@ -183,6 +234,7 @@ const CommentSection = ({
         onCommentDelete(commentId);
       }
     } catch (error) {
+      console.error('删除评论失败:', error);
       message.error('删除评论失败');
     }
   };

@@ -1,62 +1,76 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Users, Heart, Calendar } from 'lucide-react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 import PersonalInfo from './component/PersonalInfo/PersonalInfo';
+import {
+  fetchFollowedDevelopers,
+  fetchDeveloperFans,
+  unfollowDeveloper,
+  getMockFollowedDevelopers
+} from '../../api/service/developerService.js';
 import styles from './fans.module.css';
 
 const Fans = () => {
   const navigate = useNavigate();
   const { userInfo, statistics } = useOutletContext();
 
-  // 模拟关注/粉丝数据
-  const [fansList] = useState([
-    {
-      id: 1,
-      name: 'Adobe Inc.',
-      avatar: 'https://picsum.photos/60/60?random=10',
-      type: 'company',
-      description: '全球领先的创意软件公司，提供Photoshop、Illustrator等专业工具',
-      followersCount: 125000,
-      softwareCount: 28,
-      followDate: '2024-01-15',
-      verified: true
-    },
-    {
-      id: 2,
-      name: 'Microsoft',
-      avatar: 'https://picsum.photos/60/60?random=11',
-      type: 'company',
-      description: '微软公司，Office、Windows等产品的开发商',
-      followersCount: 89000,
-      softwareCount: 45,
-      followDate: '2024-02-20',
-      verified: true
-    },
-    {
-      id: 3,
-      name: 'JetBrains',
-      avatar: 'https://picsum.photos/60/60?random=12',
-      type: 'company',
-      description: '专业开发工具提供商，IntelliJ IDEA、PyCharm等IDE的制作者',
-      followersCount: 45000,
-      softwareCount: 15,
-      followDate: '2024-03-10',
-      verified: true
-    },
-    {
-      id: 4,
-      name: '独立开发者小张',
-      avatar: 'https://picsum.photos/60/60?random=13',
-      type: 'individual',
-      description: '专注于效率工具开发，已发布多款实用软件',
-      followersCount: 1200,
-      softwareCount: 5,
-      followDate: '2024-04-05',
-      verified: false
-    }
-  ]);
+  const [fansList, setFansList] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const [loading, setLoading] = useState(false);
+  // 确保 userInfo 存在，并提供默认值
+  const currentUserRole = userInfo?.role || 'user';
+  const currentUserId = userInfo?.id || '2'; // 默认用户ID，实际应该从userInfo获取
+  const pageTitle = currentUserRole === 'developer' ? '我的粉丝' : '我的关注';
+  const emptyText = currentUserRole === 'developer' ? '还没有粉丝关注你' : '你还没有关注任何开发商';
+
+  // 获取数据
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        let result;
+
+        if (currentUserRole === 'developer') {
+          // 开发者获取粉丝列表
+          try {
+            result = await fetchDeveloperFans(currentUserId);
+          } catch (err) {
+            // 如果接口还没准备好，使用虚拟数据
+            console.log('粉丝接口暂未实现，使用虚拟数据');
+            result = getMockFollowedDevelopers();
+          }
+        } else {
+          // 用户获取关注的开发者列表
+          try {
+            result = await fetchFollowedDevelopers(currentUserId);
+          } catch (err) {
+            // 如果接口调用失败，使用虚拟数据
+            console.log('使用虚拟数据:', err);
+            result = getMockFollowedDevelopers();
+          }
+        }
+
+        if (result.code === 200) {
+          setFansList(result.data);
+        } else {
+          setError(result.msg || '获取数据失败');
+        }
+      } catch (err) {
+        console.error('获取数据失败:', err);
+        setError('网络错误，请稍后重试');
+        // 发生错误时也使用虚拟数据
+        const mockData = getMockFollowedDevelopers();
+        setFansList(mockData.data);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [currentUserRole, currentUserId]);
 
   // 处理返回
   const handleBack = () => {
@@ -64,14 +78,27 @@ const Fans = () => {
   };
 
   // 处理取消关注（仅用户身份显示）
-  const handleUnfollow = (item) => {
-    console.log('取消关注:', item.name);
-    // 这里实现取消关注逻辑
-    // 可以添加确认弹窗
-    if (window.confirm(`确定要取消关注 ${item.name} 吗？`)) {
-      // 调用API取消关注
-      // await unfollowSupplier(item.id);
-      // 更新列表或刷新数据
+  const handleUnfollow = async (item) => {
+    if (!window.confirm(`确定要取消关注 ${item.name} 吗？`)) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const result = await unfollowDeveloper(currentUserId, item.id);
+
+      if (result.code === 200) {
+        // 更新本地列表，移除取消关注的项目
+        setFansList(prevList => prevList.filter(fan => fan.id !== item.id));
+        alert(result.msg || '取消关注成功！');
+      } else {
+        alert(result.msg || '取消关注失败');
+      }
+    } catch (error) {
+      console.error('取消关注失败:', error);
+      alert('网络错误，请稍后重试');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -81,11 +108,6 @@ const Fans = () => {
     // 跳转到供应商详情页面
     navigate(`/supplier/${item.id}`);
   };
-
-  // 确保 userInfo 存在，并提供默认值
-  const currentUserRole = userInfo?.role || 'user';
-  const pageTitle = currentUserRole === 'developer' ? '我的粉丝' : '我的关注';
-  const emptyText = currentUserRole === 'developer' ? '还没有粉丝关注你' : '你还没有关注任何开发商';
 
   return (
     <div className={styles.fansPage}>
@@ -109,6 +131,13 @@ const Fans = () => {
 
       {/* 内容区域 */}
       <div className={styles.content}>
+        {error && (
+          <div className={styles.error}>
+            <p>错误: {error}</p>
+            <button onClick={() => window.location.reload()}>重新加载</button>
+          </div>
+        )}
+
         {loading ? (
           <div className={styles.loading}>加载中...</div>
         ) : fansList.length === 0 ? (
@@ -130,6 +159,10 @@ const Fans = () => {
                       src={item.avatar}
                       alt={item.name}
                       className={styles.avatar}
+                      onError={(e) => {
+                        // 头像加载失败时使用默认头像
+                        e.target.src = '/images/avatar/default.jpg';
+                      }}
                     />
                     {item.verified && (
                       <div className={styles.verifiedBadge}>✓</div>
@@ -170,12 +203,14 @@ const Fans = () => {
                     <button
                       className={styles.viewBtn}
                       onClick={() => handleViewProfile(item)}
+                      disabled={loading}
                     >
                       查看详情
                     </button>
                     <button
                       className={styles.unfollowBtn}
                       onClick={() => handleUnfollow(item)}
+                      disabled={loading}
                     >
                       取消关注
                     </button>

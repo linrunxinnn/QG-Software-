@@ -1,4 +1,5 @@
 //这里用来创建用户登录，注册，获取用户信息等相关的API
+import { version } from "react";
 import api from "../index.js";
 
 //等后台api准备好后确定
@@ -76,14 +77,14 @@ export const fetchSortCheckAPI = async () => {
   try {
     // 使用 axios 发送 GET 请求
     const response = await api.get(path);
-    const result = response; // axios 返回的数据位于 `data` 字段中
+    const result = response.data; // axios 返回的数据位于 `data` 字段中
 
     // 定义一个获取发布者名称的函数
     const fetchPublisherName = async (authorId) => {
       try {
         // 使用 axios 发送 GET 请求获取发布者信息
         const publisherResponse = await api.get(`/publishers/${authorId}`);
-        const publisherData = publisherResponse; // 返回数据位于 `data` 字段中
+        const publisherData = publisherResponse.data; // 返回数据位于 `data` 字段中
         return publisherData.name; // 假设返回的数据中包含 'name' 字段
       } catch (error) {
         console.error("获取发布者信息失败:", error);
@@ -114,6 +115,7 @@ export const fetchSortCheckAPI = async () => {
 
 //这个是提交软件申请表的接口
 export const submitSoftwareData = async (values, name) => {
+  console.log(values.picture);
   const softwareData = {
     software: {
       authorId: name, // 假设这个值是固定的
@@ -123,14 +125,16 @@ export const submitSoftwareData = async (values, name) => {
       type: values.type,
       name: values.name,
     },
-    picture: values.picture, // 图片文件
-    file: values.file, // 安装包文件
+    picture: values.picture[0], // 图片文件
+    file: values.file[0], // 安装包文件
   };
-
+  const headers = {
+    "Content-Type": "multipart/form-data",
+  };
   try {
     const path = "/softwares/addSoftware";
     // 向后台发送第一个 POST 请求，提交软件信息
-    const softwareResponse = await api.post(path, softwareData);
+    const softwareResponse = await api.post(path, softwareData, { headers });
 
     // 假设后台返回的 response.data 中有 softwareId
     const softwareId = softwareResponse.data.softwareId;
@@ -155,5 +159,148 @@ export const submitSoftwareData = async (values, name) => {
   } catch (error) {
     console.error("提交失败:", error);
     return { success: false, message: "提交失败" };
+  }
+};
+
+//这个是查看开发商发布过的软件的接口
+export const fetchPublishSortAPI = async (authorId) => {
+  const path = "/softwares/selectLastRecordsPerName";
+  try {
+    // 使用 axios 发送 GET 请求，带上 authorId
+    const response = await api.get(`/${path}/${authorId}`);
+    const result = response.data; // axios 返回的数据位于 `data` 字段中
+
+    // 格式化数据，将返回的字段存入 formattedData
+    const formattedData = result.map((item) => ({
+      picture: item.picture, // 图片字段
+      name: item.name, // 名称字段
+      published_time: item.published_time, // 发布时间字段
+    }));
+
+    return formattedData; // 返回格式化后的数据
+  } catch (error) {
+    console.error("请求失败:", error);
+    throw error; // 抛出错误以便外部捕获
+  }
+};
+
+//这个是查看开发商发布过的软件版本的接口
+export const fetchSoftVersionAPI = async (softname) => {
+  const path = "/softwares/SearchSoftwareVersion";
+  try {
+    // 使用 axios 发送 GET 请求，带上 softname
+    const response = await api.get(`/${path}/${softname}`);
+    const result = response.data; // axios 返回的数据位于 `data` 字段中
+
+    // 格式化数据，将返回的字段存入 formattedData
+    const formattedData = result.map((item) => ({
+      picture: item.picture, // 图片字段
+      name: item.name, // 名称字段
+      published_time: item.published_time, // 发布时间字段
+      versionId: item.id,
+      introduction: item.introduction,
+      price: item.price,
+    }));
+
+    return formattedData; // 返回格式化后的数据
+  } catch (error) {
+    console.error("请求失败:", error);
+    throw error; // 抛出错误以便外部捕获
+  }
+};
+
+//这个是软件开发商修改完版本信息后修改发送的更新信息
+export const fetchUpdateAPI = async (versionId) => {
+  const path = "/softwares/SearchSoftware";
+  try {
+    const requestBody = {
+      versionId,
+      ...updateData,
+    };
+    const response = await api.post(`${path}`, requestBody);
+    const result = response.message; // Get the response data
+    // 格式化数据，将返回的字段存入 formattedData
+
+    return result; // 返回格式化后的数据
+  } catch (error) {
+    console.error("请求失败:", error);
+    throw error; // 抛出错误以便外部捕获
+  }
+};
+
+//获取所有账户信息的接口
+export const fetchAccountAPI = async () => {
+  const path = "/admins";
+  try {
+    const response = await api.get(`/${path}`);
+
+    return response.data; // 返回格式化后的数据
+  } catch (error) {
+    console.error("请求失败:", error);
+    throw error;
+  }
+};
+
+//冻结账户的接口
+export const fetchstatusAPI = async () => {
+  const path = "/bans";
+  try {
+    const response = await api.post(`/${path}`);
+    return response.message; // 返回格式化后的数据
+  } catch (error) {
+    console.error("请求失败:", error);
+    throw error;
+  }
+};
+
+//获取用户申请成为开发商的接口
+export const fetchApplyAPI = async (setApplications) => {
+  try {
+    const path = "/applyDevelopers";
+    // 使用封装好的 api.get 来获取数据
+    const response = await api.get(path); // 假设返回包含id、reason和material的数组
+    const applicationsData = response.data;
+
+    // 根据id查询name并合并数据
+
+    const fetchNames = applicationsData.map(async (app) => {
+      try {
+        const nameResponse = await api.get(`/api/getNameById?id=${app.id}`);
+        return {
+          ...app,
+          name: nameResponse.data.name, // 合并name字段
+        };
+      } catch (error) {
+        console.error(`查询ID为${app.id}的name失败:`, error);
+        return { ...app, name: "未知" }; // 如果查询失败，返回默认值
+      }
+    });
+
+    // 等待所有查询完成
+    const allApps = await Promise.all(fetchNames);
+    return allApps; // 更新状态
+  } catch (error) {
+    console.error("获取数据失败:", error);
+  }
+};
+export const fetchAdmitAPI = async (id) => {
+  const path = "/applyDevelopers/updateStatus";
+  try {
+    const response = await api.post(`/${path}${id}`);
+    return response.message; // 返回格式化后的数据
+  } catch (error) {
+    console.error("请求失败:", error);
+    throw error;
+  }
+};
+
+export const fetchBanAPI = async (id) => {
+  const path = "/applyDevelopers/updateStatus";
+  try {
+    const response = await api.post(`/${path}${id}`);
+    return response.message; // 返回格式化后的数据
+  } catch (error) {
+    console.error("请求失败:", error);
+    throw error;
   }
 };

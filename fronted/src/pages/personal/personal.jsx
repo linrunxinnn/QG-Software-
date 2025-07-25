@@ -290,7 +290,7 @@ const Personal = () => {
                   required
                 />
               </div>
-
+{/* 
               <div className={styles.formGroup}>
                 <label>开发经验</label>
                 <textarea
@@ -302,9 +302,9 @@ const Personal = () => {
                   placeholder="请简述您的软件开发经验（选填）"
                   rows={3}
                 />
-              </div>
+              </div> */}
 
-              <div className={styles.formGroup}>
+              {/* <div className={styles.formGroup}>
                 <label>作品集链接</label>
                 <input
                   type="url"
@@ -315,7 +315,7 @@ const Personal = () => {
                   })}
                   placeholder="https://your-portfolio.com（选填）"
                 />
-              </div>
+              </div> */}
 
               {/* 佐证材料上传 */}
               <div className={styles.formGroup}>

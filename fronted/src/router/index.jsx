@@ -16,7 +16,6 @@ import ControlPage from "../pages/contorlPage/controlPage.jsx";
 import CheckDetail from "../pages/contorlPage/component/softdetail.jsx";
 import ShowSoft from "../pages/contorlPage/component/commentSoft.jsx";
 import UserList from "../pages/contorlPage/component/userList.jsx";
-
 // 新增：供应商详情页面
 import SupplierProfile from "../pages/supplier/supplierProfile.jsx";
 import CheckList from "../pages/contorlPage/component/CheckSoftList.jsx";
@@ -24,6 +23,7 @@ import SoftwareDetail from "../pages/detail/SoftwareDetail.jsx"; // 新增
 import ManagerRouter from "../component/ProtectedRoute/manageRouter.jsx";
 import Moresoft from "../pages/home/component/moresoft.jsx";
 import CommentSection from "../component/CommentSection/CommentSection.jsx";
+import EditorDetail from "../pages/publish/editor.jsx";
 
 export const router = createBrowserRouter([
   {
@@ -106,6 +106,10 @@ export const router = createBrowserRouter([
             path: "create",
             element: <CreatePost />,
           },
+          {
+            path: "editor",
+            element: <EditorDetail />,
+          }
         ],
       },
     ],
