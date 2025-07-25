@@ -11,7 +11,7 @@ export const fetchCarouselSoftware = async () => {
     });
 
     // 处理并格式化数据
-    const formattedData = response.data.map((item) => ({
+    const formattedData = response.data.data.map((item) => ({
       id: item.id,
       picture: item.picture,
       name: item.name,
