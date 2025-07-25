@@ -4,6 +4,20 @@ import api from '../index.js';
  * 软件详情页相关API接口
  */
 
+
+/**
+ * 将ID转换为数字类型（long）
+ * @param {string|number} id - 输入的ID
+ * @returns {number} 转换后的数字ID
+ */
+const convertToLong = (id) => {
+  const numId = parseInt(id, 10);
+  if (isNaN(numId)) {
+    throw new Error(`无效的ID格式: ${id}`);
+  }
+  return numId;
+};
+
 /**
  * 获取软件详情信息
  * @param {string} softwareId - 软件ID
@@ -18,7 +32,7 @@ export const getSoftwareDetail = async (softwareId) => {
     });
     return {
       success: true,
-      data: response.data
+      data: response.data.data
     };
   } catch (error) {
     console.error('获取软件详情失败:', error);
@@ -36,10 +50,11 @@ export const getSoftwareDetail = async (softwareId) => {
  */
 export const getDeveloperInfo = async (authorId) => {
   try {
-    const response = await api.get(`/users/getInformation/${authorId}`);
+    const authorIdLong = convertToLong(authorId); // ✅ 转换为long
+    const response = await api.get(`/users/getInformation/${authorIdLong}`);
     return {
       success: true,
-      data: response.data
+      data: response.data.data
     };
   } catch (error) {
     console.error('获取开发商信息失败:', error);
@@ -60,13 +75,13 @@ export const getSubscribeStatus = async (authorId, userId) => {
   try {
     const response = await api.get('/subscribes/isSubscribe', {
       params: {
-        authorId: authorId,
-        userId: userId
+        developerId: convertToLong(authorId), 
+        userId: convertToLong(userId)   
       }
     });
     return {
       success: true,
-      data: response.data // 应该是布尔值
+      data: response.data.data // 应该是布尔值
     };
   } catch (error) {
     console.error('获取关注状态失败:', error);
@@ -187,8 +202,12 @@ export const mapSoftwareStatus = (statusCode) => {
  */
 export const getSoftwareDetailPageData = async (softwareId, userId) => {
   try {
+    // 转换ID为long类型
+    const softwareIdLong = convertToLong(softwareId);
+    const userIdLong = convertToLong(userId);
+
     // 1. 获取软件详情
-    const softwareResult = await getSoftwareDetail(softwareId);
+    const softwareResult = await getSoftwareDetail(softwareIdLong);
     if (!softwareResult.success) {
       throw new Error('获取软件详情失败');
     }
@@ -203,8 +222,8 @@ export const getSoftwareDetailPageData = async (softwareId, userId) => {
 
     // 3. 获取关注状态（如果有用户ID和开发商ID）
     let subscribeStatus = false;
-    if (userId && softwareData.developerId) {
-      const subscribeResult = await getSubscribeStatus(softwareData.developerId, userId);
+    if (userIdLong && softwareData.developerId) {
+      const subscribeResult = await getSubscribeStatus(softwareData.developerId, userIdLong);
       if (subscribeResult.success) {
         subscribeStatus = subscribeResult.data;
       }

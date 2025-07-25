@@ -15,7 +15,9 @@ import {
   downloadSoftware,
   validatePurchaseData,
   validateReserveData,
-  formatErrorMessage
+  formatErrorMessage,
+  getSoftwareStatus,    // 🔥 使用新接口
+  mapSoftwareStatus     // 🔥 使用新映射函数
 } from '../../api/service/userOperationApi';
 import styles from './SoftwareDetail.module.css';
 
@@ -29,13 +31,20 @@ const SoftwareDetail = () => {
   const [softwareInfo, setSoftwareInfo] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // 用户状态信息
-  const [userStatus, setUserStatus] = useState({
-    hasPurchased: false,        // 是否已购买
-    hasReserved: false,         // 是否已预约
-    purchaseDate: null,         // 购买日期
-    reserveDate: null,          // 预约日期
-    licenseType: null           // 许可证类型
+  // 🔥 新的状态管理 - 使用统一的状态对象
+  const [softwareStatus, setSoftwareStatus] = useState({
+    softwareStatus: '暂不可用',    // 软件状态：可预约/现货
+    canReserve: false,            // 是否可以预约
+    canPurchase: false,           // 是否可以购买
+    hasReserved: false,           // 是否已预约
+    hasPurchased: false,          // 是否已购买
+    canDownload: false,           // 是否可以下载
+    buttonConfig: {               // 主按钮配置
+      text: '暂不可用',
+      type: 'default',
+      disabled: true,
+      action: null
+    }
   });
 
   // 开发商信息状态
@@ -105,26 +114,22 @@ const SoftwareDetail = () => {
   const fetchSoftwareDetail = async () => {
     try {
       setLoading(true);
-
-      // 获取当前用户ID（从localStorage或其他地方获取）
       const currentUserId = localStorage.getItem('userId') || 'current_user_id';
 
-      // 尝试从API获取真实数据
+      // 1️⃣ 获取软件详情
       const result = await getSoftwareDetailPageData(softwareId, currentUserId);
 
       if (result.success && result.data.software) {
-        // 使用API返回的数据
         const { software, developer, isFollowing: followingStatus } = result.data;
 
         setSoftwareInfo(software);
         setDeveloperInfo(developer);
         setIsFollowing(followingStatus);
 
-        // 获取用户状态
-        await fetchUserStatus(software.id);
+        // 2️⃣ 获取软件状态（新接口）
+        await fetchSoftwareStatus(software.id, currentUserId);
 
       } else {
-        // API失败时使用静态模拟数据
         console.warn('API获取失败，使用模拟数据:', result.error);
         await loadMockData();
       }
@@ -132,12 +137,57 @@ const SoftwareDetail = () => {
     } catch (error) {
       console.error('获取软件详情失败:', error);
       message.error('获取软件信息失败，使用模拟数据');
-
-      // 出错时使用静态模拟数据
       await loadMockData();
     } finally {
       setLoading(false);
     }
+  };
+
+  // 🔥 新的软件状态获取函数
+  const fetchSoftwareStatus = async (softwareId, userId) => {
+    try {
+      console.log('正在获取软件状态:', { userId, softwareId });
+
+      // 调用新的软件状态API
+      const result = await getSoftwareStatus(userId, softwareId);
+
+      if (result.success) {
+        console.log('软件状态API返回:', result.data);
+
+        // 使用新的映射函数处理状态数据
+        const mappedStatus = mapSoftwareStatus(result.data);
+        console.log('映射后的软件状态:', mappedStatus);
+
+        setSoftwareStatus(mappedStatus);
+
+      } else {
+        console.error('获取软件状态失败:', result.error);
+        setDefaultSoftwareStatus();
+      }
+
+    } catch (error) {
+      console.error('获取软件状态异常:', error);
+      setDefaultSoftwareStatus();
+    }
+  };
+
+  // 🔥 设置默认软件状态
+  const setDefaultSoftwareStatus = () => {
+    setSoftwareStatus({
+      softwareStatus: '暂不可用',
+      canReserve: false,
+      canPurchase: false,
+      hasReserved: false,
+      hasPurchased: false,
+      canDownload: false,
+      buttonConfig: {
+        text: '暂不可用',
+        type: 'default',
+        disabled: true,
+        action: null
+      }
+    });
+    setBoundDevices([]);
   };
 
   // 加载模拟数据（保留原有逻辑）
@@ -152,7 +202,7 @@ const SoftwareDetail = () => {
       icon: 'https://picsum.photos/120/120?random=1',
       price: '¥998.00',
       version: 'v25.0.1',
-      status: '现货', // 🔄 将这里从 '现货' 改为 '可预约'
+      status: '现货',
       category: '图像处理',
       description: '专业的图像编辑和设计软件，提供强大的图像处理功能和创意工具，是设计师和摄影师的首选工具。支持多种文件格式，具备先进的AI功能和云端同步特性。',
       images: staticImages,
@@ -177,42 +227,26 @@ const SoftwareDetail = () => {
     setDeveloperInfo(mockDeveloperData);
     setIsFollowing(Math.random() > 0.5);
 
-    // 获取用户状态
-    await fetchUserStatus(mockSoftwareData.id);
+    // 模拟软件状态
+    await fetchMockSoftwareStatus(mockSoftwareData.id);
   };
 
-  // 获取用户对该软件的状态（购买/预约状态）
-  const fetchUserStatus = async (softwareId) => {
+  // 🔥 模拟软件状态获取
+  const fetchMockSoftwareStatus = async (softwareId) => {
     try {
-      // TODO: 后续添加用户状态API调用
-      /*
-      const response = await getUserSoftwareStatus(softwareId);
-      if (response.success) {
-        setUserStatus(response.data);
-        setBoundDevices(response.data.boundDevices || []);
-      }
-      */
-
       await new Promise(resolve => setTimeout(resolve, 300));
 
-      // 模拟用户状态数据
-      const mockUserStatus = {
-        hasPurchased: false, // Math.random() > 0.7, // 30%概率已购买
-        hasReserved: false, // Math.random() > 0.8,   // 20%概率已预约
-        purchaseDate: null, // '2024-07-15',
-        reserveDate: null, // '2024-07-10',
-        licenseType: null, // 'standard',
-        boundDevices: [
-          // { id: 1, name: '我的MacBook Pro', type: 'desktop', status: 'active' },
-          // { id: 2, name: '办公电脑', type: 'desktop', status: 'active' }
-        ]
-      };
+      // 随机生成一个状态码进行测试
+      const mockStatusCodes = [0, 1, 3, 4];
+      const randomStatusCode = mockStatusCodes[Math.floor(Math.random() * mockStatusCodes.length)];
 
-      setUserStatus(mockUserStatus);
-      setBoundDevices(mockUserStatus.boundDevices || []);
+      console.log('模拟状态码:', randomStatusCode);
+      const mappedStatus = mapSoftwareStatus(randomStatusCode);
+      setSoftwareStatus(mappedStatus);
 
     } catch (error) {
-      console.error('获取用户状态失败:', error);
+      console.error('获取模拟软件状态失败:', error);
+      setDefaultSoftwareStatus();
     }
   };
 
@@ -244,18 +278,28 @@ const SoftwareDetail = () => {
     }
   };
 
-  // 获取状态颜色和文本
-  const getStatusConfig = (status) => {
-    const configs = {
-      '现货': { color: 'green', text: '现货' },
-      '可预约': { color: 'orange', text: '可预约' }
-    };
-    return configs[status] || configs['现货'];
+  // 🔥 统一的按钮点击处理函数
+  const handleMainButtonClick = () => {
+    const action = softwareStatus.buttonConfig.action;
+
+    switch (action) {
+      case 'reserve':
+        handleReserve();
+        break;
+      case 'purchase':
+        handlePurchase();
+        break;
+      case 'download':
+        handleDownload();
+        break;
+      default:
+        break;
+    }
   };
 
   // 处理预约
   const handleReserve = () => {
-    if (!softwareInfo || softwareInfo.status !== '可预约') {
+    if (!softwareStatus.canReserve) {
       message.error('该软件当前不支持预约');
       return;
     }
@@ -272,7 +316,6 @@ const SoftwareDetail = () => {
     try {
       const currentUserId = localStorage.getItem('userId') || 'current_user_id';
 
-      // 参数验证
       const validation = validateReserveData(currentUserId, softwareInfo.id);
       if (!validation.valid) {
         message.error(validation.message);
@@ -282,12 +325,8 @@ const SoftwareDetail = () => {
       const result = await reserveSoftware(currentUserId, softwareInfo.id);
 
       if (result.success) {
-        // 更新用户状态
-        setUserStatus(prev => ({
-          ...prev,
-          hasReserved: true,
-          reserveDate: new Date().toISOString().split('T')[0]
-        }));
+        // 🔥 预约成功后，重新获取软件状态
+        await fetchSoftwareStatus(softwareInfo.id, currentUserId);
 
         message.success('预约成功！我们会在软件发布时通知您');
         setReserveModalVisible(false);
@@ -303,7 +342,7 @@ const SoftwareDetail = () => {
 
   // 处理购买
   const handlePurchase = () => {
-    if (!softwareInfo || softwareInfo.status !== '现货') {
+    if (!softwareStatus.canPurchase) {
       message.error('该软件当前不可购买');
       return;
     }
@@ -320,7 +359,6 @@ const SoftwareDetail = () => {
     try {
       const currentUserId = localStorage.getItem('userId') || 'current_user_id';
 
-      // 构建购买数据
       const purchaseData = {
         userid: currentUserId,
         developerid: softwareInfo.developerId,
@@ -328,7 +366,6 @@ const SoftwareDetail = () => {
         softwareid: softwareInfo.id
       };
 
-      // 参数验证
       const validation = validatePurchaseData(purchaseData);
       if (!validation.valid) {
         message.error(validation.message);
@@ -338,13 +375,8 @@ const SoftwareDetail = () => {
       const result = await purchaseSoftware(purchaseData);
 
       if (result.success) {
-        // 更新用户状态
-        setUserStatus(prev => ({
-          ...prev,
-          hasPurchased: true,
-          purchaseDate: new Date().toISOString().split('T')[0],
-          licenseType: 'standard'
-        }));
+        // 🔥 购买成功后，重新获取软件状态
+        await fetchSoftwareStatus(softwareInfo.id, currentUserId);
 
         message.success('购买成功！软件将在5分钟内发送到您的设备');
         setPurchaseModalVisible(false);
@@ -365,6 +397,7 @@ const SoftwareDetail = () => {
 
       if (result.success) {
         message.success(result.data.message);
+        // 🔥 下载后不需要更新状态，因为用户可以一直下载
       } else {
         message.error(formatErrorMessage(result.error));
       }
@@ -387,14 +420,6 @@ const SoftwareDetail = () => {
 
     try {
       // TODO: 调用绑定设备API
-      /*
-      await bindDevice({
-        softwareId: softwareInfo.id,
-        deviceType: selectedDevice,
-        deviceName: `新设备 ${boundDevices.length + 1}`
-      });
-      */
-
       await new Promise(resolve => setTimeout(resolve, 500));
 
       const newDevice = {
@@ -417,10 +442,6 @@ const SoftwareDetail = () => {
   const handleUnbindDevice = async (deviceId) => {
     try {
       // TODO: 调用解绑设备API
-      /*
-      await unbindDevice(deviceId);
-      */
-
       await new Promise(resolve => setTimeout(resolve, 300));
 
       setBoundDevices(boundDevices.filter(device => device.id !== deviceId));
@@ -440,46 +461,14 @@ const SoftwareDetail = () => {
     console.log('删除评论:', commentId);
   };
 
-  // 获取主要按钮的配置
-  const getMainButtonConfig = () => {
-    // 已购买：显示安装按钮
-    if (userStatus.hasPurchased) {
-      return {
-        text: '立即安装',
-        type: 'primary',
-        disabled: false,
-        onClick: handleDownload
-      };
-    }
-
-    // 软件状态为可预约
-    if (softwareInfo.status === '可预约') {
-      if (userStatus.hasReserved) {
-        // 已预约：显示已预约状态
-        return {
-          text: '已预约',
-          type: 'default',
-          disabled: true,
-          onClick: null
-        };
-      } else {
-        // 未预约：显示预约按钮
-        return {
-          text: '立即预约',
-          type: 'primary',
-          disabled: false,
-          onClick: handleReserve
-        };
-      }
-    }
-
-    // 软件状态为现货：显示购买按钮
-    return {
-      text: '立即购买',
-      type: 'primary',
-      disabled: false,
-      onClick: handlePurchase
+  // 🔥 获取状态颜色和文本配置
+  const getStatusConfig = (status) => {
+    const configs = {
+      '现货': { color: 'green', text: '现货' },
+      '可预约': { color: 'orange', text: '可预约' },
+      '暂不可用': { color: 'gray', text: '暂不可用' }
     };
+    return configs[status] || configs['暂不可用'];
   };
 
   // 加载状态
@@ -504,8 +493,8 @@ const SoftwareDetail = () => {
     );
   }
 
-  const statusConfig = getStatusConfig(softwareInfo.status);
-  const mainButtonConfig = getMainButtonConfig();
+  const statusConfig = getStatusConfig(softwareStatus.softwareStatus);
+  const mainButtonConfig = softwareStatus.buttonConfig;
 
   return (
     <div className={styles.detailContainer}>
@@ -567,7 +556,7 @@ const SoftwareDetail = () => {
                 type={mainButtonConfig.type}
                 size="large"
                 className={styles.purchaseBtn}
-                onClick={mainButtonConfig.onClick}
+                onClick={handleMainButtonClick}
                 disabled={mainButtonConfig.disabled}
               >
                 {mainButtonConfig.text}
@@ -582,14 +571,15 @@ const SoftwareDetail = () => {
                   text={statusConfig.text}
                   className={styles.statusBadge}
                 />
-                {userStatus.hasPurchased && (
+                {/* 🔥 根据新状态显示标签 */}
+                {softwareStatus.hasPurchased && (
                   <Tag color="green" className={styles.purchasedTag}>
-                    已购买 ({userStatus.purchaseDate})
+                    已购买
                   </Tag>
                 )}
-                {userStatus.hasReserved && !userStatus.hasPurchased && (
+                {softwareStatus.hasReserved && !softwareStatus.hasPurchased && (
                   <Tag color="orange" className={styles.reservedTag}>
-                    已预约 ({userStatus.reserveDate})
+                    已预约
                   </Tag>
                 )}
               </div>
@@ -602,8 +592,8 @@ const SoftwareDetail = () => {
               <p className={styles.description}>{softwareInfo.description}</p>
 
               <div className={styles.actionButtons}>
-                {/* 根据状态显示不同的操作按钮 */}
-                {!userStatus.hasPurchased && !userStatus.hasReserved && softwareInfo.status === '可预约' && (
+                {/* 🔥 根据新状态显示不同的操作按钮 */}
+                {softwareStatus.canReserve && !softwareStatus.hasReserved && (
                   <Button
                     type="primary"
                     icon={<CalendarOutlined />}
@@ -615,7 +605,7 @@ const SoftwareDetail = () => {
                   </Button>
                 )}
 
-                {!userStatus.hasPurchased && softwareInfo.status === '现货' && (
+                {softwareStatus.canPurchase && (
                   <Button
                     type="primary"
                     icon={<ShoppingCartOutlined />}
@@ -627,7 +617,7 @@ const SoftwareDetail = () => {
                   </Button>
                 )}
 
-                {userStatus.hasPurchased && (
+                {softwareStatus.hasPurchased && (
                   <Button
                     icon={<DesktopOutlined />}
                     size="large"
@@ -682,7 +672,7 @@ const SoftwareDetail = () => {
       </div>
 
       {/* 已绑定设备 - 只有已购买才显示 */}
-      {userStatus.hasPurchased && (
+      {softwareStatus.hasPurchased && (
         <div className={styles.devicesSection}>
           <h2 className={styles.sectionTitle}>已绑定设备</h2>
           <div className={styles.devicesList}>
@@ -721,7 +711,7 @@ const SoftwareDetail = () => {
       <CommentSection
         softwareId={softwareInfo.id}
         userInfo={{
-          hasPurchased: userStatus.hasPurchased,
+          hasPurchased: softwareStatus.hasPurchased,
           userId: 'current_user_id',
           username: '当前用户',
           avatar: 'https://picsum.photos/40/40?random=100'
