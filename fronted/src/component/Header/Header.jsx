@@ -59,6 +59,8 @@ const Header = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  console.log("头像", userInfo);
+
   // Tab配置
   const tabItems = [
     {
