@@ -3,6 +3,8 @@ import { Button, Form, Input, Select, Space, Typography, message } from "antd";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { sendCode } from "../../api/service/userService.js";
+import { registerUser } from "../../store/slice/userSlice.js";
 
 const { Option } = Select;
 
@@ -29,6 +31,7 @@ const ResetForm = ({ onSuccess }) => {
 
   const handlerSendVerificationCode = async () => {
     console.log("handlerSendVerificationCode");
+    await sendCode(form.getFieldValue("email"));
     if (countdown > 0) {
       message.warning(`请等待 ${countdown} 秒后重试`);
       return;
@@ -56,7 +59,7 @@ const ResetForm = ({ onSuccess }) => {
         message.error("两次输入的密码不一致");
         return;
       }
-      console.log("修改密码成功", values);
+      const result = await dispatch(registerUser(values)).unwrap();
       onSuccess(1);
     } catch (error) {
       console.log(error.message);
@@ -86,14 +89,20 @@ const ResetForm = ({ onSuccess }) => {
         <Form.Item
           name="password"
           label="新密码"
-          rules={[{ required: true, message: "请输入新密码" }]}
+          rules={[
+            { required: true, message: "请输入新密码" },
+            { min: 6, message: "密码至少6个字符!" },
+          ]}
         >
           <Input.Password placeholder="请输入新密码" />
         </Form.Item>
         <Form.Item
           name="confirmPassword"
           label="确认密码"
-          rules={[{ required: true, message: "请输入确认密码" }]}
+          rules={[
+            { required: true, message: "请输入确认密码" },
+            { min: 6, message: "密码至少6个字符!" },
+          ]}
         >
           <Input.Password placeholder="请输入确认密码" />
         </Form.Item>
