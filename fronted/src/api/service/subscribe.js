@@ -11,3 +11,8 @@ export const getAppByAuthorId = async (authorId) => {
   );
   return response.data;
 };
+
+export const getHaveSubscribed = async (userId) => {
+  const response = await api.get(`/subscribes/${userId}`);
+  return response.data;
+};

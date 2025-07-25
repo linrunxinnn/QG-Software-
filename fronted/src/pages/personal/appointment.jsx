@@ -1,17 +1,34 @@
-import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Clock, Package, ShoppingBag, Edit3, Plus } from 'lucide-react';
-import { useNavigate, useOutletContext } from 'react-router-dom';
-import styles from './appointment.module.css';
+import React, { useState, useEffect } from "react";
+import {
+  ArrowLeft,
+  Clock,
+  Package,
+  ShoppingBag,
+  Edit3,
+  Plus,
+} from "lucide-react";
+import { useNavigate, useOutletContext } from "react-router-dom";
+import styles from "./appointment.module.css";
+import {
+  getAppointment,
+  getPurchase,
+  getDeveloperSoftware,
+} from "../../api/service/userService.js";
+import { useSelector } from "react-redux";
 
 const Appointment = () => {
   const navigate = useNavigate();
-  const { userInfo } = useOutletContext();
+  const userInfo = useSelector((state) => state.user.user);
+  console.log("！！！！！用户信息:", userInfo);
 
   // 用户角色：'user' 或 'developer'
-  const userRole = userInfo?.role || 'user';
+  const userRole = userInfo?.role || 3;
 
+  //已预约
   const [reservedList, setReservedList] = useState([]);
+  //已购买
   const [purchasedList, setPurchasedList] = useState([]);
+  //已发布的软件列表
   const [mySoftwareList, setMySoftwareList] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -20,26 +37,35 @@ const Appointment = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        if (userRole === 'developer') {
+        if (userRole === 2) {
           // 获取开发商的软件列表
+          async function getMySoftwareList() {
+            try {
+              const response = await getDeveloperSoftware(userInfo.id);
+              setMySoftwareList(response.data);
+              console.log("!!!!!获取我的软件列表:", response.data);
+            } catch (error) {
+              console.error("获取我的软件列表失败:", error);
+            }
+          }
+          getMySoftwareList();
           // const response = await api.getMySoftwareList();
           // setMySoftwareList(response.data);
-
           // 临时模拟数据
-          setTimeout(() => {
-            setMySoftwareList([
-              {
-                id: 1,
-                name: 'PhotoMaster Pro',
-                icon: 'https://picsum.photos/60/60?random=1',
-                category: '图像处理',
-                version: 'v3.2.1',
-                price: 299.00,
-                status: 'published', // published, draft, reviewing
-              }
-            ]);
-            setLoading(false);
-          }, 1000);
+          // setTimeout(() => {
+          //   setMySoftwareList([
+          //     {
+          //       id: 1,
+          //       name: "PhotoMaster Pro",
+          //       icon: "https://picsum.photos/60/60?random=1",
+          //       category: "图像处理",
+          //       version: "v3.2.1",
+          //       price: 299.0,
+          //       status: "published", // published, draft, reviewing
+          //     },
+          //   ]);
+          //   setLoading(false);
+          // }, 1000);
         } else {
           // 获取用户的预约和购买列表
           // const [reservedRes, purchasedRes] = await Promise.all([
@@ -48,35 +74,53 @@ const Appointment = () => {
           // ]);
           // setReservedList(reservedRes.data);
           // setPurchasedList(purchasedRes.data);
-
+          async function getAppointmentList() {
+            try {
+              const response = await getAppointment(userInfo.id);
+              setReservedList(response.data.records);
+              console.log("!!!!!获取我的预约列表:", response.data.records);
+            } catch (error) {
+              console.error("获取我的预约列表失败:", error);
+            }
+          }
+          getAppointmentList();
+          async function getReservedList() {
+            try {
+              const response = await getPurchase(userInfo.id);
+              setPurchasedList(response.data);
+            } catch (error) {
+              console.error("获取预约列表失败:", error);
+            }
+          }
+          getReservedList();
           // 临时模拟数据
-          setTimeout(() => {
-            setReservedList([
-              {
-                id: 1,
-                name: 'AutoCAD 2025',
-                icon: 'https://picsum.photos/60/60?random=2',
-                developer: 'Autodesk',
-                price: 1680.00,
-                reserveDate: '2024-07-20',
-                expectedReleaseDate: '2024-12-01'
-              }
-            ]);
-            setPurchasedList([
-              {
-                id: 2,
-                name: 'Figma Enterprise',
-                icon: 'https://picsum.photos/60/60?random=3',
-                developer: 'Figma Inc.',
-                price: 380.00,
-                purchaseDate: '2024-07-18'
-              }
-            ]);
-            setLoading(false);
-          }, 1000);
+          // setTimeout(() => {
+          //   setReservedList([
+          //     {
+          //       id: 1,
+          //       name: "AutoCAD 2025",
+          //       icon: "https://picsum.photos/60/60?random=2",
+          //       developer: "Autodesk",
+          //       price: 1680.0,
+          //       reserveDate: "2024-07-20",
+          //       expectedReleaseDate: "2024-12-01",
+          //     },
+          //   ]);
+          //   setPurchasedList([
+          //     {
+          //       id: 2,
+          //       name: "Figma Enterprise",
+          //       icon: "https://picsum.photos/60/60?random=3",
+          //       developer: "Figma Inc.",
+          //       price: 380.0,
+          //       purchaseDate: "2024-07-18",
+          //     },
+          //   ]);
+          //   setLoading(false);
+          // }, 1000);
         }
       } catch (error) {
-        console.error('获取数据失败:', error);
+        console.error("获取数据失败:", error);
         setLoading(false);
       }
     };
@@ -87,26 +131,26 @@ const Appointment = () => {
   // 获取状态配置
   const getStatusConfig = (status) => {
     const configs = {
-      published: { text: '已发布', color: '#10b981', bgColor: '#d1fae5' },
-      draft: { text: '草稿', color: '#f59e0b', bgColor: '#fef3c7' },
-      reviewing: { text: '审核中', color: '#3b82f6', bgColor: '#dbeafe' }
+      published: { text: "已发布", color: "#10b981", bgColor: "#d1fae5" },
+      draft: { text: "草稿", color: "#f59e0b", bgColor: "#fef3c7" },
+      reviewing: { text: "审核中", color: "#3b82f6", bgColor: "#dbeafe" },
     };
     return configs[status] || configs.draft;
   };
 
   // 处理返回
   const handleBack = () => {
-    navigate('/personal');
+    navigate("/personal");
   };
 
   // 处理跳转到全部软件页面
   const handleViewAll = () => {
-    navigate('/publish');
+    navigate("/publish");
   };
 
   // 处理软件详情/编辑点击
   const handleSoftwareClick = (software, type) => {
-    if (userRole === 'developer') {
+    if (userRole === 2) {
       // 跳转到编辑页面
       navigate(`/publish/edit/${software.id}`);
     } else {
@@ -116,7 +160,7 @@ const Appointment = () => {
   };
 
   // 渲染软件卡片
-  const renderSoftwareCard = (software, type = '') => (
+  const renderSoftwareCard = (software, type = "") => (
     <div key={software.id} className={styles.softwareCard}>
       <div className={styles.cardContent}>
         <img
@@ -127,12 +171,12 @@ const Appointment = () => {
         <div className={styles.softwareInfo}>
           <div className={styles.titleRow}>
             <h3 className={styles.softwareName}>{software.name}</h3>
-            {userRole === 'developer' && (
+            {userRole === 2 && (
               <span
                 className={styles.statusBadge}
                 style={{
                   color: getStatusConfig(software.status).color,
-                  backgroundColor: getStatusConfig(software.status).bgColor
+                  backgroundColor: getStatusConfig(software.status).bgColor,
                 }}
               >
                 {getStatusConfig(software.status).text}
@@ -141,22 +185,23 @@ const Appointment = () => {
           </div>
 
           <div className={styles.details}>
-            {userRole === 'developer' ? (
+            {userRole === 2 ? (
               <>
                 <span className={styles.category}>{software.category}</span>
                 <span className={styles.version}>版本: {software.version}</span>
-                <div className={styles.stats}>
-                </div>
+                <div className={styles.stats}></div>
               </>
             ) : (
               <>
-                <span className={styles.developer}>开发商: {software.developer}</span>
-                {type === 'reserved' && software.expectedReleaseDate && (
+                <span className={styles.developer}>
+                  开发商: {software.developer}
+                </span>
+                {type === "reserved" && software.expectedReleaseDate && (
                   <span className={styles.releaseDate}>
                     预计发布: {software.expectedReleaseDate}
                   </span>
                 )}
-                {type === 'purchased' && software.purchaseDate && (
+                {type === "purchased" && software.purchaseDate && (
                   <span className={styles.purchaseDate}>
                     购买时间: {software.purchaseDate}
                   </span>
@@ -173,13 +218,13 @@ const Appointment = () => {
           className={styles.actionBtn}
           onClick={() => handleSoftwareClick(software, type)}
         >
-          {userRole === 'developer' ? (
+          {userRole === "developer" ? (
             <>
               <Edit3 size={14} />
               编辑
             </>
           ) : (
-            '查看详情'
+            "查看详情"
           )}
         </button>
       </div>
@@ -187,11 +232,11 @@ const Appointment = () => {
   );
 
   const getPageTitle = () => {
-    return userRole === 'developer' ? '我的软件' : '我的预约';
+    return userRole === "developer" ? "我的软件" : "我的预约";
   };
 
   const getTotalCount = () => {
-    if (userRole === 'developer') {
+    if (userRole === "developer") {
       return mySoftwareList.length;
     }
     return reservedList.length + purchasedList.length;
@@ -221,11 +266,17 @@ const Appointment = () => {
         <h1 className={styles.pageTitle}>{getPageTitle()}</h1>
         <div className={styles.headerRight}>
           <div className={styles.statsInfo}>
-            {userRole === 'developer' ? <Package size={16} /> : <Clock size={16} />}
-            <span>{getTotalCount()} 个{userRole === 'developer' ? '软件' : '项目'}</span>
+            {userRole === "developer" ? (
+              <Package size={16} />
+            ) : (
+              <Clock size={16} />
+            )}
+            <span>
+              {getTotalCount()} 个{userRole === "developer" ? "软件" : "项目"}
+            </span>
           </div>
           {/* 开发商角色显示全部按钮 */}
-          {userRole === 'developer' && (
+          {userRole === "developer" && (
             <button className={styles.viewAllBtn} onClick={handleViewAll}>
               <Package size={16} />
               全部
@@ -236,7 +287,7 @@ const Appointment = () => {
 
       {/* 内容区域 */}
       <div className={styles.content}>
-        {userRole === 'developer' ? (
+        {userRole === "developer" ? (
           // 开发商视图：我的软件
           <div className={styles.section}>
             <div className={styles.sectionHeader}>
@@ -253,7 +304,7 @@ const Appointment = () => {
               </div>
             ) : (
               <div className={styles.softwareList}>
-                {mySoftwareList.map(software => renderSoftwareCard(software))}
+                {mySoftwareList.map((software) => renderSoftwareCard(software))}
               </div>
             )}
           </div>
@@ -276,7 +327,9 @@ const Appointment = () => {
                 </div>
               ) : (
                 <div className={styles.softwareList}>
-                  {reservedList.map(software => renderSoftwareCard(software, 'reserved'))}
+                  {reservedList.map((software) =>
+                    renderSoftwareCard(software, "reserved")
+                  )}
                 </div>
               )}
             </div>
@@ -297,7 +350,9 @@ const Appointment = () => {
                 </div>
               ) : (
                 <div className={styles.softwareList}>
-                  {purchasedList.map(software => renderSoftwareCard(software, 'purchased'))}
+                  {purchasedList.map((software) =>
+                    renderSoftwareCard(software, "purchased")
+                  )}
                 </div>
               )}
             </div>

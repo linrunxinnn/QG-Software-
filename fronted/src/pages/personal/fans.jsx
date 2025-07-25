@@ -1,28 +1,33 @@
-import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Users, Heart, Calendar } from 'lucide-react';
-import { useNavigate, useOutletContext } from 'react-router-dom';
-import PersonalInfo from './component/PersonalInfo/PersonalInfo';
+import React, { useState, useEffect, use } from "react";
+import { ArrowLeft, Users, Heart, Calendar } from "lucide-react";
+import { useNavigate, useOutletContext } from "react-router-dom";
+import PersonalInfo from "./component/PersonalInfo/PersonalInfo";
 import {
   fetchFollowedDevelopers,
   fetchDeveloperFans,
   unfollowDeveloper,
-  getMockFollowedDevelopers
-} from '../../api/service/developerService.js';
-import styles from './fans.module.css';
+  getMockFollowedDevelopers,
+} from "../../api/service/developerService.js";
+import styles from "./fans.module.css";
+import { useSelector } from "react-redux";
 
 const Fans = () => {
   const navigate = useNavigate();
   const { userInfo, statistics } = useOutletContext();
+  const user = useSelector((state) => state.user.userInfo);
 
   const [fansList, setFansList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   // 确保 userInfo 存在，并提供默认值
-  const currentUserRole = userInfo?.role || 'user';
-  const currentUserId = userInfo?.id || '2'; // 默认用户ID，实际应该从userInfo获取
-  const pageTitle = currentUserRole === 'developer' ? '我的粉丝' : '我的关注';
-  const emptyText = currentUserRole === 'developer' ? '还没有粉丝关注你' : '你还没有关注任何开发商';
+  const currentUserRole = userInfo?.role || 3;
+  const currentUserId = userInfo?.id || "2"; // 默认用户ID，实际应该从userInfo获取
+  const pageTitle = currentUserRole === "developer" ? "我的粉丝" : "我的关注";
+  const emptyText =
+    currentUserRole === "developer"
+      ? "还没有粉丝关注你"
+      : "你还没有关注任何开发商";
 
   // 获取数据
   useEffect(() => {
@@ -33,13 +38,13 @@ const Fans = () => {
       try {
         let result;
 
-        if (currentUserRole === 'developer') {
+        if (currentUserRole === "developer") {
           // 开发者获取粉丝列表
           try {
             result = await fetchDeveloperFans(currentUserId);
           } catch (err) {
             // 如果接口还没准备好，使用虚拟数据
-            console.log('粉丝接口暂未实现，使用虚拟数据');
+            console.log("粉丝接口暂未实现，使用虚拟数据");
             result = getMockFollowedDevelopers();
           }
         } else {
@@ -48,7 +53,7 @@ const Fans = () => {
             result = await fetchFollowedDevelopers(currentUserId);
           } catch (err) {
             // 如果接口调用失败，使用虚拟数据
-            console.log('使用虚拟数据:', err);
+            console.log("使用虚拟数据:", err);
             result = getMockFollowedDevelopers();
           }
         }
@@ -56,11 +61,11 @@ const Fans = () => {
         if (result.code === 200) {
           setFansList(result.data);
         } else {
-          setError(result.msg || '获取数据失败');
+          setError(result.msg || "获取数据失败");
         }
       } catch (err) {
-        console.error('获取数据失败:', err);
-        setError('网络错误，请稍后重试');
+        console.error("获取数据失败:", err);
+        setError("网络错误，请稍后重试");
         // 发生错误时也使用虚拟数据
         const mockData = getMockFollowedDevelopers();
         setFansList(mockData.data);
@@ -74,7 +79,7 @@ const Fans = () => {
 
   // 处理返回
   const handleBack = () => {
-    navigate('/personal');
+    navigate("/personal");
   };
 
   // 处理取消关注（仅用户身份显示）
@@ -89,14 +94,14 @@ const Fans = () => {
 
       if (result.code === 200) {
         // 更新本地列表，移除取消关注的项目
-        setFansList(prevList => prevList.filter(fan => fan.id !== item.id));
-        alert(result.msg || '取消关注成功！');
+        setFansList((prevList) => prevList.filter((fan) => fan.id !== item.id));
+        alert(result.msg || "取消关注成功！");
       } else {
-        alert(result.msg || '取消关注失败');
+        alert(result.msg || "取消关注失败");
       }
     } catch (error) {
-      console.error('取消关注失败:', error);
-      alert('网络错误，请稍后重试');
+      console.error("取消关注失败:", error);
+      alert("网络错误，请稍后重试");
     } finally {
       setLoading(false);
     }
@@ -104,7 +109,7 @@ const Fans = () => {
 
   // 处理查看详情（仅用户身份显示）
   const handleViewProfile = (item) => {
-    console.log('查看详情:', item.name);
+    console.log("查看详情:", item.name);
     // 跳转到供应商详情页面
     navigate(`/supplier/${item.id}`);
   };
@@ -148,10 +153,12 @@ const Fans = () => {
           </div>
         ) : (
           <div className={styles.fansList}>
-            {fansList.map(item => (
+            {fansList.map((item) => (
               <div
                 key={item.id}
-                className={`${styles.fansCard} ${currentUserRole === 'developer' ? styles.noActions : ''}`}
+                className={`${styles.fansCard} ${
+                  currentUserRole === "developer" ? styles.noActions : ""
+                }`}
               >
                 <div className={styles.fansInfo}>
                   <div className={styles.avatarSection}>
@@ -161,7 +168,7 @@ const Fans = () => {
                       className={styles.avatar}
                       onError={(e) => {
                         // 头像加载失败时使用默认头像
-                        e.target.src = '/images/avatar/default.jpg';
+                        e.target.src = "/images/avatar/default.jpg";
                       }}
                     />
                     {item.verified && (
@@ -173,7 +180,7 @@ const Fans = () => {
                     <div className={styles.nameSection}>
                       <h3 className={styles.name}>{item.name}</h3>
                       <span className={styles.type}>
-                        {item.type === 'company' ? '企业开发商' : '个人开发者'}
+                        {item.type === "company" ? "企业开发商" : "个人开发者"}
                       </span>
                     </div>
                     <p className={styles.description}>{item.description}</p>
@@ -181,7 +188,9 @@ const Fans = () => {
                     <div className={styles.stats}>
                       <div className={styles.statItem}>
                         <Heart size={14} />
-                        <span>{item.followersCount.toLocaleString()} 关注者</span>
+                        <span>
+                          {item.followersCount.toLocaleString()} 关注者
+                        </span>
                       </div>
                       <div className={styles.statItem}>
                         <Users size={14} />
@@ -190,7 +199,10 @@ const Fans = () => {
                       <div className={styles.statItem}>
                         <Calendar size={14} />
                         <span>
-                          {currentUserRole === 'developer' ? '关注时间' : '关注于'} {item.followDate}
+                          {currentUserRole === "developer"
+                            ? "关注时间"
+                            : "关注于"}{" "}
+                          {item.followDate}
                         </span>
                       </div>
                     </div>
@@ -198,7 +210,7 @@ const Fans = () => {
                 </div>
 
                 {/* 根据用户身份条件渲染操作按钮 */}
-                {currentUserRole === 'user' && (
+                {currentUserRole === "user" && (
                   <div className={styles.actions}>
                     <button
                       className={styles.viewBtn}

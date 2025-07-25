@@ -4,6 +4,13 @@ import {
   loginCode,
   register,
 } from "../../api/service/userService.js";
+import { useNavigate } from "react-router-dom";
+import { use } from "react";
+import {
+  changeAvatar,
+  changeUsername,
+  changePhone,
+} from "../../api/service/userService.js";
 
 //密码登录
 export const loginUserByPassword = createAsyncThunk(
@@ -11,6 +18,7 @@ export const loginUserByPassword = createAsyncThunk(
   async (credentials, { rejectWithValue }) => {
     try {
       const data = await loginPassword(credentials);
+      console.log("userSlice.js - 登录请求数据:", data);
       return data;
     } catch (error) {
       return rejectWithValue(error.response?.data || "登录失败");
@@ -46,6 +54,45 @@ export const registerUser = createAsyncThunk(
   }
 );
 
+//更改头像
+export const updateAvatar = createAsyncThunk(
+  "/users/updateAvatar",
+  async ({ formData, userId }, { rejectWithValue }) => {
+    // 解构参数
+    try {
+      const data = await changeAvatar(formData, userId); // 分开传
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || "更改头像失败");
+    }
+  }
+);
+
+export const updateUsername = createAsyncThunk(
+  "/users/updateName",
+  async ({ userId, newUsername }, { rejectWithValue }) => {
+    console.log("更新用户名请求数据111:", { userId, newUsername });
+    try {
+      const response = await changeUsername(userId, newUsername);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || "更改用户名失败");
+    }
+  }
+);
+
+export const updatePhone = createAsyncThunk(
+  "/users/updatePhone",
+  async ({ userId, newPhone }, { rejectWithValue }) => {
+    try {
+      const response = await changePhone(userId, newPhone);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || "更改手机号失败");
+    }
+  }
+);
+
 const userSlice = createSlice({
   name: "user",
   initialState: {
@@ -74,6 +121,7 @@ const userSlice = createSlice({
       localStorage.removeItem("user");
       localStorage.removeItem("token");
       localStorage.removeItem("role");
+      useNavigate("/");
     },
     clearError: (state) => {
       state.error = null;
@@ -138,6 +186,20 @@ const userSlice = createSlice({
         localStorage.setItem("role", action.payload.data.user.role);
       })
       .addCase(registerUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(updateAvatar.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateAvatar.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user.avatar = action.payload.avatar;
+        localStorage.setItem("user", JSON.stringify(state.user));
+        state.error = null;
+      })
+      .addCase(updateAvatar.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

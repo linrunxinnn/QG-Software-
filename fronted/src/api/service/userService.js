@@ -9,12 +9,21 @@ import api from "../index.js";
 //2.在组件的dispatch中使用
 //3.其他需要使用api的地方
 
+export const deleteUser = async (userId) => {
+  api.delete(`/users/delete/${userId}`);
+};
+
 export const loginPassword = async (credentials) => {
-  const response = await api.get("/users/password", {
-    params: credentials,
-  });
-  console.log("登录结果:", response.data);
-  return response.data;
+  try {
+    console.log("登录请求数据:", credentials);
+    const response = await api.get("/users/password", {
+      params: credentials,
+    });
+    console.log("登录结果:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("登录失败:", error);
+  }
 };
 
 export const loginCode = async (credentials) => {
@@ -47,6 +56,62 @@ export const resetPassword = async (email, newPassword) => {
   const response = await api.post("/users/resetPassword", {
     params: { email, newPassword },
   });
+  return response.data;
+};
+
+//更改用户头像
+export const changeAvatar = async (formData, userId) => {
+  const response = await api.post(`/users/updateAvatar`, formData, {
+    params: { userId },
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response.data;
+};
+
+//更改用户名
+export const changeUsername = async (id, name) => {
+  console.log("更新用户名请求数据:", { id, name });
+  const response = await api.put(`/users/updateName`, {
+    id: id,
+    name: name,
+  });
+  return response.data;
+};
+
+//更改手机号
+export const changePhone = async (id, phone) => {
+  const response = await api.put(`/users/updatePhone`, {
+    id: id,
+    phone: phone,
+  });
+  return response.data;
+};
+
+//获取用户预约软件
+export const getAppointment = async (userId) => {
+  // console.log("获取用户预约软件，用户ID:", userId);
+  const response = await api.get(`/equipments/selectAppointment/${userId}`);
+  // console.log("获取预约软件结果:", response.data);
+  return response.data;
+};
+
+//获取用户已经购买软件
+export const getPurchase = async (userId) => {
+  // console.log("获取用户购买软件，用户ID:", userId);
+  const response = await api.get(`/equipments/selectPurchased/${userId}`);
+  // console.log("获取购买软件结果:", response.data);
+  return response.data;
+};
+
+//获取软件开发商的软件
+export const getDeveloperSoftware = async (authorId) => {
+  console.log("获取开发商软件，作者ID:", authorId);
+  const response = await api.get(
+    `/softwares/selectLastRecordsPerName/${authorId}`
+  );
+  console.log("获取开发商软件结果:", response.data);
   return response.data;
 };
 

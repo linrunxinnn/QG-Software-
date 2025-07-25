@@ -16,6 +16,7 @@ import ControlPage from "../pages/contorlPage/controlPage.jsx";
 import CheckDetail from "../pages/contorlPage/component/softdetail.jsx";
 import ShowSoft from "../pages/contorlPage/component/commentSoft.jsx";
 import UserList from "../pages/contorlPage/component/userList.jsx";
+import ProtectRouterByToken from "../component/ProtectedRoute/ProtectedProvider.jsx";
 // 新增：供应商详情页面
 import SupplierProfile from "../pages/supplier/supplierProfile.jsx";
 import CheckList from "../pages/contorlPage/component/CheckSoftList.jsx";
@@ -37,7 +38,11 @@ export const router = createBrowserRouter([
       {
         //个人页面
         path: "personal",
-        element: <Personal />,
+        element: (
+          <ProtectRouterByToken>
+            <Personal />
+          </ProtectRouterByToken>
+        ),
         children: [
           {
             //粉丝数（软件提供商）/关注数（普通用户）
@@ -85,12 +90,20 @@ export const router = createBrowserRouter([
       {
         //动态页面（消息）
         path: "moments",
-        element: <Moments />,
+        element: (
+          <ProtectRouterByToken>
+            <Moments />
+          </ProtectRouterByToken>
+        ),
       },
       {
         //发布页面
         path: "publish",
-        element: <Publish />,
+        element: (
+          <ProtectRouterByToken>
+            <Publish />
+          </ProtectRouterByToken>
+        ),
         children: [
           {
             //列表展示&下拉栏搜索栏
