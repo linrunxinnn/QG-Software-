@@ -35,11 +35,20 @@ export const loginCode = async (credentials) => {
 };
 
 export const register = async (userData) => {
+<<<<<<< HEAD
+  const response = await api.post("/users/register", {
+    code: userData.code,
+    user: { email: userData.email, password: userData.password },
+  });
+  console.log("注册结果:", response.data);
+  return response.data;
+=======
     const response = await api.post("/users/register", {
         code: userData.code,
         user: { email: userData.email, password: userData.password },
     });
     return response.data;
+>>>>>>> upstream/main
 };
 
 //发送验证码
@@ -72,12 +81,12 @@ export const changeAvatar = async (formData, userId) => {
 
 //更改用户名
 export const changeUsername = async (id, name) => {
-    console.log("更新用户名请求数据:", { id, name });
-    const response = await api.put(`/users/updateName`, {
-        id: id,
-        name: name,
-    });
-    return response.data;
+  console.log("更新用户名请求数据:", { id, name });
+  const response = await api.put(`/users/updateName`, {
+    id: id,
+    name: name,
+  });
+  return response.data; // 返回数据和id
 };
 
 //更改手机号
@@ -107,13 +116,43 @@ export const getPurchase = async (userId) => {
 
 //获取软件开发商的软件
 export const getDeveloperSoftware = async (authorId) => {
+<<<<<<< HEAD
+  console.log("获取开发商软件，作者ID:", authorId);
+  const response = await api.get("/softwares/selectLastRecordsPerName", {
+    params: { authorId },
+  });
+  console.log("获取开发商软件结果:", response.data);
+  return response.data;
+=======
     console.log("获取开发商软件，作者ID:", authorId);
     const response = await api.get(
         `/softwares/selectLastRecordsPerName/${authorId}`
     );
     console.log("获取开发商软件结果:", response.data);
     return response.data;
+>>>>>>> upstream/main
 };
+
+//用户有没有信息
+export const hasInfo = async (userId) => {
+  console.log("有没有信息检查用户信息，用户ID:", userId);
+  const response = await api.get(`/messages/check/${userId}`);
+  console.log("检查用户消息结果:", response.data);
+  return response.data;
+};
+
+//用户充值
+export const rechargeUser = async (userId, amount) => {
+  console.log("用户充值，用户ID:", userId, "充值金额:", amount);
+  const response = await api.put(`/users/updateMoney`, {
+    id: userId,
+    money: amount,
+  });
+  console.log("充值结果:", response.data);
+  return response.data;
+};
+
+//! 其他接口
 
 //这个是展示不同类别的软件的接口
 export const fetchSortFromAPI = async (type) => {
@@ -121,7 +160,7 @@ export const fetchSortFromAPI = async (type) => {
     try {
         // 使用 axios 发送 GET 请求
         const response = await api.get(`${path}?type=${type}`);
-        const result = response.data; // axios 返回的数据位于 `data` 字段中
+        const result = response.data.data; // axios 返回的数据位于 `data` 字段中
 
         // 处理并格式化数据
         const formattedData = result.map((item) => ({
@@ -130,6 +169,8 @@ export const fetchSortFromAPI = async (type) => {
             price: item.price,
             id: item.id,
         }));
+
+        console.log("一个类别的请求返回的数据", formattedData);
 
         return formattedData;
     } catch (error) {
@@ -153,8 +194,6 @@ export const fetchSortCheckAPI = async () => {
                 // 使用 axios 发送 GET 请求获取发布者信息
                 const publisherResponse = await api.get(`/users/getInformation/${authorId}`);
                 const publisherData = publisherResponse.data.data;  // 返回数据位于 `data` 字段中
-                console.log("第二个请求的表", publisherData);
-
                 return publisherData;  // 假设返回的数据中包含 'name' 字段
             } catch (error) {
                 console.error('获取发布者信息失败:', error);
@@ -176,6 +215,7 @@ export const fetchSortCheckAPI = async () => {
             };
         }));
 
+        console.log("返回前端的数据", formattedData);
 
         return formattedData;
     } catch (error) {
@@ -514,3 +554,15 @@ export const fetchControlcancelAPI = async (id, authorId, softwareId) => {
         throw error;
     }
 };
+
+//删除评论的接口
+export const fetchDeletecommentAPI = async (id) => {
+    const path = "/reviews/deleteReview"
+    try {
+        const response = await api.delete(`${path}/${id}`)
+        return response.data
+    } catch (error) {
+        console.error("请求失败", error);
+    }
+
+}

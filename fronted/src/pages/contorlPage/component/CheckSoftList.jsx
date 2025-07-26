@@ -26,8 +26,6 @@ const SoftwareList = () => {
         let isMounted = true;
         if (isMounted) {
             fetchAllCheck();
-            console.log("第一次挂载");
-
         }
         return () => {
             isMounted = false; // 在卸载时防止在异步操作结束后修改状态
@@ -69,8 +67,8 @@ const SoftwareList = () => {
             dataIndex: 'status',
             key: 'status',
             render: (status) => (
-                <Tag color={status === '0' ? 'orange' : 'green'}>
-                    {status === '0' ? '待审核' : '已审核'}
+                <Tag color={status === '1' ? 'orange' : 'green'}>
+                    {status === '2' ? '待审核' : '已审核'}
                 </Tag>
             ),
         },
@@ -78,13 +76,13 @@ const SoftwareList = () => {
 
     // 导航栏点击事件
     const handleMenuClick = (e) => {
+        console.log("点击导航栏", e.target);
         setSelectedStatus(e.key);  // 更新选择的状态
     };
 
     // 跳转到审核页面详情
     const handleRowClick = (record) => {
         console.log(record);//输出3
-
         navigate(`detail/${record.name}`, {
             state: { authorId: record.authorId, id: record.id }
         });  // 跳转到软件的详情页面
@@ -111,7 +109,7 @@ const SoftwareList = () => {
                 <Table
                     columns={columns}
                     dataSource={filterSoftware()}  // 使用过滤后的数据
-                    pagination={false}  // 可以根据需求启用分页
+                    pagination={true}  // 可以根据需求启用分页
                     onRow={(record) => ({
                         onClick: () => handleRowClick(record),  // 点击行时触发，record对应的是当前行的所有信息
                     })}

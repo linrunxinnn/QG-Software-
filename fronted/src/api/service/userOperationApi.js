@@ -411,6 +411,7 @@ export const bindDeviceWithMachineCode = async (userId, softwareId, softwareName
 
     if (error.message && error.message.includes('请勿')) {
       errorMessage = error.message; // 使用后端返回的具体错误信息
+
     }
 
     return {
@@ -680,3 +681,4 @@ export const mapSoftwareStatus = (statusCode) => {
     }
   };
 };
+

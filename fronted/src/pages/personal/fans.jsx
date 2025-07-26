@@ -23,11 +23,9 @@ const Fans = () => {
   // 确保 userInfo 存在，并提供默认值
   const currentUserRole = userInfo?.role || 3;
   const currentUserId = userInfo?.id || "2"; // 默认用户ID，实际应该从userInfo获取
-  const pageTitle = currentUserRole === "developer" ? "我的粉丝" : "我的关注";
+  const pageTitle = currentUserRole === 2 ? "我的粉丝" : "我的关注";
   const emptyText =
-    currentUserRole === "developer"
-      ? "还没有粉丝关注你"
-      : "你还没有关注任何开发商";
+    currentUserRole === 2 ? "还没有粉丝关注你" : "你还没有关注任何开发商";
 
   // 获取数据
   useEffect(() => {
@@ -38,10 +36,11 @@ const Fans = () => {
       try {
         let result;
 
-        if (currentUserRole === "developer") {
+        if (currentUserRole === 2) {
           // 开发者获取粉丝列表
           try {
             result = await fetchDeveloperFans(currentUserId);
+            console.log("获取到的粉丝数据:", result);
           } catch (err) {
             // 如果接口还没准备好，使用虚拟数据
             console.log("粉丝接口暂未实现，使用虚拟数据");
@@ -51,6 +50,7 @@ const Fans = () => {
           // 用户获取关注的开发者列表
           try {
             result = await fetchFollowedDevelopers(currentUserId);
+            console.log("获取到的关注数据:", result);
           } catch (err) {
             // 如果接口调用失败，使用虚拟数据
             console.log("使用虚拟数据:", err);
@@ -157,7 +157,7 @@ const Fans = () => {
               <div
                 key={item.id}
                 className={`${styles.fansCard} ${
-                  currentUserRole === "developer" ? styles.noActions : ""
+                  currentUserRole === 2 ? styles.noActions : ""
                 }`}
               >
                 <div className={styles.fansInfo}>
@@ -168,7 +168,7 @@ const Fans = () => {
                       className={styles.avatar}
                       onError={(e) => {
                         // 头像加载失败时使用默认头像
-                        e.target.src = "/images/avatar/default.jpg";
+                        e.target.src = "";
                       }}
                     />
                     {item.verified && (
@@ -199,9 +199,7 @@ const Fans = () => {
                       <div className={styles.statItem}>
                         <Calendar size={14} />
                         <span>
-                          {currentUserRole === "developer"
-                            ? "关注时间"
-                            : "关注于"}{" "}
+                          {currentUserRole === 2 ? "关注时间" : "关注于"}{" "}
                           {item.followDate}
                         </span>
                       </div>

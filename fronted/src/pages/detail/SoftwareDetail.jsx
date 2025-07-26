@@ -217,12 +217,14 @@ const SoftwareDetail = () => {
     }
   };
 
+
   // 页面加载时获取数据
   useEffect(() => {
     if (softwareId) {
       fetchSoftwareDetail();
     }
   }, [softwareId]);
+
 
   //  当用户已购买时获取版本信息
   useEffect(() => {
@@ -258,6 +260,7 @@ const SoftwareDetail = () => {
         // 显示具体的错误信息
         message.error(result.error);
         return { success: false, error: result.error };
+
       }
 
     } catch (error) {
@@ -342,6 +345,7 @@ const SoftwareDetail = () => {
   };
 
   // 获取软件版本列表
+
   const fetchSoftwareVersions = async () => {
     try {
       setVersionsLoading(true);
@@ -366,6 +370,7 @@ const SoftwareDetail = () => {
       setVersionsLoading(false);
     }
   };
+
 
   // 模拟版本数据
   const getMockVersions = () => {
@@ -399,6 +404,7 @@ const SoftwareDetail = () => {
       }
     ];
   };
+
 
   //  设置默认软件状态
   const setDefaultSoftwareStatus = () => {
@@ -530,6 +536,7 @@ const SoftwareDetail = () => {
     }
   };
 
+
   //  修改：处理预约 - 使用currentUserId
   const handleReserve = () => {
     if (!currentUserId) {
@@ -543,6 +550,7 @@ const SoftwareDetail = () => {
     }
     setReserveModalVisible(true);
   };
+
 
   //  修改：确认预约 - 使用currentUserId
   const handleConfirmReserve = async () => {
@@ -589,6 +597,7 @@ const SoftwareDetail = () => {
     setPurchaseModalVisible(true);
   };
 
+
   //  修改：确认购买 - 使用currentUserId
   const handleConfirmPurchase = async () => {
     try {
@@ -622,6 +631,7 @@ const SoftwareDetail = () => {
         message.success('购买成功！');
         setPurchaseModalVisible(false);
 
+
         //  购买成功后自动绑定当前设备
         await bindCurrentDevice();
       } else {
@@ -649,6 +659,7 @@ const SoftwareDetail = () => {
     }
   };
 
+
   //  处理版本下载
   const handleVersionDownload = async (version) => {
     try {
@@ -663,6 +674,7 @@ const SoftwareDetail = () => {
       message.error('下载失败，请稍后重试');
     }
   };
+
 
   //  生成版本下拉菜单
   const getVersionsMenu = () => {
@@ -707,6 +719,7 @@ const SoftwareDetail = () => {
       </Menu>
     );
   };
+
 
   //  修改：手动绑定设备（已购买用户可以使用）
   const handleBindDevice = async () => {
@@ -826,6 +839,7 @@ const SoftwareDetail = () => {
                   {mainButtonConfig.text}
                 </Button>
 
+
                 {/*  多版本下载下拉按钮 - 只有已购买时显示 */}
                 {softwareStatus.hasPurchased && (
                   <Dropdown
@@ -877,6 +891,7 @@ const SoftwareDetail = () => {
 
               <p className={styles.description}>{softwareInfo.description}</p>
 
+
               {currentUserId && (
                 <div className={styles.actionButtons}>
                   {/* 根据新状态显示不同的操作按钮 */}
@@ -918,6 +933,7 @@ const SoftwareDetail = () => {
                   )}
                 </div>
               )}
+
             </div>
           </div>
         </div>
@@ -961,6 +977,7 @@ const SoftwareDetail = () => {
         </div>
       </div>
 
+
       {/* 用户评论区 */}
       <CommentSection
         softwareId={softwareInfo.id}
@@ -1000,7 +1017,9 @@ const SoftwareDetail = () => {
         </div>
       </Modal>
 
+
       {/*  修改：购买弹窗 - 改成绑定本机说明 */}
+
       <Modal
         title="购买软件"
         open={purchaseModalVisible}
@@ -1021,6 +1040,7 @@ const SoftwareDetail = () => {
                 * 购买成功后将自动获取本机机械码并绑定<br />
                 * 每个软件最多可绑定3台设备<br />
                 * 绑定后可在对应设备上激活使用<br />
+
                 * 重复绑定或超过3台设备会绑定失败
               </p>
             </div>
