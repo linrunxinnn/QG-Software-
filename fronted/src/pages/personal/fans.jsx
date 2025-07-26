@@ -117,11 +117,11 @@ const Fans = () => {
   return (
     <div className={styles.fansPage}>
       {/* 个人信息展示 */}
-      {userInfo && (
+      {/* {userInfo && (
         <div className={styles.personalInfoSection}>
           <PersonalInfo userInfo={userInfo} statistics={statistics} />
         </div>
-      )}
+      )} */}
 
       {/* 页面头部 */}
       <div className={styles.header}>

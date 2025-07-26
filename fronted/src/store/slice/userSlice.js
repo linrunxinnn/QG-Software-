@@ -3,6 +3,7 @@ import {
   loginPassword,
   loginCode,
   register,
+  getUserInfoApi,
 } from "../../api/service/userService.js";
 import { useNavigate } from "react-router-dom";
 import { use } from "react";
@@ -11,6 +12,19 @@ import {
   changeUsername,
   changePhone,
 } from "../../api/service/userService.js";
+
+export const fetchUserInfo = createAsyncThunk(
+  "",
+  async (userId, { rejectWithValue }) => {
+    try {
+      const response = await getUserInfoApi(userId);
+      console.log("获取用户信息结果:", response);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || "获取用户信息失败");
+    }
+  }
+);
 
 //密码登录
 export const loginUserByPassword = createAsyncThunk(
@@ -62,6 +76,7 @@ export const updateAvatar = createAsyncThunk(
     // 解构参数
     try {
       const data = await changeAvatar(formData, userId); // 分开传
+      console.log("更新头像结果:", data);
       return data;
     } catch (error) {
       return rejectWithValue(error.response?.data || "更改头像失败");
@@ -107,7 +122,8 @@ const userSlice = createSlice({
   },
   reducers: {
     setUser: (state, action) => {
-      const { id, username, role, token } = action.payload;
+      const { id, username, role, token, avatar } = action.payload;
+      state.avatar = avatar;
       state.id = id;
       state.username = username;
       state.role = role;
@@ -122,7 +138,7 @@ const userSlice = createSlice({
       localStorage.removeItem("user");
       localStorage.removeItem("token");
       localStorage.removeItem("role");
-      useNavigate("/");
+      window.location.reload(); // 刷新页面
     },
     clearError: (state) => {
       state.error = null;
@@ -145,6 +161,7 @@ const userSlice = createSlice({
         state.user = action.payload.data.user;
         state.token = action.payload.data.token;
         state.role = action.payload.data.user.role;
+        state.avatar = action.payload.data.user.avatar;
         state.error = null;
         localStorage.setItem("user", JSON.stringify(action.payload.data.user));
         localStorage.setItem("token", action.payload.data.token);
@@ -195,8 +212,9 @@ const userSlice = createSlice({
         state.error = null;
       })
       .addCase(updateAvatar.fulfilled, (state, action) => {
+        console.log("更新头像成功:", action.payload.data);
         state.loading = false;
-        state.user.avatar = action.payload.avatar;
+        state.user.avatar = action.payload.data;
         localStorage.setItem("user", JSON.stringify(state.user));
         state.error = null;
       })

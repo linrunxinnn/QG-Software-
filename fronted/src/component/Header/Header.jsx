@@ -51,6 +51,7 @@ const Header = () => {
   //搜索栏结果
   const [searchResult, setSearchResult] = useState([]);
   const user = useSelector((state) => state.user.user);
+  const avatar = useSelector((state) => state.user.avatar);
 
   useEffect(() => {
     if (localStorage.getItem("token")) {
@@ -66,6 +67,7 @@ const Header = () => {
       if (isLoggedIn) {
         const userId = userInfo.id;
         console.log("检查用户信息，用户ID:", userId);
+        console.log("用户信息:", userInfo);
         try {
           const response = await hasInfo(userId);
           if (!response.data) {
@@ -84,7 +86,7 @@ const Header = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  console.log("头像", userInfo);
+  console.log("头像", userInfo.avatar);
 
   // Tab配置
   const tabItems = [
@@ -339,7 +341,7 @@ const Header = () => {
               <div className={styles.userInfo}>
                 <Avatar
                   size="small"
-                  src={userInfo.avatar}
+                  src={avatar}
                   icon={<UserOutlined />}
                   className={styles.userAvatar}
                 />
