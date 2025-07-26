@@ -1,4 +1,8 @@
 import api from '../index.js';
+import screenshot1 from '../../assets/images/screenshot1.jpg';
+import screenshot2 from '../../assets/images/screenshot2.jpg';
+import screenshot3 from '../../assets/images/screenshot3.jpg';
+import screenshot4 from '../../assets/images/screenshot4.jpg';
 
 /**
  * 软件详情页相关API接口
@@ -11,12 +15,12 @@ import api from '../index.js';
  * @returns {number} 转换后的数字ID
  */
 const convertToLong = (id) => {
-  // 🔥 处理null和undefined的情况
+  //  处理null和undefined的情况
   if (id === null || id === undefined) {
     throw new Error(`ID不能为空: ${id}`);
   }
 
-  // 🔥 使用Number()而不是parseInt()，保持与userOperationApi.js一致
+  // 使用Number()而不是parseInt()，保持与userOperationApi.js一致
   const numId = Number(id);
   console.log(`转换ID: ${id} -> ${numId}`);
 
@@ -60,7 +64,7 @@ export const getSoftwareDetail = async (softwareId) => {
  */
 export const getDeveloperInfo = async (authorId) => {
   try {
-    const authorIdLong = convertToLong(authorId); // ✅ 转换为long
+    const authorIdLong = convertToLong(authorId); // 转换为long
     const response = await api.get(`/users/getInformation/${authorIdLong}`);
     return {
       success: true,
@@ -130,35 +134,35 @@ export const mapSoftwareData = (backendData) => {
     developerId: backendData.author_id,
     // 静态数据保持不变
     images: [
-      'https://picsum.photos/800/600?random=1',
-      'https://picsum.photos/800/600?random=2',
-      'https://picsum.photos/800/600?random=3',
-      'https://picsum.photos/800/600?random=4'
+      screenshot1,
+      screenshot2,
+      screenshot3,
+      screenshot4
     ],
     features: [
       {
-        title: '智能图像处理',
-        description: '采用最新AI技术，提供智能修复、自动调色、对象识别等功能，让图像处理更加高效便捷。支持批量处理和自定义预设，大幅提升工作效率。'
+        title: '便捷应用获取​​',
+        description: '软件应用商城提供一站式下载平台，用户无需通过浏览器搜索，可直接在商城内浏览、搜索和安装应用，节省时间且避免下载风险。海量应用分类清晰，满足不同需求，提升用户体验。'
       },
       {
-        title: '专业设计工具',
-        description: '丰富的画笔工具、图层管理、滤镜效果和调整选项，满足从基础编辑到专业设计的所有需求。支持矢量和位图混合编辑。'
+        title: '安全可靠​​',
+        description: '商城严格审核上架应用，减少恶意软件和病毒风险。用户可查看开发者信息、评分和评论，确保下载安全。定期更新提示也能帮助用户及时修补漏洞。'
       },
       {
-        title: '云端协作支持',
-        description: '与Creative Cloud深度集成，支持多设备同步、版本管理和团队协作。随时随地访问您的创作内容，与团队成员实时分享和协作。'
+        title: '​​自动更新维护​​',
+        description: '商城自动推送应用更新，用户无需手动检查，确保始终使用最新版本。更新通常包含功能优化和安全补丁，提升稳定性并修复已知问题，保障设备安全。'
       },
       {
-        title: '高性能渲染',
-        description: '优化的渲染引擎，支持GPU加速，处理大型文件和复杂效果时依然保持流畅体验。支持HDR和广色域显示。'
+        title: '​​个性化推荐​​',
+        description: '基于用户下载历史和偏好，商城智能推荐相关应用，帮助发现实用工具或娱乐内容。分类榜单（如“热门”“新品”）也能辅助选择，提高探索效率。'
       },
       {
-        title: '插件生态系统',
-        description: '丰富的第三方插件支持，扩展无限可能。从特效处理到工作流程优化，海量插件满足各种专业需求。'
+        title: '跨设备同步​​',
+        description: '登录同一账号后，用户可在不同设备间同步已购应用，避免重复下载。部分商城支持云端备份数据，换机时快速恢复应用列表，提升使用连贯性。'
       },
       {
-        title: '跨平台兼容',
-        description: '完美支持Windows和macOS系统，提供一致的用户体验。支持多种文件格式导入导出，与其他Adobe产品无缝集成。'
+        title: '开发者支持​​',
+        description: '商城为开发者提供发布、推广和盈利平台，内置数据分析工具帮助优化应用。用户反馈渠道也能促进产品改进，形成开发者与用户间的良性循环。'
       }
     ]
   };
