@@ -108,9 +108,9 @@ export const getPurchase = async (userId) => {
 //获取软件开发商的软件
 export const getDeveloperSoftware = async (authorId) => {
   console.log("获取开发商软件，作者ID:", authorId);
-  const response = await api.get(
-    `/softwares/selectLastRecordsPerName/${authorId}`
-  );
+  const response = await api.get("/softwares/selectLastRecordsPerName", {
+    params: { authorId },
+  });
   console.log("获取开发商软件结果:", response.data);
   return response.data;
 };

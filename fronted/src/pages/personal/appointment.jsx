@@ -43,7 +43,7 @@ const Appointment = () => {
             try {
               const response = await getDeveloperSoftware(userInfo.id);
               setMySoftwareList(response.data);
-              console.log("!!!!!获取我的软件列表:", response.data);
+              console.log("获取我的软件列表:", response.data);
             } catch (error) {
               console.error("获取我的软件列表失败:", error);
             }
@@ -78,7 +78,7 @@ const Appointment = () => {
             try {
               const response = await getAppointment(userInfo.id);
               setReservedList(response.data.records);
-              console.log("!!!!!获取我的预约列表:", response.data.records);
+              console.log("获取我的预约列表:", response.data.records);
             } catch (error) {
               console.error("获取我的预约列表失败:", error);
             }
@@ -87,9 +87,9 @@ const Appointment = () => {
           async function getReservedList() {
             try {
               const response = await getPurchase(userInfo.id);
-              setPurchasedList(response.data);
+              setPurchasedList(response.data.records);
             } catch (error) {
-              console.error("获取预约列表失败:", error);
+              console.error("获取购买列表失败:", error);
             }
           }
           getReservedList();
