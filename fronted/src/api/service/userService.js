@@ -2,6 +2,8 @@
 import { version } from "react";
 import api from "../index.js";
 
+
+
 //等后台api准备好后确定
 
 //这里导出以后会到哪里使用
@@ -48,6 +50,7 @@ export const register = async (userData) => {
   });
   console.log("注册结果:", response.data);
   return response.data;
+
 };
 
 //发送验证码
@@ -82,12 +85,12 @@ export const changeAvatar = async (formData, userId) => {
 
 //更改用户名
 export const changeUsername = async (id, name) => {
-  console.log("更新用户名请求数据:", { id, name });
-  const response = await api.put(`/users/updateName`, {
-    id: id,
-    name: name,
-  });
-  return response.data; // 返回数据和id
+    console.log("更新用户名请求数据:", { id, name });
+    const response = await api.put(`/users/updateName`, {
+        id: id,
+        name: name,
+    });
+    return response.data; // 返回数据和id
 };
 
 //更改手机号
@@ -123,25 +126,26 @@ export const getDeveloperSoftware = async (authorId) => {
   });
   console.log("获取开发商软件结果:", response.data);
   return response.data;
+
 };
 
 //用户有没有信息
 export const hasInfo = async (userId) => {
-  console.log("有没有信息检查用户信息，用户ID:", userId);
-  const response = await api.get(`/messages/check/${userId}`);
-  console.log("检查用户消息结果:", response.data);
-  return response.data;
+    console.log("有没有信息检查用户信息，用户ID:", userId);
+    const response = await api.get(`/messages/check/${userId}`);
+    console.log("检查用户消息结果:", response.data);
+    return response.data;
 };
 
 //用户充值
 export const rechargeUser = async (userId, amount) => {
-  console.log("用户充值，用户ID:", userId, "充值金额:", amount);
-  const response = await api.put(`/users/updateMoney`, {
-    id: userId,
-    money: amount,
-  });
-  console.log("充值结果:", response.data);
-  return response.data;
+    console.log("用户充值，用户ID:", userId, "充值金额:", amount);
+    const response = await api.put(`/users/updateMoney`, {
+        id: userId,
+        money: amount,
+    });
+    console.log("充值结果:", response.data);
+    return response.data;
 };
 
 //! 其他接口
@@ -222,59 +226,64 @@ export const fetchSortCheckAPI = async () => {
 
 //这个是提交软件申请表的接口
 export const submitSoftwareData = async (values, publishId) => {
-  // 创建一个新的 FormData 对象
-  const formData = new FormData();
-  // 将软件信息封装成 JSON 字符串
-  const softwareData = JSON.stringify({
-    authorId: 1, // 假设这个值是固定的
-    price: values.price,
-    introduction: values.introduction,
-    version: values.version,
-    type: values.type,
-    name: values.name,
-  });
-  console.log(softwareData);
-  // 将 JSON 数据和文件一起添加到 FormData 中
-  formData.append("software", softwareData); // 添加软件信息的 JSON 字符串
-  formData.append("picture", values.picture[0].originFileObj); // 图片文件
-  formData.append("file", values.file[0].originFileObj);
-
-  try {
-    const path = "/softwares/addSoftware";
-    // 向后台发送第一个 POST 请求，提交软件信息（使用 FormData）
-
-    const softwareResponse = await api.post(path, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
+    // 创建一个新的 FormData 对象
+    const formData = new FormData();
+    // 将软件信息封装成 JSON 字符串
+    const softwareData = JSON.stringify({
+        authorId: publishId, // 假设这个值是固定的
+        price: values.price,
+        introduction: values.introduction,
+        version: values.version,
+        type: values.type,
+        name: values.name,
     });
+    console.log(softwareData);
+    // 将 JSON 数据和文件一起添加到 FormData 中
+    formData.append('software', softwareData); // 添加软件信息的 JSON 字符串
+    formData.append('picture', values.picture[0].originFileObj); // 图片文件
+    formData.append('file', values.file[0].originFileObj);
 
-    // 假设后台返回的 response.data 中有 softwareId
-    const softwareId = softwareResponse.data.data.id;
-    console.log(softwareId);
+    try {
+        const path = "/softwares/addSoftware";
+        // 向后台发送第一个 POST 请求，提交软件信息（使用 FormData）
 
-    if (softwareId) {
-      // 如果返回了 softwareId，准备第二次请求
-      const secondFormData = new FormData();
-      const secondData = JSON.stringify({
-        userId: 2,
-        softwareId: softwareId,
-        reason: "",
-      });
-      secondFormData.append("applySoftware", secondData);
-      secondFormData.append("file", values.proof[0].originFileObj); // 上传的证明文件
 
-      // 向后台发送第二个 POST 请求，提交申请信息（使用 FormData）
-      const secondpath = "/applySoftwares";
-      const applyResponse = await api.post(secondpath, secondFormData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+        const softwareResponse = await api.post(path, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
 
-      return { success: true, message: "软件申请已提交" };
-    } else {
-      throw new Error("获取 softwareId 失败");
+        // 假设后台返回的 response.data 中有 softwareId
+        const softwareId = softwareResponse.data.data.id;
+        console.log(softwareId);
+
+        if (softwareId) {
+            // 如果返回了 softwareId，准备第二次请求
+            const secondFormData = new FormData();
+            const secondData = JSON.stringify({
+                userId: publishId,
+                softwareId: softwareId,
+                reason: ""
+            });
+            secondFormData.append('applySoftware', secondData);
+            secondFormData.append('file', values.proof[0].originFileObj); // 上传的证明文件
+
+            // 向后台发送第二个 POST 请求，提交申请信息（使用 FormData）
+            const secondpath = "/applySoftwares";
+            const applyResponse = await api.post(secondpath, secondFormData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+
+            return { success: true, message: '软件申请已提交' };
+        } else {
+            throw new Error('获取 softwareId 失败');
+        }
+    } catch (error) {
+        console.error('提交失败:', error);
+        return { success: false, message: '提交失败' };
     }
   } catch (error) {
     console.error("提交失败:", error);
@@ -284,31 +293,31 @@ export const submitSoftwareData = async (values, publishId) => {
 
 //这个是查看开发商发布过的软件的接口
 export const fetchPublishSortAPI = async (authorId) => {
-  // const path = "/softwares/selectLastRecordsPerName";
-  try {
-    // 使用 axios 发送 GET 请求，带上 authorId
-    const response = await api.get("/softwares/selectLastRecordsPerName", {
-      params: {
-        authorId,
-      },
-    });
-    const result = response.data.data; // axios 返回的数据位于 `data` 字段中
+    try {
+        // 使用 axios 发送 GET 请求，带上 authorId
+        const response = await api.get("/softwares/selectLastRecordsPerName", {
+            params: {
+                authorId
+            }
+        });
+        const result = response.data.data;  // axios 返回的数据位于 `data` 字段中
 
-    // 格式化数据，将返回的字段存入 formattedData
-    const formattedData = result.map((item) => ({
-      picture: item.picture, // 图片字段
-      name: item.name, // 名称字段
-      published_time: item.publishedTime, // 发布时间字段
-      softId: item.id, //软件的id
-    }));
+        // 格式化数据，将返回的字段存入 formattedData
+        const formattedData = result.map(item => ({
+            picture: item.picture,         // 图片字段
+            name: item.name,               // 名称字段
+            published_time: item.publishedTime, // 发布时间字段
+            softId: item.id//软件的id
+        }));
 
-    return formattedData; // 返回格式化后的数据
-  } catch (error) {
-    // 打印更详细的错误信息
-    if (error.response) {
-      console.error("API错误:", error.response);
-    } else {
-      console.error("请求错误:", error.message);
+        return formattedData;  // 返回格式化后的数据
+    } catch (error) {
+        // 打印更详细的错误信息
+        if (error.response) {
+            console.error('API错误:', error.response);
+        } else {
+            console.error('请求错误:', error.message);
+        }
     }
   }
 };
@@ -459,32 +468,42 @@ export const fetchAdmitAPI = async (id, userId) => {
 
 //拒绝用户升级申请
 export const fetchBanAPI = async (id, userId) => {
-  const path = "/applyDevelopers/disagreeApplyDeveloper";
-  try {
-    const reason = "操";
-    const requestbody = {
-      id,
-      userId,
-      reason,
-    };
-    const response = await api.post(path, requestbody);
-    return response.message; // 返回格式化后的数据
-  } catch (error) {
-    console.error("请求失败:", error);
-  }
-};
+
+    const path = "/applyDevelopers/disagreeApplyDeveloper"
+    try {
+        const reason = "操"
+        const requestbody = {
+            id,
+            userId,
+            reason
+        }
+        const response = await api.put(path, requestbody)
+        return response.message;  // 返回格式化后的数据
+    } catch (error) {
+        console.error('请求失败:', error);
+    }
+}
+
 
 //获取软件商发布的审核材料
 export const fetchSoftApplyAPI = async (authorId, id) => {
-  const path = "/softwares/getSoftwareWithMaterial";
-  try {
-    const response = await api.get(path, {
-      params: {
-        authorId,
-        id, //请求表的id
-      },
-    });
-    console.log("这是点击进入审核资料", response.data);
+    const path = "/softwares/getSoftwareWithMaterial"
+    try {
+        const response = await api.get(path, {
+            params: {
+                authorId,
+                id//请求表的id
+            }
+        })
+        console.log("这是点击进入审核资料", response.data.data);
+
+        return response.data.data
+        //这里会有三个id 
+    } catch (error) {
+        console.error('请求失败', error);
+
+    }
+}
 
     return response.data.data;
     //这里会有三个id
@@ -495,30 +514,31 @@ export const fetchSoftApplyAPI = async (authorId, id) => {
 
 //同意软件发布时的接口 /softwares/roleUpdate _body id
 export const fetchContollerAdmitAPI = async (softwareId, authorId, id) => {
-  const path1 = "/softwares/roleUpdate";
-  const path2 = "/applySoftwares/agreeApplySoftware";
+    const path1 = "/softwares/roleUpdate";
+    const path2 = "/applySoftwares/agreeApplySoftware";
 
-  // 请求体
-  const body1 = { softwareId };
-  const body2 = { userId: authorId, id, softwareId };
 
-  try {
-    // 使用 Promise.all 同时发起两个请求
-    const [response1, response2] = await Promise.all([
-      api.put(path1, body1),
-      api.put(path2, body2),
-    ]);
+    // 请求体
+    const body1 = { id: softwareId };
+    const body2 = { userId: authorId, id, softwareId };
 
-    // 返回两个请求的结果
-    return {
-      response1: response1.data,
-      response2: response2.data,
-    };
-  } catch (error) {
-    console.error("请求失败", error);
-    // 处理错误，可以返回错误信息
-    throw error;
-  }
+    try {
+        // 使用 Promise.all 同时发起两个请求
+        const [response1, response2] = await Promise.all([
+            api.put(path1, body1),
+            api.put(path2, body2),
+        ]);
+
+        // 返回两个请求的结果
+        return {
+            response1: response1.data,
+            response2: response2.data,
+        };
+    } catch (error) {
+        console.error("请求失败", error);
+        // 处理错误，可以返回错误信息
+        throw error;
+    }
 };
 
 //拒绝软件发布时的接口
@@ -553,11 +573,28 @@ export const fetchControlcancelAPI = async (id, authorId, softwareId) => {
 
 //删除评论的接口
 export const fetchDeletecommentAPI = async (id) => {
-  const path = "/reviews/deleteReview";
-  try {
-    const response = await api.delete(`${path}/${id}`);
-    return response.data;
-  } catch (error) {
-    console.error("请求失败", error);
-  }
-};
+
+    const path = "/reviews/deleteReview"
+    try {
+        const response = await api.delete(`${path}/${id}`)
+        return response.data
+    } catch (error) {
+        console.error("请求失败", error);
+    }
+
+}
+
+export const fecthseekAPI = async (name) => {
+    const path = "/admins/name"
+    try {
+        const response = await api.get(path, {
+            params: {
+                name
+            }
+        })
+        return response.data
+    } catch (error) {
+        console.error("模糊查询失败");
+    }
+}
+

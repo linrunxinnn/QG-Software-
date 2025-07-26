@@ -3,6 +3,7 @@ import { Row, Col, Button, Avatar, Collapse, Typography, Divider } from 'antd';
 import { DownOutlined, UpOutlined } from '@ant-design/icons';
 import styles from './showList.module.css';
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { fetchPublishSortAPI } from "../../api/service/userService";
 import { fetchSoftVersionAPI } from "../../api/service/userService";
 
@@ -13,10 +14,8 @@ const SoftwareList = () => {
   const [expandedRow, setExpandedRow] = useState(null);
   const [softwareData, setSoftwareData] = useState([]); // 将 softwareData 移到这里，作为状态变量
   const [versionData, setVersionData] = useState([])
-
+  const id = useSelector((state) => state.user.user.id);
   useEffect(() => {
-    const authorId = 1; // 这里可以根据实际需要替换为动态值
-
     // 模拟软件数据（只用作示例）
     setSoftwareData([
       {
@@ -58,7 +57,7 @@ const SoftwareList = () => {
     // 调用 fetchPublishSortAPI 获取数据
     const getData = async () => {
       try {
-        const data = await fetchPublishSortAPI(3);
+        const data = await fetchPublishSortAPI(id);
         setSoftwareData(data);  // 更新组件状态
       } catch (error) {
         console.error("获取数据失败:", error);
