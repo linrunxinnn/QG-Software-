@@ -44,10 +44,12 @@ const CommentSection = ({
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [commentText, setCommentText] = useState('');
-  const [rating, setRating] = useState(5);
+  //  注释掉星级相关状态
+  // const [rating, setRating] = useState(5);
   const [currentPage, setCurrentPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [pageSize] = useState(10);
+  const [isUsingMockData, setIsUsingMockData] = useState(false); // 标记是否使用虚拟数据
 
   // 从props获取用户权限信息，并提供默认值
   const userPermissions = {
@@ -65,43 +67,86 @@ const CommentSection = ({
     }
   }, [currentPage, softwareId]);
 
-  // 加载评论数据
+  // 按时间排序评论（新评论在前）
+  const sortCommentsByTime = (commentsArray) => {
+    return commentsArray.sort((a, b) => {
+      const timeA = new Date(a.createTime);
+      const timeB = new Date(b.createTime);
+      return timeB - timeA; // 降序排列，新的在前
+    });
+  };
+
+  // 修复：加载评论数据 - 正确处理无评论和真正错误的情况
   const loadComments = async () => {
     setLoading(true);
+    setIsUsingMockData(false);
+
     try {
+      console.log('正在获取评论数据，软件ID:', softwareId);
+
       // 尝试从API获取评论数据
       const result = await getSoftwareReviews(softwareId);
 
-      if (result.success && result.data) {
-        // 使用API返回的数据
-        const mappedComments = mapReviewsData(result.data);
-        setComments(mappedComments);
-        setTotal(mappedComments.length);
-        console.log('成功从API获取评论数据:', mappedComments);
+      if (result.success) {
+        // API调用成功
+        if (result.isEmpty) {
+          // 后端返回404，表示没有评论（正常情况）
+          console.log('该软件暂无评论');
+          setComments([]);
+          setTotal(0);
+        } else {
+          // 有评论数据，映射并按时间排序
+          const mappedComments = mapReviewsData(result.data);
+          const sortedComments = sortCommentsByTime(mappedComments);
+          console.log('成功从API获取评论数据:', sortedComments);
+          setComments(sortedComments);
+          setTotal(sortedComments.length);
+        }
       } else {
-        // API失败时使用模拟数据
-        console.warn('API获取评论失败，使用模拟数据:', result.error);
-        await loadMockComments();
+        // API调用失败 - 真正的错误（网络错误、服务器错误等）
+        console.error('API获取评论失败，错误类型:', result.errorType, '错误信息:', result.error);
+
+        // 根据错误类型决定是否使用虚拟数据
+        if (result.errorType === 'network_error' || result.errorType >= 500) {
+          // 网络错误或服务器错误，使用虚拟数据作为备用
+          console.warn('使用虚拟数据作为备用方案');
+          await loadMockComments();
+          message.warning('网络连接异常，显示示例评论数据');
+        } else {
+          // 其他错误（如400、401、403等），显示空状态
+          console.warn('设置空评论状态');
+          setComments([]);
+          setTotal(0);
+          message.error('获取评论失败，请稍后重试');
+        }
       }
 
     } catch (error) {
-      console.error('获取评论数据失败:', error);
-      message.error('获取评论失败，使用模拟数据');
-      // 出错时使用模拟数据
+      // 捕获到的异常（网络错误等）
+      console.error('获取评论数据异常:', error);
+
+      // 网络异常时使用虚拟数据
+      console.warn('网络异常，使用虚拟数据');
       await loadMockComments();
+      message.warning('网络连接异常，显示示例评论数据');
+
     } finally {
       setLoading(false);
     }
   };
 
-  // 加载模拟评论数据（保留原有逻辑作为后备）
+  //  加载模拟评论数据（只在网络错误等真正异常情况下使用）
   const loadMockComments = async () => {
     // 模拟延迟
     await new Promise(resolve => setTimeout(resolve, 500));
 
     const mockComments = getMockReviews();
-    setComments(mockComments);
-    setTotal(mockComments.length);
+    const sortedMockComments = sortCommentsByTime(mockComments);
+    setComments(sortedMockComments);
+    setTotal(sortedMockComments.length);
+    setIsUsingMockData(true); // 标记为使用虚拟数据
+
+    console.log('已加载虚拟评论数据作为备用');
   };
 
   // 提交评论
@@ -137,6 +182,8 @@ const CommentSection = ({
         return;
       }
 
+      console.log('正在提交评论:', reviewData);
+
       // 尝试调用API添加评论
       const result = await addSoftwareReview(reviewData);
 
@@ -144,14 +191,15 @@ const CommentSection = ({
         // API调用成功
         console.log('评论添加成功:', result.data);
 
-        // 创建新评论对象用于立即显示
+        // 创建新评论对象用于立即显示（不包含星级）
         const newComment = {
           id: result.data?.id || Date.now().toString(),
           userId: userPermissions.userId,
           username: userPermissions.username,
           avatar: userPermissions.avatar,
           content: commentText,
-          rating: rating,
+          // 移除星级字段
+          // rating: rating,
           createTime: new Date().toLocaleString('zh-CN', {
             year: 'numeric',
             month: '2-digit',
@@ -163,11 +211,22 @@ const CommentSection = ({
           isPurchased: true
         };
 
-        // 更新评论列表
-        setComments([newComment, ...comments]);
-        setTotal(total + 1);
+        // 如果之前使用的是虚拟数据，现在有了真实评论，清除虚拟数据标记
+        if (isUsingMockData) {
+          setIsUsingMockData(false);
+          setComments([newComment]); // 只显示新评论
+          setTotal(1);
+        } else {
+          //  新评论添加到顶部，确保按时间倒序
+          const updatedComments = [newComment, ...comments];
+          const sortedComments = sortCommentsByTime(updatedComments);
+          setComments(sortedComments);
+          setTotal(total + 1);
+        }
+
         setCommentText('');
-        setRating(5);
+        // 注释掉星级重置
+        // setRating(5);
         message.success('评论发表成功');
 
         // 如果有外部回调，调用它
@@ -176,40 +235,13 @@ const CommentSection = ({
         }
 
       } else {
-        // API调用失败，但仍然显示评论（模拟成功）
-        console.warn('API添加评论失败，模拟添加:', result.error);
-
-        const newComment = {
-          id: Date.now().toString(),
-          userId: userPermissions.userId,
-          username: userPermissions.username,
-          avatar: userPermissions.avatar,
-          content: commentText,
-          rating: rating,
-          createTime: new Date().toLocaleString('zh-CN', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit'
-          }),
-          isPurchased: true
-        };
-
-        setComments([newComment, ...comments]);
-        setTotal(total + 1);
-        setCommentText('');
-        setRating(5);
-        message.success('评论发表成功');
-
-        if (onCommentSubmit) {
-          onCommentSubmit(newComment);
-        }
+        // API调用失败
+        console.warn('API添加评论失败:', result.error);
+        message.error(formatReviewErrorMessage(result.error));
       }
 
     } catch (error) {
-      console.error('提交评论失败:', error);
+      console.error('提交评论异常:', error);
       message.error('发表评论失败，请稍后重试');
     } finally {
       setSubmitting(false);
@@ -270,11 +302,20 @@ const CommentSection = ({
         <h3 className={styles.title}>
           用户评论
           <span className={styles.count}>({total})</span>
+          {/* 🔥 显示数据来源提示 */}
+          {isUsingMockData && (
+            <Tag color="orange" size="small" style={{ marginLeft: 8 }}>
+              示例数据
+            </Tag>
+          )}
         </h3>
+        {/* 🔥 注释掉平均评分显示 */}
+        {/* 
         <div className={styles.ratingInfo}>
           <Rate disabled defaultValue={4.5} className={styles.avgRating} />
           <span className={styles.avgScore}>4.5分</span>
         </div>
+        */}
       </div>
 
       {/* 发表评论区域 - 根据购买状态显示 */}
@@ -291,6 +332,8 @@ const CommentSection = ({
           </div>
 
           <div className={styles.formContent}>
+            {/* 🔥 注释掉星级评分输入 */}
+            {/* 
             <div className={styles.ratingRow}>
               <span className={styles.ratingLabel}>评分：</span>
               <Rate
@@ -302,6 +345,7 @@ const CommentSection = ({
                 {['很差', '较差', '一般', '不错', '很棒'][rating - 1]}
               </span>
             </div>
+            */}
 
             <TextArea
               value={commentText}
@@ -346,7 +390,11 @@ const CommentSection = ({
           <div className={styles.loading}>加载中...</div>
         ) : comments.length === 0 ? (
           <Empty
-            description="暂无评论，来发表第一个评论吧~"
+            description={
+              isUsingMockData
+                ? "网络异常，无法获取评论数据"
+                : "暂无评论，来发表第一个评论吧~"
+            }
             className={styles.emptyState}
           />
         ) : (
@@ -374,14 +422,17 @@ const CommentSection = ({
                   </div>
                 </div>
 
-                <div className={styles.commentActions}>
+                {/* <div className={styles.commentActions}> */}
+                  {/* 🔥 注释掉星级显示 */}
+                  {/* 
                   <Rate
                     disabled
                     value={comment.rating}
                     size="small"
                     className={styles.commentRating}
                   />
-                  {canDeleteComment(comment) && (
+                  */}
+                  {/* {canDeleteComment(comment) && (
                     <Popconfirm
                       title="确定要删除这条评论吗？"
                       onConfirm={() => handleDeleteComment(comment.id)}
@@ -397,7 +448,7 @@ const CommentSection = ({
                       />
                     </Popconfirm>
                   )}
-                </div>
+                </div> */}
               </div>
 
               <div className={styles.commentContent}>

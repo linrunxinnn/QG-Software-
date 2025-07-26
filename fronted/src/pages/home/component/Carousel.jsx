@@ -94,6 +94,7 @@ const CarouselComponent = () => {
       setLoading(true);
 
       // 调用API接口获取数据
+      console.log('开始获取轮播图软件数据...');
       const backendData = await fetchCarouselSoftware();
 
       if (backendData && Array.isArray(backendData) && backendData.length > 0) {

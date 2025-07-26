@@ -33,15 +33,7 @@ const ShowCommentCard = () => {
                 const allData = await Promise.all(
                     types.map((type) => fetchSortFromAPI(type)) // 同时发送多个请求
                 );
-
-                // 合并所有数据并格式化
-
-                // 确保所有请求返回后，再更新 data
-                console.log(allData);
-
                 setData(allData);
-                console.log(data);
-
             } catch (error) {
                 console.error('获取数据失败:', error);
             }
@@ -57,7 +49,7 @@ const ShowCommentCard = () => {
             {/* 第一组卡片 - 健康 */}
             {data.length > 0 && (
                 <div>
-                    <Gap sort={typeMap[1]} sortId={1} />
+                    <Gap sort={typeMap[1]} sortId={1} role={3} />
                     <div className="Medium">
                         {data[0].map((item) => (
                             <MediumCard
@@ -75,7 +67,7 @@ const ShowCommentCard = () => {
             {/* 第二组卡片 - 教育 */}
             {data.length > 1 && (
                 <div>
-                    <Gap sort={typeMap[2]} sortId={2} />
+                    <Gap sort={typeMap[2]} sortId={2} role={3} />
                     <div className="Small">
                         {data[1].map((item) => (
                             <SmallCard
@@ -101,6 +93,7 @@ const ShowCommentCard = () => {
                         id={data[2].map((item) => item.id)}
                         onClick={tocomment}
                         sortId={3}
+                        role={3}
                     />
                     <BigCard
                         sort={typeMap[4]}
@@ -110,6 +103,7 @@ const ShowCommentCard = () => {
                         id={data[3].map((item) => item.id)}
                         onClick={tocomment}
                         sortId={4}
+                        role={3}
                     />
                 </div>
             )}

@@ -67,7 +67,6 @@ const Load = ({ value, onChange }) => {
         }}
         accept="image/*,application/pdf,.zip" // 允许上传图片和PDF文件
         beforeUpload={() => false} // 阻止文件自动上传
-
       >
         {uploadButton}
       </Upload>
@@ -77,7 +76,7 @@ const Load = ({ value, onChange }) => {
         footer={null}
         onCancel={() => {
           setPreviewOpen(false);
-          setPreviewImage(''); // 关闭后清空图片
+          setPreviewImage(""); // 关闭后清空图片
           setPreviewPdf(null); // 关闭后清空PDF
         }}
         width={800}

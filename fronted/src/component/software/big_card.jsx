@@ -2,7 +2,7 @@ import React from "react";
 import styles from "./big_card.module.css";
 import { useNavigate } from "react-router-dom";
 
-const BigCard = ({ sort, titles, prices, images, id, onClick, sortId }) => {
+const BigCard = ({ sort, titles, prices, images, id, onClick, sortId, role }) => {
   console.log("BigCard组件接收到的参数:", id);
   const handle = (e) => {
     console.log("点击的ID:", e.currentTarget.id);
@@ -13,7 +13,12 @@ const BigCard = ({ sort, titles, prices, images, id, onClick, sortId }) => {
   function lookmore(sortId) {
     console.log("跳转");
 
-    navigate(`/more/${sortId}`);
+    // 根据role判断跳转路径
+    if (role === 3) {
+      navigate(`/manager/comment/more/${sortId}`);
+    } else {
+      navigate(`/more/${sortId}`);
+    }
   }
   return (
     <div className={styles.categorycard}>
