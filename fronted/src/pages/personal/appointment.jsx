@@ -19,7 +19,7 @@ import { useSelector } from "react-redux";
 const Appointment = () => {
   const navigate = useNavigate();
   const userInfo = useSelector((state) => state.user.user);
-  console.log("！！！！！用户信息:", userInfo);
+  // console.log("！！！！！用户信息:", userInfo);
 
   // 用户角色：'user' 或 'developer'
   const userRole = userInfo?.role || 3;
@@ -49,6 +49,7 @@ const Appointment = () => {
             }
           }
           getMySoftwareList();
+          setLoading(false);
           // const response = await api.getMySoftwareList();
           // setMySoftwareList(response.data);
           // 临时模拟数据
@@ -87,12 +88,14 @@ const Appointment = () => {
           async function getReservedList() {
             try {
               const response = await getPurchase(userInfo.id);
-              setPurchasedList(response.data.records);
+              setPurchasedList(response.data?.records);
+              console.log("获取我的购买列表:", response.data);
             } catch (error) {
               console.error("获取购买列表失败:", error);
             }
           }
           getReservedList();
+          setLoading(false);
           // 临时模拟数据
           // setTimeout(() => {
           //   setReservedList([
@@ -212,13 +215,13 @@ const Appointment = () => {
         </div>
       </div>
 
-      <div className={styles.cardFooter}>
+      {/* <div className={styles.cardFooter}>
         <span className={styles.price}>¥{software.price}</span>
         <button
           className={styles.actionBtn}
           onClick={() => handleSoftwareClick(software, type)}
         >
-          {userRole === "developer" ? (
+          {userRole === 2 ? (
             <>
               <Edit3 size={14} />
               编辑
@@ -227,19 +230,19 @@ const Appointment = () => {
             "查看详情"
           )}
         </button>
-      </div>
+      </div> */}
     </div>
   );
 
   const getPageTitle = () => {
-    return userRole === "developer" ? "我的软件" : "我的预约";
+    return userRole === 2 ? "我的软件" : "我的预约";
   };
 
   const getTotalCount = () => {
-    if (userRole === "developer") {
-      return mySoftwareList.length;
+    if (userRole === 2) {
+      return mySoftwareList?.length;
     }
-    return reservedList.length + purchasedList.length;
+    return reservedList?.length + purchasedList?.length;
   };
 
   if (loading) {
@@ -266,17 +269,13 @@ const Appointment = () => {
         <h1 className={styles.pageTitle}>{getPageTitle()}</h1>
         <div className={styles.headerRight}>
           <div className={styles.statsInfo}>
-            {userRole === "developer" ? (
-              <Package size={16} />
-            ) : (
-              <Clock size={16} />
-            )}
+            {userRole === 2 ? <Package size={16} /> : <Clock size={16} />}
             <span>
-              {getTotalCount()} 个{userRole === "developer" ? "软件" : "项目"}
+              {getTotalCount()} 个{userRole === 2 ? "软件" : "项目"}
             </span>
           </div>
           {/* 开发商角色显示全部按钮 */}
-          {userRole === "developer" && (
+          {userRole === 2 && (
             <button className={styles.viewAllBtn} onClick={handleViewAll}>
               <Package size={16} />
               全部
@@ -287,16 +286,16 @@ const Appointment = () => {
 
       {/* 内容区域 */}
       <div className={styles.content}>
-        {userRole === "developer" ? (
+        {userRole === 2 ? (
           // 开发商视图：我的软件
           <div className={styles.section}>
             <div className={styles.sectionHeader}>
               <Package size={20} />
               <h2>我的软件</h2>
-              <span className={styles.count}>{mySoftwareList.length}</span>
+              <span className={styles.count}>{mySoftwareList?.length}</span>
             </div>
 
-            {mySoftwareList.length === 0 ? (
+            {mySoftwareList?.length === 0 ? (
               <div className={styles.empty}>
                 <Package size={48} />
                 <h3>暂无软件</h3>
@@ -304,7 +303,10 @@ const Appointment = () => {
               </div>
             ) : (
               <div className={styles.softwareList}>
-                {mySoftwareList.map((software) => renderSoftwareCard(software))}
+                {mySoftwareList &&
+                  mySoftwareList.map((software) =>
+                    renderSoftwareCard(software)
+                  )}
               </div>
             )}
           </div>
@@ -339,10 +341,10 @@ const Appointment = () => {
               <div className={styles.sectionHeader}>
                 <ShoppingBag size={20} />
                 <h2>已购买软件</h2>
-                <span className={styles.count}>{purchasedList.length}</span>
+                <span className={styles.count}>{purchasedList?.length}</span>
               </div>
 
-              {purchasedList.length === 0 ? (
+              {purchasedList?.length === 0 ? (
                 <div className={styles.empty}>
                   <ShoppingBag size={48} />
                   <h3>暂无购买</h3>
@@ -350,9 +352,10 @@ const Appointment = () => {
                 </div>
               ) : (
                 <div className={styles.softwareList}>
-                  {purchasedList.map((software) =>
-                    renderSoftwareCard(software, "purchased")
-                  )}
+                  {purchasedList &&
+                    purchasedList.map((software) =>
+                      renderSoftwareCard(software, "purchased")
+                    )}
                 </div>
               )}
             </div>

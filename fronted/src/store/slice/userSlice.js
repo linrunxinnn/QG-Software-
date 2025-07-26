@@ -47,6 +47,7 @@ export const registerUser = createAsyncThunk(
     console.log("注册用户数据:", userData);
     try {
       const data = await register(userData);
+      console.log("注册结果:", data);
       return data;
     } catch (error) {
       return rejectWithValue(error.response?.data || "注册失败");
@@ -74,7 +75,7 @@ export const updateUsername = createAsyncThunk(
     console.log("更新用户名请求数据111:", { userId, newUsername });
     try {
       const response = await changeUsername(userId, newUsername);
-      return response.data;
+      return { ...response.data, name: newUsername };
     } catch (error) {
       return rejectWithValue(error.response?.data || "更改用户名失败");
     }
@@ -179,11 +180,11 @@ const userSlice = createSlice({
         state.loading = false;
         state.user = action.payload.user;
         state.token = action.payload.token;
-        state.role = action.payload.role;
+        state.role = 3;
         state.error = null;
         localStorage.setItem("user", JSON.stringify(action.payload.data.user));
         localStorage.setItem("token", action.payload.data.token);
-        localStorage.setItem("role", action.payload.data.user.role);
+        localStorage.setItem("role", 3);
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
@@ -202,6 +203,28 @@ const userSlice = createSlice({
       .addCase(updateAvatar.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      .addCase(updateUsername.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateUsername.fulfilled, (state, action) => {
+        console.log("更新用户名成功:", action.payload.name);
+        state.loading = false;
+        state.user.name = action.payload.name;
+        let currentUserInLocalStorage = JSON.parse(
+          localStorage.getItem("user") || "{}"
+        );
+
+        // 2. 更新 localStorage 中用户数据的 name 属性
+        currentUserInLocalStorage = {
+          ...currentUserInLocalStorage,
+          name: action.payload.name, // 这里使用 newUsername (字符串)，而不是 action.payload (对象)
+        };
+
+        // 3. 将更新后的 JavaScript 对象转换为 JSON 字符串，再存入 localStorage
+        localStorage.setItem("user", JSON.stringify(currentUserInLocalStorage));
+        state.error = null;
       });
   },
 });

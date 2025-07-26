@@ -39,6 +39,7 @@ export const register = async (userData) => {
     code: userData.code,
     user: { email: userData.email, password: userData.password },
   });
+  console.log("注册结果:", response.data);
   return response.data;
 };
 
@@ -77,7 +78,7 @@ export const changeUsername = async (id, name) => {
     id: id,
     name: name,
   });
-  return response.data;
+  return response.data; // 返回数据和id
 };
 
 //更改手机号
