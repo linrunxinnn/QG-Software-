@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Tag, Menu, Layout } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { fetchSortCheckAPI } from '../../../api/service/userService';
+import { all } from 'axios';
 
 const { Header, Content } = Layout;
 
@@ -21,8 +22,17 @@ const SoftwareList = () => {
                 console.error('获取数据失败:', error);
             }
         };
-        fetchAllCheck();
-    }, []);
+        // 加一个判断标志，防止多次请求
+        let isMounted = true;
+        if (isMounted) {
+            fetchAllCheck();
+            console.log("第一次挂载");
+
+        }
+        return () => {
+            isMounted = false; // 在卸载时防止在异步操作结束后修改状态
+        };
+    }, []); // 只有组件挂载时触发
 
     // 过滤数据函数，根据 selectedStatus 来过滤
     const filterSoftware = () => {
@@ -72,9 +82,14 @@ const SoftwareList = () => {
     };
 
     // 跳转到审核页面详情
-    const handleRowClick = (softwareName) => {
-        navigate(`detail/${softwareName}`);  // 跳转到软件的详情页面
+    const handleRowClick = (record) => {
+        console.log(record);//输出3
+
+        navigate(`detail/${record.name}`, {
+            state: { authorId: record.authorId, id: record.id }
+        });  // 跳转到软件的详情页面
     };
+
 
     return (
         <Layout>
@@ -98,7 +113,7 @@ const SoftwareList = () => {
                     dataSource={filterSoftware()}  // 使用过滤后的数据
                     pagination={false}  // 可以根据需求启用分页
                     onRow={(record) => ({
-                        onClick: () => handleRowClick(record.name),  // 点击行时触发，record对应的是当前行的所有信息
+                        onClick: () => handleRowClick(record),  // 点击行时触发，record对应的是当前行的所有信息
                     })}
                 />
             </Content>

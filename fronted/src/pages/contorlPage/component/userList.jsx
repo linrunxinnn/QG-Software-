@@ -5,47 +5,61 @@ import { BellOutlined } from "@ant-design/icons";
 import { fetchAccountAPI } from "../../../api/service/userService"
 import { fetchstatusAPI } from "../../../api/service/userService"
 import { fetchApplyAPI } from "../../../api/service/userService"
-
 import { fetchBanAPI } from "../../../api/service/userService"
 import { fetchAdmitAPI } from "../../../api/service/userService"
+import { fetchfrezeeAPI } from "../../../api/service/userService"
 
 const UserList = () => {
     //渲染的数据
     const [users, setUsers] = useState([])
     const [searchQuery, setSearchQuery] = useState('');
     const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
-    const [expandedRow, setexpandedRow] = useState(null);
-    const [Application, setApplication] = useState([
-        { name: 'Meryam', reason: '申请理由1', material: '佐证材料1' },
-        { name: 'John', reason: '申请理由2', material: '佐证材料2' },
-        // 你可以添加更多的用户
-    ])
+    const [expandedRow, setexpandedRow] = useState(null);//是否展开用户申请的详情
+    const [Application, setApplication] = useState([])//用户的申请数据
+
+
     // 更新搜索框的值
     const handleSearchChange = (e) => {
         setSearchQuery(e.target.value);
     };
 
     // 冻结用户的处理函数
-    const handleFreezeUser = (useId) => {
-        Modal.confirm({
-            title: '确认冻结用户',
-            content: `您确定要冻结该账户吗？`,
-            okText: '确认',
-            cancelText: '取消',
-            onOk: () => {
-                fetchstatusAPI(useId)
-            },
-        });
+    const handleFreezeUser = (useId, useStatus) => {
+        if (useStatus === 1) {
+            Modal.confirm({
+                title: '确认冻结用户',
+                content: `您确定要冻结该账户吗？`,
+                okText: '确认',
+                cancelText: '取消',
+                onOk: () => {
+                    fetchstatusAPI(useId, "2024-12-31 23:59:59"); // 冻结用户
+                },
+            });
+        } else {
+            Modal.confirm({
+                title: '确认解冻用户',
+                content: `您确定要解冻该账户吗？`,
+                okText: '确认',
+                cancelText: '取消',
+                onOk: () => {
+                    fetchfrezeeAPI(useId); // 解冻用户
+                },
+            });
+        }
     };
 
     //控制弹窗
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const showModal = () => {
-        setIsModalOpen(true);
-        useEffect(() => {
-            setApplication(fetchApplyAPI());
-        }, []);
-
+    const showModal = async () => { // 添加async关键字
+        try {
+            setIsModalOpen(true);
+            const applications = await fetchApplyAPI();
+            setApplication(applications);
+            console.log(Application);
+            console.log(Application[0].userId);
+        } catch (error) {
+            console.error('获取申请数据失败:', error);
+        }
     };
     const handleOk = () => {
         setIsModalOpen(false);
@@ -64,8 +78,10 @@ const UserList = () => {
     const fetchUsers = async () => {
         try {
             const response = await fetchAccountAPI();
-            if (response && response.data) {
-                setUsers(response.data);
+            console.log(response);
+
+            if (response) {
+                setUsers(response);
             }
         } catch (error) {
             console.error("获取用户数据失败", error);
@@ -79,47 +95,26 @@ const UserList = () => {
     }, []);
 
 
-    const admit = async (id) => {
+    const admit = async (id, userId) => {
         try {
-            const response = await fetchAdmitAPI(id);
+            setexpandedRow(false)
+            console.log(userId);
+            const response = await fetchAdmitAPI(id, userId);
         } catch (error) {
-            console.error("获取用户数据失败", error);
-            message.error("获取用户数据失败");
+            console.error("同意用户申请失败", error);
+            message.error("同意用户申请失败");
         }
     }
 
-    const Ban = async (id) => {
+    const Ban = async (id, userId) => {
         try {
-            const response = await fetchBanAPI(id);
+            setexpandedRow(false)
+            const response = await fetchBanAPI(id, userId);
         } catch (error) {
-            console.error("获取用户数据失败", error);
-            message.error("获取用户数据失败");
+            console.error("拒绝用户申请失败", error);
+            message.error("拒绝用户申请失败");
         }
     }
-
-
-
-    // // 虚拟数据
-    // setUsers([
-    //     {
-    //         id: 1,
-    //         name: '张三',
-    //         avatar: 'https://joeschmoe.io/api/v1/zhangsan',
-    //         status: 1,
-    //         role: 1,
-    //         startTime: '2025-01-01',
-    //         endTime: '2025-12-31',
-    //     },
-    //     {
-    //         id: 2,
-    //         name: '李四',
-    //         avatarUrl: 'https://joeschmoe.io/api/v1/lisi',
-    //         status: 0,
-    //         role: 3,
-    //         startTime: '',
-    //         endTime: '',
-    //     },
-    // ]);
     return (
         <div className="user-list-container">
             {/* 搜索框 */}
@@ -150,11 +145,11 @@ const UserList = () => {
                         actions={[
                             <Button
                                 icon={<LockOutlined />}
-                                onClick={() => handleFreezeUser(user.id)}
+                                onClick={() => handleFreezeUser(user.id, user.status)}
                                 type="primary"
                                 ghost
                             >
-                                冻结
+                                {user.status ? "冻结" : "解冻"}
                             </Button>,
                         ]}
                     >
@@ -165,7 +160,7 @@ const UserList = () => {
                         {/* 用户冻结状态和身份 */}
                         <div style={{ display: 'flex', flexDirection: 'column' }}>
                             <span style={{ fontSize: '14px', color: '#888' }}>
-                                {user.status ? (
+                                {!user.status ? (
                                     <span style={{ color: '#FF4D4F', fontWeight: '500' }}>
                                         已冻结 | 封号时间: {user.startTime} - {user.endTime}
                                     </span>
@@ -218,8 +213,8 @@ const UserList = () => {
                                             <div>
                                                 <img src={apply.material} alt={`material-${apply.name}`} style={{ maxWidth: '100%' }} />
                                             </div>
-                                            <Button onClick={() => admit(apply.id)} >同意</Button>
-                                            <Button onClick={() => Ban(apply.id)}>取消</Button>
+                                            <Button onClick={() => admit(apply.id, apply.userId)} >同意</Button>
+                                            <Button onClick={() => Ban(apply.id, apply.userId)}>取消</Button>
                                         </div>
                                     </Collapse.Panel>
                                 </Collapse>

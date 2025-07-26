@@ -1,24 +1,51 @@
-import React, { useState } from 'react';
-import { Input, Button, Upload, Form, Switch, InputNumber, Image, Modal, message, Row, Col, Select } from 'antd';
-import { UploadOutlined, CloseCircleOutlined } from '@ant-design/icons';
-import { useParams } from 'react-router-dom';
-import styles from "./softdetail.module.css"
-import Load from "./load.jsx"
+import React, { useState, useEffect } from 'react';
+import { Input, Button, Form, InputNumber, Modal, message, Row, Col, Select } from 'antd';
+import { CloseCircleOutlined } from '@ant-design/icons';
+import { useParams, useLocation } from 'react-router-dom';
+import styles from "./softdetail.module.css";
+import Load from "./load.jsx"; // 加载组件
+import { fetchSoftApplyAPI } from "../../../api/service/userService.js";
+import { fetchContollerAdmitAPI } from "../../../api/service/userService.js";
+import { fetchControlcancelAPI } from "../../../api/service/userService.js";
 
 const CheckDetail = () => {
-    const { name } = useParams();  // 获取路由中的动态参数 name来拉取信息
-
-
-    // 是否驳回
-    const [isRejected, setIsRejected] = useState(false);
+    const { name } = useParams();  // 获取路由中的动态参数 name 来拉取信息
     const [form] = Form.useForm();
+    const location = useLocation();
+    const { authorId, id, } = location.state;
+    const [data, setData] = useState(null);  // 初始为 null
+    const [loading, setLoading] = useState(true);  // 加载状态
+
+    useEffect(() => {
+        // 检查 id 和 authorId 是否为空
+        if (authorId && id) {
+            const fetchData = async () => {
+                try {
+                    // 调用 API 获取数据
+                    const result = await fetchSoftApplyAPI(authorId, id);
+                    setData(result);  // 设置数据
+                } catch (error) {
+                    console.error('Failed to fetch data:', error);
+                } finally {
+                    setLoading(false);  // 数据加载完成后设置为 false
+                }
+            };
+            fetchData();  // 调用异步函数获取数据
+        } else {
+            console.log('id or authorId is missing or invalid');
+        }
+    }, [authorId, id]);
 
     // 提交表单处理函数
-    const onSubmit = (values) => {
-        console.log('Submitted values:', values);
-        message.success('软件信息已更新');
-    };
+    const onSubmit = async () => {
 
+        const result = await fetchContollerAdmitAPI(id, authorId, data.id);
+        if (result.success) {
+            message.success(result.message);
+        } else {
+            message.error(result.message);
+        }
+    }
     // 驳回申请
     const handleReject = () => {
         Modal.confirm({
@@ -26,32 +53,30 @@ const CheckDetail = () => {
             content: '您确定要驳回该软件的发布申请吗？',
             okText: '确认',
             cancelText: '取消',
-            onOk: () => {
-                setIsRejected(true);
+            onOk: async () => {
+                try {
+                    const result = await fetchControlcancelAPI(id, authorId, data.id);
+                } catch (error) {
+                    console.error('Failed to fetch data:', error);
+                }
                 message.error('软件发布申请已驳回');
             },
         });
     };
-    //从后台拉取
-    const software = {
-        name: '示例软件',
-        description: '这是一个很棒的软件。',
-        proofMaterials: [],
-        package: [],
-        preSale: true,
-        price: 199.99,
-        cover: [],
-    };
 
+    // 如果数据还在加载中，显示加载组件
+    if (loading) {
+        return <Load />;
+    }
 
     return (
-        <div className={styles.softwareDetailContainer}> {/* 使用 CSS Modules 中的类名 */}
+        <div className={styles.softwareDetailContainer}>
             <h2>软件详细信息</h2>
 
             <Form
                 form={form}
                 layout="vertical"
-                initialValues={software}
+                initialValues={data}  // 使用 data 作为 initialValues 填充表单
                 onFinish={onSubmit}
             >
                 {/* 软件名称 */}
@@ -76,17 +101,14 @@ const CheckDetail = () => {
                 <Row gutter={16}>
                     <Col span={8}>
                         <Form.Item label="软件佐证材料">
-                            <Load />
-                        </Form.Item>
-                    </Col>
-                    <Col span={8}>
-                        <Form.Item label="软件包">
-                            <Load />
+                            {/* 上传组件可以在这里添加 */}
                         </Form.Item>
                     </Col>
                     <Col span={8}>
                         <Form.Item label="软件封面">
-                            <Load />
+                            <div style={{ width: "50%", height: "50%" }}>
+                                <img src="" alt="image" />
+                            </div>
                         </Form.Item>
                     </Col>
                 </Row>
@@ -115,21 +137,28 @@ const CheckDetail = () => {
                             </Select>
                         </Form.Item>
                     </Col>
+                    <Col span={8}>
+                        <Form.Item
+                            name="version"
+                            label="版本"
+                            rules={[{ required: true, message: '请输入版本' }]}
+                        >
+                            <InputNumber min={0} step={0.01} />
+                        </Form.Item>
+                    </Col>
                 </Row>
-
-
 
                 {/* 确认按钮 */}
                 <Form.Item>
                     <Button type="primary" htmlType="submit">
-                        发布
+                        同意
                     </Button>
                     <Button
                         style={{ marginLeft: '10px' }}
-                        onClick={() => setEditable(!editable)}
+                        onClick={handleReject}
                         icon={<CloseCircleOutlined />}
                     >
-                        取消发布
+                        驳回
                     </Button>
                 </Form.Item>
             </Form>
