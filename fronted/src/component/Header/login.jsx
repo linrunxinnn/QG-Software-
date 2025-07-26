@@ -2,10 +2,11 @@ import React, { use, useState } from "react";
 import { Button, Form, Input, message, Typography, Space } from "antd";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { sendCode } from "../../api/service/userService.js";
+import { sendCode, loginCode } from "../../api/service/userService.js";
 import {
   loginUserByPassword,
   loginUserByCode,
+  setUser,
 } from "../../store/slice/userSlice.js";
 const { Text } = Typography;
 
@@ -32,16 +33,26 @@ const LoginForm = ({ onSuccess }) => {
         const result = await dispatch(loginUserByPassword(values)).unwrap();
         onSuccess();
         message.success("登录成功");
+        console.log("!!!!!!!!!!!!!!!!!role", result);
         // 返回的用户信息中有身份，如果身份为管理员则还要跳转到管理员页面
-        if (result.role === 1) {
+        if (result.data.user.role === 1) {
+          console.log("成功成为管理员");
           navigator("/manager");
         }
       } else {
-        const result = await dispatch(loginUserByCode(values)).unwrap();
+        const result = await loginCode(values);
+        console.log("验证码登录结果:", result);
+        if (result) {
+          dispatch(setUser(result.data.user));
+          localStorage.setItem("user", JSON.stringify(result.data.user));
+          localStorage.setItem("token", result.data.token);
+          localStorage.setItem("role", result.data.user.role);
+        }
         onSuccess();
         message.success("登录成功");
         // 返回的用户信息中有身份，如果身份为管理员则还要跳转到管理员页面
         if (result.role === 1) {
+          console.log("成功成为管理员");
           navigator("/manager");
         }
       }

@@ -33,6 +33,7 @@ export const loginPassword = async (credentials) => {
 };
 
 export const loginCode = async (credentials) => {
+  console.log("登录请求", credentials);
   const response = await api.get("/users/code", {
     params: credentials,
   });
@@ -128,8 +129,8 @@ export const getDeveloperSoftware = async (authorId) => {
 //用户有没有信息
 export const hasInfo = async (userId) => {
   console.log("有没有信息检查用户信息，用户ID:", userId);
-  const response = await api.get(`/messages/check/${userId}`);
-  console.log("检查用户消息结果:", response.data);
+  //   const response = await api.get(`/messages/check/${userId}`);
+  console.log("检查用户消息结果:");
   return response.data;
 };
 
