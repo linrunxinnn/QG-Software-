@@ -25,6 +25,7 @@ import ManagerRouter from "../component/ProtectedRoute/manageRouter.jsx";
 import Moresoft from "../pages/home/component/moresoft.jsx";
 import CommentSection from "../component/CommentSection/CommentSection.jsx";
 import EditorDetail from "../pages/publish/editor.jsx";
+import CommentList from "../pages/contorlPage/component/detailcomment.jsx"
 
 export const router = createBrowserRouter([
   {
@@ -132,9 +133,9 @@ export const router = createBrowserRouter([
     //管理端路径
     path: "/manager",
     element: (
-      <ManagerRouter>
-        <ControlPage />
-      </ManagerRouter>
+      // <ManagerRouter>
+      <ControlPage />
+      // </ManagerRouter>
     ),
     children: [
       {
@@ -148,11 +149,10 @@ export const router = createBrowserRouter([
       {
         path: "comment",
         element: <ShowSoft />,
-        children: [],
       },
       {
-        path: "comment/detail",
-        element: <CommentSection />,
+        path: "comment/:id",
+        element: <CommentList />,
       },
       {
         path: "detail/:name",

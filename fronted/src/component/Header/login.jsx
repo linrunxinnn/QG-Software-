@@ -33,7 +33,7 @@ const LoginForm = ({ onSuccess }) => {
         onSuccess();
         message.success("登录成功");
         // 返回的用户信息中有身份，如果身份为管理员则还要跳转到管理员页面
-        if (result.role === 3) {
+        if (result.role === 1) {
           navigator("/manager");
         }
       } else {
@@ -41,7 +41,7 @@ const LoginForm = ({ onSuccess }) => {
         onSuccess();
         message.success("登录成功");
         // 返回的用户信息中有身份，如果身份为管理员则还要跳转到管理员页面
-        if (result.role === 3) {
+        if (result.role === 1) {
           navigator("/manager");
         }
       }

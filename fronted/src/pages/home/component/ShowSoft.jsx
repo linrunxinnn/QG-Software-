@@ -22,91 +22,102 @@ const ShowCommentCard = () => {
   };
 
   const [data, setData] = useState([]); // 存储返回的数据
-  //要连接时再注释掉
-  // //当组件被挂载时，按类别发送请求
-  // useEffect(() => {
-  //     const types = ['健康', '教育', '运动', '办公'];  // 请求不同类型的数据
-  //     const fetchAllSort = async () => {
-  //         try {
-  //             const allData = await Promise.all(
-  //                 types.map((type) => fetchSortFromAPI(type))  // 同时发送多个请求
-  //             );
 
-  //             // 格式化后的数据被返回为一个二维数组，合并成一个数组
-  //             setData(allData.flat());
-  //         } catch (error) {
-  //             console.error('获取数据失败:', error);
-  //         }
-  //     };
-  //     fetchAllSort();
-  // }, []);
-  useEffect(
-    () =>
-      //示例数据
-      setData([
-        // 健康
-        [
-          {
-            id: 1,
-            picture: "https://picsum.photos/600/400?random=3",
-            name: "产品1",
-            price: "99.99",
-          },
-          {
-            id: 2,
-            picture: "https://picsum.photos/600/400?random=3",
-            name: "产品2",
-            price: "199.99",
-          },
-        ],
-        // 教育
-        [
-          {
-            id: 3,
-            picture: "https://picsum.photos/600/400?random=3",
-            name: "产品1",
-            price: "99.99",
-          },
-          {
-            id: 4,
-            picture: "https://picsum.photos/600/400?random=3",
-            name: "产品2",
-            price: "199.99",
-          },
-        ],
-        // 运动
-        [
-          {
-            id: 5,
-            picture: "https://picsum.photos/600/400?random=3",
-            name: "产品1",
-            price: "99.99",
-          },
-          {
-            id: 6,
-            picture: "https://picsum.photos/600/400?random=3",
-            name: "产品2",
-            price: "199.99",
-          },
-        ],
-        // 办公
-        [
-          {
-            id: 7,
-            picture: "https://picsum.photos/600/400?random=3",
-            name: "产品1",
-            price: "99.99",
-          },
-          {
-            id: 8,
-            picture: "https://picsum.photos/600/400?random=3",
-            name: "产品2",
-            price: "199.99",
-          },
-        ],
-      ]),
-    []
-  );
+  // 当组件挂载时，发送请求
+  useEffect(() => {
+    const types = ['健康', '教育', '运动', '办公']; // 请求不同类型的数据
+
+    const fetchAllSort = async () => {
+      try {
+        // 使用 Promise.all 并行请求所有类别
+        const allData = await Promise.all(
+          types.map((type) => fetchSortFromAPI(type)) // 同时发送多个请求
+        );
+
+        // 合并所有数据并格式化
+
+        // 确保所有请求返回后，再更新 data
+        console.log(allData);
+
+        setData(allData);
+        console.log(data);
+
+      } catch (error) {
+        console.error('获取数据失败:', error);
+      }
+    };
+
+    fetchAllSort();
+  }, []); // 空数组意味着只在组件挂载时执行一次
+
+
+  // useEffect(
+  //   () =>
+  //     //示例数据
+  //     setData([
+  //       // 健康
+  //       [
+  //         {
+  //           id: 1,
+  //           picture: "https://picsum.photos/600/400?random=3",
+  //           name: "产品1",
+  //           price: "99.99",
+  //         },
+  //         {
+  //           id: 2,
+  //           picture: "https://picsum.photos/600/400?random=3",
+  //           name: "产品2",
+  //           price: "199.99",
+  //         },
+  //       ],
+  //       // 教育
+  //       [
+  //         {
+  //           id: 3,
+  //           picture: "https://picsum.photos/600/400?random=3",
+  //           name: "产品1",
+  //           price: "99.99",
+  //         },
+  //         {
+  //           id: 4,
+  //           picture: "https://picsum.photos/600/400?random=3",
+  //           name: "产品2",
+  //           price: "199.99",
+  //         },
+  //       ],
+  //       // 运动
+  //       [
+  //         {
+  //           id: 5,
+  //           picture: "https://picsum.photos/600/400?random=3",
+  //           name: "产品1",
+  //           price: "99.99",
+  //         },
+  //         {
+  //           id: 6,
+  //           picture: "https://picsum.photos/600/400?random=3",
+  //           name: "产品2",
+  //           price: "199.99",
+  //         },
+  //       ],
+  //       // 办公
+  //       [
+  //         {
+  //           id: 7,
+  //           picture: "https://picsum.photos/600/400?random=3",
+  //           name: "产品1",
+  //           price: "99.99",
+  //         },
+  //         {
+  //           id: 8,
+  //           picture: "https://picsum.photos/600/400?random=3",
+  //           name: "产品2",
+  //           price: "199.99",
+  //         },
+  //       ],
+  //     ]),
+  //   []
+  // );
 
   //跳转用item的id进行拼接
   return (
@@ -157,6 +168,7 @@ const ShowCommentCard = () => {
             images={data[2].map((item) => item.picture)}
             id={data[2].map((item) => item.id)}
             onClick={tocomment}
+            sortId={3}
           />
           <BigCard
             sort={typeMap[4]}
@@ -165,6 +177,7 @@ const ShowCommentCard = () => {
             images={data[3].map((item) => item.picture)}
             id={data[3].map((item) => item.id)}
             onClick={tocomment}
+            sortId={4}
           />
         </div>
       )}

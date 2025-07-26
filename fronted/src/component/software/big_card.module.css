@@ -73,3 +73,7 @@
   margin-right: 10px;
   /* 防止按钮文字换行 */
 }
+
+.more {
+  float: right;
+}
