@@ -212,9 +212,9 @@ const userSlice = createSlice({
         state.error = null;
       })
       .addCase(updateAvatar.fulfilled, (state, action) => {
-        console.log("更新头像成功:", action.payload.avatar);
+        console.log("更新头像成功:", action.payload.data);
         state.loading = false;
-        state.user.avatar = action.payload.avatar;
+        state.user.avatar = action.payload.data;
         localStorage.setItem("user", JSON.stringify(state.user));
         state.error = null;
       })

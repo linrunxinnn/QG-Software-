@@ -67,6 +67,7 @@ const Header = () => {
       if (isLoggedIn) {
         const userId = userInfo.id;
         console.log("检查用户信息，用户ID:", userId);
+        console.log("用户信息:", userInfo);
         try {
           const response = await hasInfo(userId);
           if (!response.data) {

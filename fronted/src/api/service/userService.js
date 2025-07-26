@@ -60,9 +60,10 @@ export const sendCode = async (email) => {
 };
 
 //重设密码
-export const resetPassword = async (id, password, code) => {
-  const response = await api.post(`/users/update/${id}`, {
-    user: { id, password },
+export const resetPassword = async (email, password, code) => {
+  console.log("重设密码请求数据:", { email, password, code });
+  const response = await api.put(`/users/updatePassword/${code}`, {
+    user: { email, password },
   });
   console.log("重设密码结果:", response.data);
   return response.data;

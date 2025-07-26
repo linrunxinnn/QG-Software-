@@ -60,8 +60,12 @@ const ResetForm = ({ onSuccess }) => {
         return;
       }
       console.log("提交重设密码表单:", values);
-      const id = JSON.parse(localStorage.getItem("user")).id;
-      const result = await resetPassword(id, values.password, values.code);
+
+      const result = await resetPassword(
+        values.email,
+        values.password,
+        values.code
+      );
       onSuccess(1);
     } catch (error) {
       console.log(error.message);
