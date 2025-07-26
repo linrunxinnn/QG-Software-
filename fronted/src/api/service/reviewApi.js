@@ -13,6 +13,8 @@ import api from '../index.js';
 export const getSoftwareReviews = async (softwareId) => {
   try {
     const response = await api.get(`/reviews/reviewOfSoftware/${softwareId}`);
+    console.log(response.data.data);
+
     return {
       success: true,
       data: response.data.data
@@ -43,7 +45,7 @@ export const addSoftwareReview = async (reviewData) => {
     });
     return {
       success: true,
-      data: response.data
+      data: response.data.data
     };
   } catch (error) {
     console.error('添加评论失败:', error);

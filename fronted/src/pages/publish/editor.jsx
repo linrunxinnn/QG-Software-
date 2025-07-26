@@ -7,13 +7,15 @@ import { fetchUpdateAPI } from "../../api/service/userService"
 
 const EditorDetail = () => {
     const location = useLocation();
+    //从父组件接收state
     const { Id, intro, price } = location.state || {};
     const [form] = Form.useForm();
     // 提交表单时的处理函数
     const onSubmit = async (values) => {
-        const data = { ...values, versionId: Id };
+        const data = { ...values, id: Id };
         try {
-            const response = await fetchUpdateAPI(data.versionId, data);
+            console.log(data);
+            const response = await fetchUpdateAPI(data);
             console.log('成功提交:', response);
             message.success('提交成功');
         } catch (error) {
@@ -54,7 +56,7 @@ const EditorDetail = () => {
                 </Row>
                 <Form.Item>
                     <Button type="primary" htmlType="submit">
-                        提交
+                        修改提交
                     </Button>
                 </Form.Item>
             </Form>

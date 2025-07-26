@@ -1,0 +1,53 @@
+.commentList {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+}
+
+.commentItem {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.commentHeader {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.commentAvatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.commentUsername {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.commentContent {
+    margin: 10px 0;
+    font-size: 14px;
+}
+
+.commentTimestamp {
+    font-size: 12px;
+    color: #888;
+}
+
+.deleteButton {
+    padding: 5px 10px;
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.deleteButton:hover {
+    background-color: #ff1a1a;
+}
