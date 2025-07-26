@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
 import { Input, Button, Form, InputNumber, Modal, message, Row, Col, Select } from 'antd';
 import { UploadOutlined, CloseCircleOutlined } from '@ant-design/icons';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import styles from "./softdetail.module.css";
 import Load from "./load.jsx";
 import { submitSoftwareData } from "../../api/service/userService"
 
 const CheckDetail = () => {
     const { name } = useParams();  // 获取路由中的动态参数 name来拉取信息
-    const [isRejected, setIsRejected] = useState(false);
     const [form] = Form.useForm();
+    const [isOpen, setisOpen] = useState(false);  // 初始值改为 false
+    const [value, setvalue] = useState({});
+    const navigate = useNavigate()
 
     // 提交表单处理函数
     const onSubmit = async (values, name) => {
-        console.log(values);
-
         const result = await submitSoftwareData(values, name);
         if (result.success) {
             message.success(result.message);
@@ -23,19 +23,37 @@ const CheckDetail = () => {
         }
     };
 
+    // 显示弹窗，确认是否上传
+    const ensure = async (values) => {
+        setisOpen(true);  // 设置为 true 显示弹窗
+        setvalue(values); // 提前储存数据
+    };
+
     // 驳回申请
     const handleReject = () => {
         Modal.confirm({
-            title: '确认驳回',
-            content: '您确定要驳回该软件的发布申请吗？',
+            title: '确认取消',
+            content: '您确定要取消该软件的发布申请吗？',
             okText: '确认',
             cancelText: '取消',
             onOk: () => {
-                setIsRejected(true);
-                message.error('软件发布申请已驳回');
+                setisOpen(false);
+                navigate("/publish")
+                message.error('软件发布申请已取消');
             },
+            onCancel: () => {
+                setisOpen(false);
+            }
         });
     };
+
+    // 发布提交表单请求
+    const ensureRequest = () => {
+        setisOpen(false); // 关闭弹窗
+        if (value) {
+            onSubmit(value, name);
+        }
+    }
 
     return (
         <div className={styles.softwareDetailContainer}>
@@ -44,7 +62,7 @@ const CheckDetail = () => {
             <Form
                 form={form}
                 layout="vertical"
-                onFinish={onSubmit}
+                onFinish={(values) => ensure(values)} // 提交时触发弹窗
             >
                 {/* 软件名称 */}
                 <Form.Item
@@ -54,7 +72,6 @@ const CheckDetail = () => {
                 >
                     <Input />
                 </Form.Item>
-
 
                 {/* 软件介绍 */}
                 <Form.Item
@@ -136,6 +153,17 @@ const CheckDetail = () => {
                     </Button>
                 </Form.Item>
             </Form>
+
+            {/* 确认发布的 Modal */}
+            <Modal
+                open={isOpen}
+                onOk={ensureRequest} // 确认时调用 ensureRequest 提交数据
+                onCancel={() => setisOpen(false)} // 取消时关闭弹窗
+                okText="确认发布"
+                cancelText="取消"
+            >
+                确认发布吗？
+            </Modal>
         </div>
     );
 };

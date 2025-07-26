@@ -32,33 +32,33 @@ const SoftwareList = () => {
     ]);
 
 
-    //模拟版本数据
-    setVersionData(
-      [
-        {
-          picture: "version1.jpg",
-          version: "v1.0",
-          published_time: "2025-07-20 12:00:00",
-          versionId: "1",
-          introduction: "垃圾接口",
-          price: "无价之宝",
-        },
-        {
-          picture: "version2.jpg",
-          version: "v1.1",
-          published_time: "2025-07-22 09:00:00",
-          versionId: "2",
-          introduction: "垃圾接口",
-          price: "无价之宝",
-        }
-      ]
-    )
+    // //模拟版本数据
+    // setVersionData(
+    //   [
+    //     {
+    //       picture: "version1.jpg",
+    //       version: "v1.0",
+    //       published_time: "2025-07-20 12:00:00",
+    //       versionId: "1",
+    //       introduction: "垃圾接口",
+    //       price: "无价之宝",
+    //     },
+    //     {
+    //       picture: "version2.jpg",
+    //       version: "v1.1",
+    //       published_time: "2025-07-22 09:00:00",
+    //       versionId: "2",
+    //       introduction: "垃圾接口",
+    //       price: "无价之宝",
+    //     }
+    //   ]
+    // )
 
 
     // 调用 fetchPublishSortAPI 获取数据
     const getData = async () => {
       try {
-        const data = await fetchPublishSortAPI(authorId);
+        const data = await fetchPublishSortAPI(3);
         setSoftwareData(data);  // 更新组件状态
       } catch (error) {
         console.error("获取数据失败:", error);
@@ -78,13 +78,13 @@ const SoftwareList = () => {
   };
 
   //处理列表折叠
-  const handleExpandToggle = (id) => {
-    setExpandedRow(expandedRow === id ? null : id);
-    getVersion()
+  const handleExpandToggle = (softId) => {
+    setExpandedRow(expandedRow === softId ? null : softId);
+    getVersion(softId)
   };
 
   const navigate = useNavigate();
-  function createsoft(Id, intro, price) {
+  function editorsoft(Id, intro, price) {
     navigate("editor", {
       state: { Id, intro, price },
     });
@@ -107,27 +107,28 @@ const SoftwareList = () => {
             <Col>
               <Button
                 type="primary"
-                onClick={() => handleExpandToggle(software.name)}
-                icon={expandedRow === software.name ? <UpOutlined /> : <DownOutlined />}
+                //这里传的是Id点击就能传递软件id去查看软件的各个版本
+                onClick={() => handleExpandToggle(software.softId)}
+                icon={expandedRow === software.softId ? <UpOutlined /> : <DownOutlined />}
               >
-                {expandedRow === software.name ? '收起' : '查看版本'}
+                {expandedRow === software.softId ? '收起' : '查看版本'}
               </Button>
             </Col>
           </Row>
 
-          {expandedRow === software.name && (
+          {expandedRow === software.softId && (
             <Collapse bordered={false}>
               <Panel header="版本信息" key="1">
                 <ul>
                   {versionData.map((version, index) => (
                     <li key={index} className={styles.versionRow}>
                       <div className={styles.versionItem}>
-                        <img src={version.picture} alt={`version cover ${index}`} className={styles.versionCover} />
+                        <img src={version.picture} alt={"image"} className={styles.versionCover} />
                         <div className={styles.versionInfo}>
-                          <Text strong>{version.version}</Text>
+                          <span>{version.version}</span>
                           <div>{version.published_time}</div>
                         </div>
-                        <Button type="link" onClick={() => createsoft(version.versionId, version.introduction, version.price)}>修改版本信息</Button>
+                        <Button type="link" onClick={() => editorsoft(version.versionId, version.introduction, version.price)}>修改版本信息</Button>
                       </div>
                     </li>
                   ))}

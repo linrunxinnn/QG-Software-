@@ -65,8 +65,9 @@ const Load = ({ value, onChange }) => {
         onRemove={(file) => {
           message.success(`${file.name} 文件已删除`);
         }}
-        accept="image/*,application/pdf" // 允许上传图片和PDF文件
-        beforeUpload={() => false} // 阻止文件自动上传(破组件的自动上传)
+        accept="image/*,application/pdf,.zip" // 允许上传图片和PDF文件
+        beforeUpload={() => false} // 阻止文件自动上传
+
       >
         {uploadButton}
       </Upload>
@@ -76,16 +77,17 @@ const Load = ({ value, onChange }) => {
         footer={null}
         onCancel={() => {
           setPreviewOpen(false);
-          setPreviewImage(""); // 关闭后清空图片
+          setPreviewImage(''); // 关闭后清空图片
           setPreviewPdf(null); // 关闭后清空PDF
         }}
         width={800}
+        open={previewOpen}
       >
         {previewImage ? (
           <Image
             src={previewImage}
             alt="Preview"
-            style={{ width: "100%", height: "auto" }}
+            style={{ width: '100%', height: 'auto' }}
           />
         ) : previewPdf ? (
           <Document file={previewPdf}>
