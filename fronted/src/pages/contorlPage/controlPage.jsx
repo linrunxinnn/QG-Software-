@@ -20,14 +20,6 @@ const ControlPage = () => {
         token: { colorBgContainer, borderRadiusLG },
     } = theme.useToken();
 
-
-    //从后台拉取
-    const users = [
-        { name: 'Alice', email: 'alice@example.com', avatarUrl: 'https://example.com/avatar1.jpg' },
-        { name: 'Bob', email: 'bob@example.com', avatarUrl: 'https://example.com/avatar2.jpg' },
-        { name: 'Charlie', email: 'charlie@example.com', avatarUrl: 'https://example.com/avatar3.jpg' },
-    ];
-
     const navigate = useNavigate()
 
     //跳转页面函数
@@ -39,7 +31,7 @@ const ControlPage = () => {
 
     return (
         <Layout className='layout'>
-            <Sider trigger={null} collapsible collapsed={collapsed}>
+            <Sider trigger={null} collapsible collapsed={collapsed} style={{ minHeight: '100vh' }} >
                 <div className="demo-logo-vertical" />
                 <Menu
                     theme="dark"
