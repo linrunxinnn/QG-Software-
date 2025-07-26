@@ -13,6 +13,8 @@ import api from '../index.js';
 export const getSoftwareReviews = async (softwareId) => {
   try {
     const response = await api.get(`/reviews/reviewOfSoftware/${softwareId}`);
+    console.log(response.data.data);
+
     return {
       success: true,
       data: response.data.data
