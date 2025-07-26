@@ -1,6 +1,7 @@
+
 import api from '../index.js';
 
-// userOperationApi.js - 修正ID为long类型
+// userOperationApi.js - 修正ID为long类型，删除获取设备接口
 // ========================================
 
 /**
@@ -9,13 +10,22 @@ import api from '../index.js';
  * @returns {number} 转换后的数字ID
  */
 const convertToLong = (id) => {
-  const numId = parseInt(id, 10);
+  // 处理null和undefined的情况
+  if (id === null || id === undefined) {
+    throw new Error(`ID不能为空: ${id}`);
+  }
+
+  // 使用Number()而不是parseInt()，保持与userOperationApi.js一致
+  const numId = Number(id);
+  console.log(`转换ID: ${id} -> ${numId}`);
+
   if (isNaN(numId)) {
+    console.error(`无效的ID格式: ${id}`);
     throw new Error(`无效的ID格式: ${id}`);
   }
+
   return numId;
 };
-
 
 /**
  * 用户操作相关API接口
@@ -31,8 +41,8 @@ const convertToLong = (id) => {
 export const followDeveloper = async (userId, developerId) => {
   try {
     const response = await api.post('/subscribes', {
-      userId: convertToLong(userId),       // 转换为long
-      developerId: convertToLong(developerId) //  转换为long
+      userId: convertToLong(userId),
+      developerId: convertToLong(developerId)
     });
     return {
       success: true,
@@ -55,7 +65,6 @@ export const followDeveloper = async (userId, developerId) => {
  */
 export const unfollowDeveloper = async (userId, developerId) => {
   try {
-    // 路径参数也需要确保是数字
     const userIdLong = convertToLong(userId);
     const developerIdLong = convertToLong(developerId);
 
@@ -91,15 +100,60 @@ export const purchaseSoftware = async (purchaseData) => {
       price: parseFloat(purchaseData.price),
       softwareId: convertToLong(purchaseData.softwareid)
     });
-    return {
-      success: true,
-      data: response.data.data
-    };
+
+    console.log('购买API响应:', response.status, response.data);
+
+    // 检查HTTP状态码和业务状态码
+    if (response.status === 200) {
+      // HTTP请求成功，再检查业务状态码
+      const businessCode = response.data?.code;
+      const message = response.data?.msg || response.data?.message;
+
+      if (businessCode === 200) {
+        // 业务状态码200，购买成功
+        console.log('✅ 购买成功');
+        return {
+          success: true,
+          data: response.data.data || response.data,
+          message: message || '购买成功！'
+        };
+      } else if (businessCode === 400) {
+        // 业务状态码400，购买失败
+        console.log(`❌ 购买失败: ${businessCode}, 错误信息: ${message}`);
+        return {
+          success: false,
+          error: message || '购买失败，请稍后重试'
+        };
+      } else {
+        // 其他业务状态码，也认为是失败
+        console.log(`❌ 未知业务状态码: ${businessCode}, 错误信息: ${message}`);
+        return {
+          success: false,
+          error: message || '购买失败，请稍后重试'
+        };
+      }
+    } else {
+      // HTTP状态码非200
+      throw new Error('网络请求失败');
+    }
+
   } catch (error) {
     console.error('购买软件失败:', error);
+
+    // 🔥 从错误响应中提取后端返回的错误信息
+    let errorMessage = '购买失败，请稍后重试';
+
+    if (error.response?.data?.msg) {
+      errorMessage = error.response.data.msg;
+    } else if (error.response?.data?.message) {
+      errorMessage = error.response.data.message;
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+
     return {
       success: false,
-      error: error.response?.data || error.message
+      error: errorMessage
     };
   }
 };
@@ -113,12 +167,13 @@ export const purchaseSoftware = async (purchaseData) => {
 export const reserveSoftware = async (userid, softid) => {
   try {
     const response = await api.post('/equipments/addAppointment', {
-      userid: convertToLong(userid),
-      softid: convertToLong(softid)
+      userId: convertToLong(userid),
+      softwareId: convertToLong(softid)
     });
     return {
       success: true,
-      data: response.data
+      data: response.data.data || response.data,
+      message: '预约成功！'
     };
   } catch (error) {
     console.error('预约软件失败:', error);
@@ -207,7 +262,7 @@ export const downloadSoftware = async (softwareId) => {
 };
 
 // ============================================
-//  🔥 新增：多版本下载功能
+//  🔥 多版本下载功能
 // ============================================
 
 /**
@@ -293,79 +348,70 @@ export const downloadSoftwareVersion = async (downloadLink, version) => {
 };
 
 // ============================================
-//  新增：设备绑定功能（真实API）
+//  🔥 核心功能：设备绑定（机械码存储）
 // ============================================
 
 /**
- * 🔥 真实API：获取机械码并绑定设备
+ * 🔥 核心功能：获取机械码并绑定设备
+ * 该功能会将机械码存储到数据库中
  * @param {string} userId - 用户ID
  * @param {string} softwareId - 软件ID
+ * @param {string} softwareName - 软件名称
  * @returns {Promise} 绑定操作结果
  */
-export const bindDeviceWithMachineCode = async (userId, softwareId) => {
+export const bindDeviceWithMachineCode = async (userId, softwareId, softwareName) => {
   try {
-    // 检测设备信息
-    const deviceInfo = detectDeviceInfo();
-    const deviceName = `${deviceInfo.os} - ${deviceInfo.device}`;
-
-    console.log('正在绑定设备:', {
+    // ✅ 调用真实API：PUT /equipments/addNetWorkCode
+    const response = await api.put('/equipments/addNetWorkCode', {
       userId: convertToLong(userId),
       softwareId: convertToLong(softwareId),
-      deviceName
+      softwareName: softwareName
     });
 
-    // ✅ 真实API调用：equipments/addNetWorkCode
-    const response = await api.put('/equipments/addNetWorkCode', {
-      userId: convertToLong(userId),        // 确保字段名匹配后端Equipment实体
-      softwareId: convertToLong(softwareId), // 确保字段名匹配后端Equipment实体
-      name: deviceName                       // 设备名称
-    });
+    console.log('绑定设备API响应:', response.status, response.data);
 
-    console.log('绑定设备API响应:', response.data);
+    // 🔥 修复：检查HTTP状态码和业务状态码
+    if (response.status === 200) {
+      // HTTP请求成功，再检查业务状态码
+      const businessCode = response.data?.code;
 
-    // 处理成功响应
-    if (response.data) {
-      // 检查响应格式
-      const responseData = response.data.data || response.data;
+      if (businessCode === 200 || businessCode === undefined || businessCode === null) {
+        // 业务状态码200或没有业务状态码，认为成功
+        console.log('✅ 设备绑定成功');
 
-      // 如果后端返回success字段，检查它
-      if (response.data.success === false) {
-        throw new Error(response.data.message || '绑定设备失败');
+        return {
+          success: true,
+          data: {
+            id: Date.now().toString(),
+            machineCode: '绑定成功',
+            deviceName: softwareName,
+            bindTime: new Date().toLocaleString(),
+            lastUsed: new Date().toLocaleString(),
+            status: 'active'
+          },
+          message: '设备绑定成功，机械码已保存'
+        };
+      } else {
+        // 业务状态码非200，绑定失败
+        const errorMsg = response.data?.msg || response.data?.message || '绑定失败，请勿重复绑定';
+        console.log(`❌ 业务状态码失败: ${businessCode}, 错误信息: ${errorMsg}`);
+
+        throw new Error(errorMsg);
       }
-
-      // 构造返回的设备信息
-      const newDevice = {
-        id: responseData.id || Date.now().toString(),
-        machineCode: responseData.networkCode || responseData.machineCode || responseData.code || 'N/A',
-        deviceName: responseData.name || deviceName,
-        bindTime: responseData.bindTime || responseData.createdTime || new Date().toLocaleString(),
-        lastUsed: responseData.lastUsed || responseData.updatedTime || new Date().toLocaleString(),
-        status: responseData.status || 'active'
-      };
-
-      console.log('构造的设备信息:', newDevice);
-
-      return {
-        success: true,
-        data: newDevice
-      };
     } else {
-      throw new Error('绑定设备失败：无响应数据');
+      // HTTP状态码非200
+      throw new Error('绑定失败，请勿重复绑定');
     }
+
   } catch (error) {
     console.error('绑定设备失败:', error);
 
-    // 提取错误信息
-    let errorMessage = '绑定设备失败，请稍后重试';
+    // 🔥 根据错误信息返回更具体的提示
+    let errorMessage = '绑定失败，请勿重复绑定';
 
-    if (error.response?.data?.message) {
-      errorMessage = error.response.data.message;
-    } else if (error.response?.data) {
-      errorMessage = typeof error.response.data === 'string'
-        ? error.response.data
-        : JSON.stringify(error.response.data);
-    } else if (error.message) {
-      errorMessage = error.message;
+    if (error.message && error.message.includes('请勿')) {
+      errorMessage = error.message; // 使用后端返回的具体错误信息
+
     }
 
     return {
@@ -373,76 +419,6 @@ export const bindDeviceWithMachineCode = async (userId, softwareId) => {
       error: errorMessage
     };
   }
-};
-
-/**
- * 获取已绑定设备列表
- * @param {string} userId - 用户ID
- * @param {string} softwareId - 软件ID
- * @returns {Promise} 已绑定设备列表
- */
-export const getBoundDevices = async (userId, softwareId) => {
-  try {
-    // ✅ 调用真实API
-    const response = await api.get('/equipments/getBoundDevices', {
-      params: {
-        userId: convertToLong(userId),
-        softwareId: convertToLong(softwareId)
-      }
-    });
-
-    // 处理响应数据
-    const devices = response.data.data || response.data || [];
-
-    // 映射设备数据格式（如果需要）
-    const mappedDevices = Array.isArray(devices) ? devices.map(device => ({
-      id: device.id || device.equipmentId,
-      machineCode: device.networkCode || device.machineCode || device.code,
-      deviceName: device.name || device.deviceName || 'Unknown Device',
-      bindTime: device.bindTime || device.createdTime || device.createTime,
-      lastUsed: device.lastUsed || device.updatedTime || device.updateTime,
-      status: device.status || 'active'
-    })) : [];
-
-    return {
-      success: true,
-      data: mappedDevices
-    };
-  } catch (error) {
-    console.error('获取已绑定设备失败:', error);
-    return {
-      success: false,
-      error: error.response?.data?.message || error.message || '获取设备列表失败'
-    };
-  }
-};
-
-/**
- * 检测设备信息的辅助函数
- * @returns {Object} 设备信息
- */
-const detectDeviceInfo = () => {
-  const userAgent = navigator.userAgent;
-  let os = 'Unknown OS';
-  let device = 'Unknown Device';
-
-  // 检测操作系统
-  if (userAgent.indexOf('Windows NT') !== -1) {
-    os = 'Windows';
-  } else if (userAgent.indexOf('Mac') !== -1) {
-    os = 'macOS';
-  } else if (userAgent.indexOf('Linux') !== -1) {
-    os = 'Linux';
-  }
-
-  // 检测设备类型
-  if (userAgent.match(/Mobile|Android|iPhone|iPad/)) {
-    device = '移动设备';
-  } else {
-    device = '桌面电脑';
-  }
-
-  return { os, device };
 };
 
 // ============================================
@@ -589,7 +565,7 @@ export const formatErrorMessage = (error) => {
 };
 
 // ============================================
-//  🔥 新接口：获取软件状态
+//  🔥 软件状态管理接口
 // ============================================
 
 /**
@@ -706,18 +682,3 @@ export const mapSoftwareStatus = (statusCode) => {
   };
 };
 
-// ============================================
-//  保留旧接口（兼容性）
-// ============================================
-
-/**
- * @deprecated 使用新的 getSoftwareStatus 替代
- * 获取用户对特定软件的状态
- */
-// export const getUserSoftwareStatus = getSoftwareStatus;
-
-// /**
-//  * @deprecated 使用新的 mapSoftwareStatus 替代
-//  * 映射用户软件状态
-//  */
-// export const mapUserSoftwareStatus = mapSoftwareStatus;

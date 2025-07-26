@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 import {
   Input,
   Badge,
@@ -31,6 +31,7 @@ import RegisterForm from "./register.jsx";
 import ResetForm from "./reset.jsx";
 import { logout } from "../../store/slice/userSlice.js";
 import { mainSearch } from "../../api/service/mainApi.js";
+import { hasInfo } from "../../api/service/userService.js";
 
 const { Search } = Input;
 
@@ -42,19 +43,43 @@ const Header = () => {
   const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
   const [options, setOptions] = useState([]);
   const [userInfo, setUserInfo] = useState({});
+  const name = JSON.parse(localStorage.getItem("user"))?.name || "用户";
   // 三个表单实例
   const [loginForm] = Form.useForm();
   const [registerForm] = Form.useForm();
   const [resetForm] = Form.useForm();
   //搜索栏结果
   const [searchResult, setSearchResult] = useState([]);
+  const user = useSelector((state) => state.user.user);
 
   useEffect(() => {
     if (localStorage.getItem("token")) {
       setIsLoggedIn(true);
-      setUserInfo(JSON.parse(localStorage.getItem("user")));
+      console.log("用户已登录，设置状态为已登录");
+      setUserInfo(user);
     }
   }, []);
+
+  useEffect(() => {
+    async function checkUserInfo() {
+      console.log("检查用户登录状态", isLoggedIn);
+      if (isLoggedIn) {
+        const userId = userInfo.id;
+        console.log("检查用户信息，用户ID:", userId);
+        try {
+          const response = await hasInfo(userId);
+          if (!response.data) {
+            // message.warning("请先完善个人信息");
+            setIsLoginModalVisible(false);
+            setActiveTab("reset");
+          }
+        } catch (error) {
+          console.error("检查用户信息失败:", error);
+        }
+      }
+    }
+    checkUserInfo();
+  }, [isLoggedIn, userInfo]);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -72,6 +97,7 @@ const Header = () => {
             setIsLoggedIn(true);
             setIsLoginModalVisible(false);
             handleModalClose();
+            window.location.reload();
           }}
         />
       ),
@@ -112,13 +138,6 @@ const Header = () => {
     resetForm.resetFields();
   };
 
-  // 模拟用户信息
-  // const userInfo = {
-  //   name: "张三",
-  //   avatar: qgLogo,
-  //   role: 1,
-  // };
-
   // 铃铛点击处理
   const handleNotificationClick = () => {
     if (!isLoggedIn) {
@@ -154,6 +173,7 @@ const Header = () => {
   const handleLogout = () => {
     setIsLoggedIn(false);
     dispatch(logout());
+    window.location.reload();
     message.success("退出登录成功");
   };
 
@@ -281,7 +301,7 @@ const Header = () => {
           {
             //发布按键，如果是软件提供商的话显示
             //如果未登录，则不显示，已登录则如果是软件提供商则显示
-            isLoggedIn && userInfo.role === 1 && (
+            isLoggedIn && userInfo.role === 2 && (
               <Tooltip title="发布">
                 <FileOutlined
                   className={styles.publish}
@@ -323,7 +343,7 @@ const Header = () => {
                   icon={<UserOutlined />}
                   className={styles.userAvatar}
                 />
-                <span className={styles.userName}>{userInfo.name}</span>
+                <span className={styles.userName}>{name || userInfo.name}</span>
               </div>
             </Dropdown>
           ) : (
