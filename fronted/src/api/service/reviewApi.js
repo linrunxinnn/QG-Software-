@@ -19,9 +19,23 @@ export const getSoftwareReviews = async (softwareId) => {
     };
   } catch (error) {
     console.error('获取评论列表失败:', error);
+
+    // 🔥 区分404和其他错误
+    if (error.response?.status === 404) {
+      // 404表示没有评论，这是正常情况，返回空数组
+      console.log('该软件暂无评论');
+      return {
+        success: true,
+        data: [],
+        isEmpty: true // 标记为空数据
+      };
+    }
+
+    // 其他错误（网络错误、服务器错误等）
     return {
       success: false,
-      error: error.response?.data || error.message
+      error: error.response?.data || error.message,
+      errorType: error.response?.status || 'network_error'
     };
   }
 };
@@ -71,14 +85,15 @@ export const mapReviewsData = (backendReviews) => {
     username: review.username || review.user?.name || review.user?.username,
     avatar: review.avatar || review.user?.avatar || review.user?.profilePicture,
     content: review.content || review.reviewContent,
-    rating: review.rating || review.score || 5, // 默认5星
+    // 🔥 注释掉星级相关字段，因为后端没有提供
+    // rating: review.rating || review.score || 5, 
     createTime: review.createTime || review.created_at || review.reviewTime,
     isPurchased: review.isPurchased !== undefined ? review.isPurchased : true
   }));
 };
 
 /**
- * 获取模拟评论数据（作为API失败时的后备数据）
+ * 获取模拟评论数据（仅在开发阶段或真正的错误情况下使用）
  * @returns {Array} 模拟评论数据
  */
 export const getMockReviews = () => {
@@ -89,7 +104,7 @@ export const getMockReviews = () => {
       username: '张三',
       avatar: 'https://picsum.photos/40/40?random=1',
       content: '这款软件真的很棒！界面设计很现代，功能也很实用。特别是AI功能，大大提高了我的工作效率。',
-      rating: 5,
+      // rating: 5, // 🔥 注释掉星级
       createTime: '2024-07-20 14:30:00',
       isPurchased: true
     },
@@ -99,7 +114,7 @@ export const getMockReviews = () => {
       username: '李四',
       avatar: 'https://picsum.photos/40/40?random=2',
       content: '性价比很高，比其他同类软件便宜不少，但功能一点也不差。客服响应也很及时，遇到问题很快就解决了。',
-      rating: 4,
+      // rating: 4, // 🔥 注释掉星级
       createTime: '2024-07-19 16:45:00',
       isPurchased: true
     },
@@ -109,7 +124,7 @@ export const getMockReviews = () => {
       username: '王五',
       avatar: 'https://picsum.photos/40/40?random=3',
       content: '刚开始使用，整体感觉不错。学习成本比较低，上手很快。希望后续版本能增加更多模板。',
-      rating: 4,
+      // rating: 4, // 🔥 注释掉星级
       createTime: '2024-07-18 09:20:00',
       isPurchased: true
     },
@@ -119,7 +134,7 @@ export const getMockReviews = () => {
       username: '赵六',
       avatar: 'https://picsum.photos/40/40?random=4',
       content: '软件很稳定，运行流畅，没有出现卡顿现象。云端同步功能很方便，在不同设备上都能无缝使用。强烈推荐！',
-      rating: 5,
+      // rating: 5, // 🔥 注释掉星级
       createTime: '2024-07-17 11:15:00',
       isPurchased: true
     }

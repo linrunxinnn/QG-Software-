@@ -2,8 +2,8 @@ import axios from "axios";
 
 //创建一个axios实例
 const api = axios.create({
-  baseURL: "http://192.168.1.156:8080", // 设置基础URL
-  timeout: 50000, // 设置请求超时时间
+  baseURL: "http://192.168.1.233:8080", // 设置基础URL
+  timeout: 5000, // 设置请求超时时间
   headers: {
     "Content-Type": "application/json",
   },

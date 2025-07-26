@@ -3,12 +3,14 @@ import api from "../index.js";
 
 // 获取轮播图软件数据
 export const fetchCarouselSoftware = async () => {
+  console.log('Fetching carousel software data...');
   try {
     const path = '/softwares/SearchSoftwareNew';
     const response = await api({
       url: path,
       method: 'GET'
     });
+    console.log('获取轮播图软件数据成功:', response.data);
 
     // 处理并格式化数据
     const formattedData = response.data.data.map((item) => ({

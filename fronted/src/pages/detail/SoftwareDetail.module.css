@@ -192,7 +192,7 @@
   line-height: 1.2;
 }
 
-/* 🔥 新增：下载按钮组样式 */
+/* 🔥 下载按钮组样式 */
 .downloadButtonGroup {
   display: flex;
   gap: 12px;
@@ -227,7 +227,7 @@
   box-shadow: none;
 }
 
-/* 🔥 新增：版本选择按钮样式 */
+/* 🔥 版本选择按钮样式 */
 .versionsBtn {
   padding: 12px 24px;
   height: auto;
@@ -256,7 +256,7 @@
   box-shadow: none;
 }
 
-/* 🔥 新增：版本下拉框样式 */
+/* 🔥 版本下拉框样式 */
 .versionsDropdown {
   min-width: 320px;
 }
@@ -553,110 +553,6 @@
   margin: 0;
 }
 
-/* 🔥 修改：设备管理区域 - 新的样式支持机械码显示 */
-.devicesSection {
-  background: white;
-  border-radius: 16px;
-  padding: 30px;
-  margin-bottom: 30px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
-}
-
-.devicesList {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.emptyDevices {
-  text-align: center;
-  padding: 40px 20px;
-  color: #999;
-}
-
-.emptyDevices p {
-  font-size: 16px;
-  margin-bottom: 20px;
-}
-
-.deviceCard {
-  padding: 20px 24px;
-  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-  border-radius: 12px;
-  border: 1px solid #e8e8e8;
-  transition: all 0.3s ease;
-}
-
-.deviceCard:hover {
-  border-color: #1890ff;
-  background: linear-gradient(135deg, #f0f8ff 0%, #ffffff 100%);
-  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.1);
-}
-
-.deviceInfo {
-  display: flex;
-  align-items: flex-start;
-  gap: 16px;
-}
-
-.deviceIcon {
-  font-size: 24px;
-  color: #1890ff;
-  margin-top: 4px;
-  flex-shrink: 0;
-}
-
-.deviceDetails {
-  flex: 1;
-  min-width: 0;
-}
-
-.deviceName {
-  font-size: 16px;
-  font-weight: 600;
-  color: #1a1a1a;
-  margin-bottom: 8px;
-}
-
-.machineCode {
-  font-size: 14px;
-  color: #666;
-  font-family: 'Courier New', monospace;
-  background: #f0f0f0;
-  padding: 4px 8px;
-  border-radius: 6px;
-  margin-bottom: 8px;
-  word-break: break-all;
-}
-
-.deviceMeta {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.deviceMeta span {
-  font-size: 12px;
-  color: #999;
-}
-
-/* 🔥 新增：设备绑定上限提示 */
-.deviceLimitNotice {
-  background: linear-gradient(135deg, #fff7e6 0%, #fffbe6 100%);
-  border: 1px solid #ffd666;
-  border-radius: 8px;
-  padding: 16px 20px;
-  text-align: center;
-  margin-top: 16px;
-}
-
-.deviceLimitNotice p {
-  margin: 0;
-  font-size: 14px;
-  color: #ad8b00;
-  font-weight: 500;
-}
-
 /* 弹窗样式 */
 .modalContent {
   padding: 10px 0;
@@ -809,8 +705,7 @@
   }
 
   .imageSection,
-  .featuresSection,
-  .devicesSection {
+  .featuresSection {
     padding: 20px;
   }
 
@@ -842,18 +737,6 @@
 
   .versionMenuItem {
     padding: 12px 16px !important;
-  }
-
-  .deviceCard {
-    padding: 16px 20px;
-  }
-
-  .deviceInfo {
-    gap: 12px;
-  }
-
-  .machineCode {
-    font-size: 12px;
   }
 }
 
@@ -917,29 +800,6 @@
     gap: 8px;
   }
 
-  .deviceCard {
-    padding: 12px 16px;
-  }
-
-  .deviceInfo {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-
-  .deviceIcon {
-    font-size: 20px;
-  }
-
-  .deviceName {
-    font-size: 14px;
-  }
-
-  .machineCode {
-    font-size: 11px;
-    padding: 3px 6px;
-  }
-
   .featureCard {
     padding: 16px;
   }
@@ -949,8 +809,7 @@
   }
 
   .imageSection,
-  .featuresSection,
-  .devicesSection {
+  .featuresSection {
     padding: 16px;
   }
 
@@ -968,13 +827,5 @@
 
   .versionDesc {
     font-size: 12px;
-  }
-
-  .deviceLimitNotice {
-    padding: 12px 16px;
-  }
-
-  .deviceLimitNotice p {
-    font-size: 13px;
   }
 }
