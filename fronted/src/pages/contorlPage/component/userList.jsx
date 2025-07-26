@@ -11,12 +11,12 @@ import { fetchfrezeeAPI } from "../../../api/service/userService"
 
 const UserList = () => {
     //渲染的数据
-    const [users, setUsers] = useState([])
-    const [searchQuery, setSearchQuery] = useState('');
-    const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
+    const [users, setUsers] = useState([])//用户的数据
+    const [searchQuery, setSearchQuery] = useState('');//搜索框
+    const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);//是否接收到用户的申请请求
     const [expandedRow, setexpandedRow] = useState(null);//是否展开用户申请的详情
     const [Application, setApplication] = useState([])//用户的申请数据
-
+    const [render, setRender] = useState(true)//控制是否重新渲染用户列表
 
     // 更新搜索框的值
     const handleSearchChange = (e) => {
@@ -24,15 +24,25 @@ const UserList = () => {
     };
 
     // 冻结用户的处理函数
-    const handleFreezeUser = (useId, useStatus) => {
+    const handleFreezeUser = async (userId, useStatus) => {
         if (useStatus === 1) {
             Modal.confirm({
                 title: '确认冻结用户',
                 content: `您确定要冻结该账户吗？`,
                 okText: '确认',
                 cancelText: '取消',
-                onOk: () => {
-                    fetchstatusAPI(useId, "2024-12-31 23:59:59"); // 冻结用户
+                onOk: async () => {
+
+                    try {
+                        // 异步调用冻结用户的API
+                        const response = await fetchstatusAPI(userId, "2025-12-31 23:59:59");
+                        if (response.data.code) {
+                            message.success("冻结用户成功");
+                        }
+                        setRender(!render)//应该放在获取数据之后更改状态才会触发重新渲染
+                    } catch (error) {
+                        message.error("冻结用户失败，请稍后再试");
+                    }
                 },
             });
         } else {
@@ -41,12 +51,23 @@ const UserList = () => {
                 content: `您确定要解冻该账户吗？`,
                 okText: '确认',
                 cancelText: '取消',
-                onOk: () => {
-                    fetchfrezeeAPI(useId); // 解冻用户
+                onOk: async () => {
+
+                    try {
+                        // 异步调用解冻用户的API
+                        const response = await fetchfrezeeAPI(userId, "2024-12-31 23:59:59");
+                        if (response.data.code) {
+                            message.success("解冻用户成功");
+                            setRender(!render)
+                        }
+                    } catch (error) {
+                        message.error("解冻用户失败，请稍后再试");
+                    }
                 },
             });
         }
     };
+
 
     //控制弹窗
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -81,6 +102,7 @@ const UserList = () => {
             console.log(response);
 
             if (response) {
+                console.log("重新渲染的数据", response);
                 setUsers(response);
             }
         } catch (error) {
@@ -92,7 +114,9 @@ const UserList = () => {
     // 初次挂载时获取数据
     useEffect(() => {
         fetchUsers();
-    }, []);
+        console.log("重新渲染用户数据");
+
+    }, [render]);
 
 
     const admit = async (id, userId) => {
@@ -100,6 +124,7 @@ const UserList = () => {
             setexpandedRow(false)
             console.log(userId);
             const response = await fetchAdmitAPI(id, userId);
+            message.success("同意用户申请成功")
         } catch (error) {
             console.error("同意用户申请失败", error);
             message.error("同意用户申请失败");
@@ -136,6 +161,7 @@ const UserList = () => {
             </div>
             {/* 用户列表 */}
             <List
+                pagination={{ pageSize: 15 }}  // 可以根据需求启用分页
                 bordered
                 //数据的渲染处
                 dataSource={users}
@@ -187,8 +213,10 @@ const UserList = () => {
             >
                 <div>
                     {Application.map((apply) => (
-                        <div key={apply.name}>
-                            <Row justify="space-between" align="middle">
+                        <div key={apply.name} style={{
+                            margin: "5px"
+                        }}>
+                            <Row justify="space-between" align="middle"  >
                                 <Col flex="1" style={{ marginLeft: 20 }}>
                                     <span>{apply.name}</span>
                                 </Col>
@@ -211,7 +239,9 @@ const UserList = () => {
 
                                             <h3>佐证材料</h3>
                                             <div>
-                                                <img src={apply.material} alt={`material-${apply.name}`} style={{ maxWidth: '100%' }} />
+                                                <a href={apply.material} target="_blank" rel="noopener noreferrer">
+                                                    {apply.material}
+                                                </a>
                                             </div>
                                             <Button onClick={() => admit(apply.id, apply.userId)} >同意</Button>
                                             <Button onClick={() => Ban(apply.id, apply.userId)}>取消</Button>

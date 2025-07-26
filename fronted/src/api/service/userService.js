@@ -360,6 +360,7 @@ export const fetchAccountAPI = async () => {
     const path = "/admins"
     try {
         const response = await api.get("/admins")
+        console.log("获取的数据", response.data.data);
 
         return response.data.data;  // 返回格式化后的数据
     } catch (error) {
@@ -377,20 +378,22 @@ export const fetchstatusAPI = async (userId, endTime) => {
             endTime
         }
         const response = await api.post(path, body)
-        return response.message;  // 返回格式化后的数据
+        return response;  // 返回格式化后的数据
     } catch (error) {
-        console.log("表哥出错了", error)
+        console.log("", error)
     }
 }
 
 //解冻账户的接口
 export const fetchfrezeeAPI = async (userId) => {
+    const path = "/bans"
     try {
-        const body = { userId }
-        const response = await api.delete("/bans",
-            body
-        )
-        return response.data.msg
+        const response = await api.delete(path, {
+            params: {
+                userId
+            }
+        })
+        return response
     } catch (error) {
         console.log("", error)
     }
@@ -404,10 +407,12 @@ export const fetchApplyAPI = async () => {
         const response = await api.get(path);  // 假设返回包含id、reason和material的数组
         const applicationsData = response.data.data;
 
+        console.log(applicationsData);
+
         // 根据id查询name并合并数据
         const fetchNames = applicationsData.map(async (app) => {
             try {
-                const nameResponse = await api.get(`/users/getInformation/${app.id}`);
+                const nameResponse = await api.get(`/users/getInformation/${app.userId}`);
                 return {
                     ...app,
                     name: nameResponse.data.data.name,  // 合并name字段

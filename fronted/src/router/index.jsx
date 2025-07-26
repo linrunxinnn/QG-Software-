@@ -26,6 +26,7 @@ import Moresoft from "../pages/home/component/moresoft.jsx";
 import CommentSection from "../component/CommentSection/CommentSection.jsx";
 import EditorDetail from "../pages/publish/editor.jsx";
 import CommentList from "../pages/contorlPage/component/detailcomment.jsx"
+import ControlMoresoft from "../pages/contorlPage/component/controlmore.jsx";
 
 export const router = createBrowserRouter([
   {
@@ -158,6 +159,10 @@ export const router = createBrowserRouter([
         path: "detail/:name",
         element: <CheckDetail />,
       },
+      {
+        path: "comment/more/:id",
+        element: <ControlMoresoft />//跳转到管理员查看更多软件的也米娜
+      }
     ],
   },
 ]);
