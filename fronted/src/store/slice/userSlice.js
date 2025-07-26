@@ -109,14 +109,26 @@ export const updatePhone = createAsyncThunk(
   }
 );
 
+const getSafeLocalStorage = (key) => {
+  const item = localStorage.getItem(key);
+  // 明确排除 "undefined" 和 "null" 字符串
+  if (item === "undefined" || item === "null" || item === null) {
+    return null;
+  }
+  try {
+    return JSON.parse(item);
+  } catch {
+    return null;
+  }
+};
+
 const userSlice = createSlice({
   name: "user",
   initialState: {
-    user: localStorage.getItem("user")
-      ? JSON.parse(localStorage.getItem("user"))
-      : null,
-    token: localStorage.getItem("token") ? localStorage.getItem("token") : null,
-    role: localStorage.getItem("role") ? localStorage.getItem("role") : null,
+    user: getSafeLocalStorage("user"),
+    token: localStorage.getItem("token") || null,
+    role: localStorage.getItem("role") || null,
+    avatar: getSafeLocalStorage("user")?.avatar || null,
     loading: false,
     error: null,
   },
@@ -195,9 +207,10 @@ const userSlice = createSlice({
       })
       .addCase(registerUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload.user;
-        state.token = action.payload.token;
+        state.user = action.payload.data.user;
+        state.token = action.payload.data.token;
         state.role = 3;
+        state.avatar = action.payload.data.user.avatar;
         state.error = null;
         localStorage.setItem("user", JSON.stringify(action.payload.data.user));
         localStorage.setItem("token", action.payload.data.token);

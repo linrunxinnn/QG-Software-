@@ -19,9 +19,7 @@ import { useSelector } from "react-redux";
 const Appointment = () => {
   const navigate = useNavigate();
   const userInfo = useSelector((state) => state.user.user);
-  // console.log("！！！！！用户信息:", userInfo);
 
-  // 用户角色：'user' 或 'developer'
   const userRole = userInfo?.role || 3;
 
   //已预约
@@ -50,31 +48,7 @@ const Appointment = () => {
           }
           getMySoftwareList();
           setLoading(false);
-          // const response = await api.getMySoftwareList();
-          // setMySoftwareList(response.data);
-          // 临时模拟数据
-          // setTimeout(() => {
-          //   setMySoftwareList([
-          //     {
-          //       id: 1,
-          //       name: "PhotoMaster Pro",
-          //       icon: "https://picsum.photos/60/60?random=1",
-          //       category: "图像处理",
-          //       version: "v3.2.1",
-          //       price: 299.0,
-          //       status: "published", // published, draft, reviewing
-          //     },
-          //   ]);
-          //   setLoading(false);
-          // }, 1000);
         }
-        // 获取用户的预约和购买列表
-        // const [reservedRes, purchasedRes] = await Promise.all([
-        //   api.getReservedSoftware(),
-        //   api.getPurchasedSoftware()
-        // ]);
-        // setReservedList(reservedRes.data);
-        // setPurchasedList(purchasedRes.data);
         async function getAppointmentList() {
           try {
             const response = await getAppointment(userInfo.id);
@@ -96,31 +70,6 @@ const Appointment = () => {
         }
         getReservedList();
         setLoading(false);
-        // 临时模拟数据
-        // setTimeout(() => {
-        //   setReservedList([
-        //     {
-        //       id: 1,
-        //       name: "AutoCAD 2025",
-        //       icon: "https://picsum.photos/60/60?random=2",
-        //       developer: "Autodesk",
-        //       price: 1680.0,
-        //       reserveDate: "2024-07-20",
-        //       expectedReleaseDate: "2024-12-01",
-        //     },
-        //   ]);
-        //   setPurchasedList([
-        //     {
-        //       id: 2,
-        //       name: "Figma Enterprise",
-        //       icon: "https://picsum.photos/60/60?random=3",
-        //       developer: "Figma Inc.",
-        //       price: 380.0,
-        //       purchaseDate: "2024-07-18",
-        //     },
-        //   ]);
-        //   setLoading(false);
-        // }, 1000);
       } catch (error) {
         console.error("获取数据失败:", error);
         setLoading(false);
@@ -290,10 +239,12 @@ const Appointment = () => {
             <div className={styles.sectionHeader}>
               <Package size={20} />
               <h2>我的软件</h2>
-              <span className={styles.count}>{mySoftwareList?.length}</span>
+              <span className={styles.count}>
+                {mySoftwareList ? mySoftwareList.length : 0}
+              </span>
             </div>
 
-            {mySoftwareList?.length === 0 ? (
+            {!mySoftwareList ? (
               <div className={styles.empty}>
                 <Package size={48} />
                 <h3>暂无软件</h3>
@@ -316,10 +267,10 @@ const Appointment = () => {
             <div className={styles.sectionHeader}>
               <Clock size={20} />
               <h2>已预约软件</h2>
-              <span className={styles.count}>{reservedList.length}</span>
+              <span className={styles.count}>{reservedList?.length}</span>
             </div>
 
-            {reservedList.length === 0 ? (
+            {reservedList?.length === 0 ? (
               <div className={styles.empty}>
                 <Clock size={48} />
                 <h3>暂无预约</h3>
@@ -344,7 +295,7 @@ const Appointment = () => {
               </span>
             </div>
 
-            {purchasedList.length === 0 ? (
+            {purchasedList?.length === 0 ? (
               <div className={styles.empty}>
                 <ShoppingBag size={48} />
                 <h3>暂无购买</h3>

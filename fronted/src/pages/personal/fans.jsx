@@ -6,10 +6,10 @@ import {
   fetchFollowedDevelopers,
   fetchDeveloperFans,
   unfollowDeveloper,
-  getMockFollowedDevelopers,
 } from "../../api/service/developerService.js";
 import styles from "./fans.module.css";
 import { useSelector } from "react-redux";
+import { message } from "antd";
 
 const Fans = () => {
   const navigate = useNavigate();
@@ -31,7 +31,6 @@ const Fans = () => {
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      setError(null);
 
       try {
         let result;
@@ -44,7 +43,6 @@ const Fans = () => {
           } catch (err) {
             // 如果接口还没准备好，使用虚拟数据
             console.log("粉丝接口暂未实现，使用虚拟数据");
-            result = getMockFollowedDevelopers();
           }
         } else {
           // 用户获取关注的开发者列表
@@ -54,18 +52,17 @@ const Fans = () => {
           } catch (err) {
             // 如果接口调用失败，使用虚拟数据
             console.log("使用虚拟数据:", err);
-            result = getMockFollowedDevelopers();
           }
         }
 
-        if (result.code === 200) {
+        if (result) {
           setFansList(result.data);
         } else {
-          setError(result.msg || "获取数据失败");
+          message.error(result.msg || "获取数据失败");
         }
       } catch (err) {
         console.error("获取数据失败:", err);
-        setError("网络错误，请稍后重试");
+        message.error("网络错误，请稍后重试");
         // 发生错误时也使用虚拟数据
         const mockData = getMockFollowedDevelopers();
         setFansList(mockData.data);
@@ -180,35 +177,17 @@ const Fans = () => {
                     <div className={styles.nameSection}>
                       <h3 className={styles.name}>{item.name}</h3>
                       <span className={styles.type}>
-                        {item.type === "company" ? "企业开发商" : "个人开发者"}
+                        {item.type === 2 ? "开发者" : "普通用户"}
                       </span>
                     </div>
                     <p className={styles.description}>{item.description}</p>
 
-                    <div className={styles.stats}>
-                      <div className={styles.statItem}>
-                        <Heart size={14} />
-                        <span>
-                          {item.followersCount.toLocaleString()} 关注者
-                        </span>
-                      </div>
-                      <div className={styles.statItem}>
-                        <Users size={14} />
-                        <span>{item.softwareCount} 个软件</span>
-                      </div>
-                      <div className={styles.statItem}>
-                        <Calendar size={14} />
-                        <span>
-                          {currentUserRole === 2 ? "关注时间" : "关注于"}{" "}
-                          {item.followDate}
-                        </span>
-                      </div>
-                    </div>
+                    <div className={styles.stats}></div>
                   </div>
                 </div>
 
                 {/* 根据用户身份条件渲染操作按钮 */}
-                {currentUserRole === "user" && (
+                {currentUserRole === 3 && (
                   <div className={styles.actions}>
                     <button
                       className={styles.viewBtn}
@@ -216,13 +195,6 @@ const Fans = () => {
                       disabled={loading}
                     >
                       查看详情
-                    </button>
-                    <button
-                      className={styles.unfollowBtn}
-                      onClick={() => handleUnfollow(item)}
-                      disabled={loading}
-                    >
-                      取消关注
                     </button>
                   </div>
                 )}

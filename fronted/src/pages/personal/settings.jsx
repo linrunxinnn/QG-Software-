@@ -244,7 +244,7 @@ const Settings = () => {
       case "profile":
         return (
           <div className={styles.settingContent}>
-            <Card title="个人资料设置" bordered={false}>
+            <Card title="个人资料设置">
               <div
                 style={{
                   display: "flex",
