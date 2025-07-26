@@ -26,6 +26,11 @@ import {
 } from '../../api/service/userOperationApi';
 import styles from './SoftwareDetail.module.css';
 import { useSelector } from 'react-redux';
+import screenshot1 from '../../assets/images/screenshot1.jpg';
+import screenshot2 from '../../assets/images/screenshot2.jpg';
+import screenshot3 from '../../assets/images/screenshot3.jpg';
+import screenshot4 from '../../assets/images/screenshot4.jpg';
+
 
 const { Option } = Select;
 const { Panel } = Collapse;
@@ -101,10 +106,10 @@ const SoftwareDetail = () => {
 
   // 静态软件截图数据（保留作为后备）
   const staticImages = [
-    'https://picsum.photos/800/600?random=1',
-    'https://picsum.photos/800/600?random=2',
-    'https://picsum.photos/800/600?random=3',
-    'https://picsum.photos/800/600?random=4'
+    screenshot1,
+    screenshot2,
+    screenshot3,
+    screenshot4
   ];
 
   // 静态产品功能特色数据（保留作为后备）
@@ -622,7 +627,7 @@ const SoftwareDetail = () => {
         message.success('购买成功！');
         setPurchaseModalVisible(false);
 
-        //  ❌ 注释掉购买成功后自动绑定当前设备
+        //  注释掉购买成功后自动绑定当前设备
         // await bindCurrentDevice();
       } else {
         message.error(formatErrorMessage(result.error));
@@ -925,7 +930,7 @@ const SoftwareDetail = () => {
 
       {/* 软件图片详情 */}
       <div className={styles.imageSection}>
-        <h2 className={styles.sectionTitle}>软件截图</h2>
+        <h2 className={styles.sectionTitle}>商城一览</h2>
         <div className={styles.imageGallery}>
           {(softwareInfo.images || staticImages).map((image, index) => (
             <div key={index} className={styles.imageItem}>
@@ -938,7 +943,7 @@ const SoftwareDetail = () => {
       {/* 产品应用介绍 */}
       <div className={styles.featuresSection}>
         <div className={styles.sectionHeader}>
-          <h2 className={styles.sectionTitle}>产品功能特色</h2>
+          <h2 className={styles.sectionTitle}>产品特色</h2>
           <Button
             type="link"
             icon={<ExpandAltOutlined />}

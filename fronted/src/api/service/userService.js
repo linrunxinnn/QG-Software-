@@ -35,20 +35,13 @@ export const loginCode = async (credentials) => {
 };
 
 export const register = async (userData) => {
-<<<<<<< HEAD
   const response = await api.post("/users/register", {
     code: userData.code,
     user: { email: userData.email, password: userData.password },
   });
   console.log("注册结果:", response.data);
   return response.data;
-=======
-    const response = await api.post("/users/register", {
-        code: userData.code,
-        user: { email: userData.email, password: userData.password },
-    });
-    return response.data;
->>>>>>> upstream/main
+tream/main
 };
 
 //发送验证码
@@ -116,21 +109,13 @@ export const getPurchase = async (userId) => {
 
 //获取软件开发商的软件
 export const getDeveloperSoftware = async (authorId) => {
-<<<<<<< HEAD
   console.log("获取开发商软件，作者ID:", authorId);
   const response = await api.get("/softwares/selectLastRecordsPerName", {
     params: { authorId },
   });
   console.log("获取开发商软件结果:", response.data);
   return response.data;
-=======
-    console.log("获取开发商软件，作者ID:", authorId);
-    const response = await api.get(
-        `/softwares/selectLastRecordsPerName/${authorId}`
-    );
-    console.log("获取开发商软件结果:", response.data);
-    return response.data;
->>>>>>> upstream/main
+
 };
 
 //用户有没有信息
