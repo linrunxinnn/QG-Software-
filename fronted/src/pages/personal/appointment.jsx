@@ -344,7 +344,7 @@ const Appointment = () => {
               </span>
             </div>
 
-            {!purchasedList ? (
+            {purchasedList.length === 0 ? (
               <div className={styles.empty}>
                 <ShoppingBag size={48} />
                 <h3>暂无购买</h3>
