@@ -38,12 +38,11 @@ const CheckDetail = () => {
 
     // 提交表单处理函数
     const onSubmit = async () => {
-
         const result = await fetchContollerAdmitAPI(id, authorId, data.id);
-        if (result.success) {
-            message.success(result.message);
+        if (result) {
+            message.success("同意申请成功");
         } else {
-            message.error(result.message);
+            message.error("同意申请失败");
         }
     }
     // 驳回申请
@@ -90,7 +89,7 @@ const CheckDetail = () => {
 
                 {/* 软件描述 */}
                 <Form.Item
-                    name="description"
+                    name="introduction"
                     label="软件描述"
                     rules={[{ required: true, message: '请输入软件描述' }]}
                 >
@@ -101,13 +100,23 @@ const CheckDetail = () => {
                 <Row gutter={16}>
                     <Col span={8}>
                         <Form.Item label="软件佐证材料">
-                            {/* 上传组件可以在这里添加 */}
+                            <div>
+                                {data && data.material ? (
+                                    <a target="_blank" href={data.material}>点击查看佐证材料</a>
+                                ) : (
+                                    <span>未提供佐证材料</span>
+                                )}
+                            </div>
                         </Form.Item>
                     </Col>
                     <Col span={8}>
                         <Form.Item label="软件封面">
                             <div style={{ width: "50%", height: "50%" }}>
-                                <img src="" alt="image" />
+                                {data && data.picture ? (
+                                    <img src={data.picture} alt="封面" />
+                                ) : (
+                                    <span>未提供软件封面</span>
+                                )}
                             </div>
                         </Form.Item>
                     </Col>
@@ -125,7 +134,7 @@ const CheckDetail = () => {
                     </Col>
                     <Col span={8}>
                         <Form.Item
-                            name="sort"
+                            name="type"
                             label="类型"
                             rules={[{ required: true, message: '请输入软件类型' }]}
                         >

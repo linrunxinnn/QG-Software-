@@ -3,58 +3,70 @@ import styles from './detailcomment.module.css';
 import { getSoftwareReviews } from '../../../api/service/reviewApi';
 import { fetchDeletecommentAPI } from "../../../api/service/userService";
 import { useParams } from 'react-router-dom';
+import { Modal, message } from 'antd';
 
 const CommentList = () => {
-    const [comments, setComments] = useState([]);  // Initialize as an empty array
-    const [loading, setLoading] = useState(true);  // For displaying loading state
-    const [error, setError] = useState(null);  // For error handling
+    const [comments, setComments] = useState([]); // 初始化评论列表为空数组
+    const [loading, setLoading] = useState(true);  // 用于显示加载状态
+    const [error, setError] = useState(null); // 用于错误处理
+    const [isModalVisible, setIsModalVisible] = useState(false); // 控制弹窗显示的状态
+    const [commentToDelete, setCommentToDelete] = useState(null); // 用于保存待删除的评论
     const { id } = useParams();  // 获取路径中的 id 参数
-    // Fetch comments on component mount
+
+    // 组件挂载时获取评论数据
     useEffect(() => {
         const fetchComments = async () => {
             try {
-                const data = await getSoftwareReviews(id);  // Fetching comments from API
-                console.log(data);
-
-                // Ensure that comments is always an array, even if API returns null
-                setComments(data?.data || []);  // Fallback to empty array if data is null or undefined
-                console.log("Received comments:", comments);
-
+                const data = await getSoftwareReviews(id);  // 从 API 获取评论数据
+                setComments(data?.data || []);  // 确保评论始终是一个数组
+                console.log("收到的评论:", data?.data);
             } catch (err) {
-                setError('Failed to load comments');  // Handle error
+                setError('加载评论失败');  // 处理错误
             } finally {
-                setLoading(false);  // End loading state
+                setLoading(false);  // 结束加载状态
             }
         };
 
-        fetchComments();  // Call the function to fetch comments
-    }, []);  // Empty dependency array to call only once on mount
+        fetchComments();  // 调用函数来获取评论数据
+    }, [id]);  // 依赖 id，确保每次 id 变化时重新获取评论
 
-    const deleteComment = async (id) => {
+    // 删除评论的函数
+    const deleteComment = async (comment) => {
         try {
-            await fetchDeletecommentAPI(id);  // Delete the comment with the provided id
-            setComments((prevComments) => prevComments.filter((comment) => comment.id !== id));
+            await fetchDeletecommentAPI(comment.id);  // 删除指定 id 的评论
+            setComments((prevComments) => prevComments.filter((item) => item.id !== comment.id)); // 过滤掉删除的评论
+            setIsModalVisible(false);  // 删除成功后关闭弹窗
+            message.success("删除评论成功")
         } catch (error) {
-            console.log(error);  // Handle error during delete operation
+            console.log(error);  // 处理删除操作中的错误
         }
     };
 
+    const showDeleteConfirm = (comment) => {
+        setCommentToDelete(comment); // 设置待删除的评论
+        setIsModalVisible(true); // 显示删除确认弹窗
+    };
+
+    const handleCancel = () => {
+        setIsModalVisible(false);  // 取消删除操作，关闭弹窗
+    };
+
     if (loading) {
-        return <div>Loading...</div>;  // Loading state
+        return <div>加载中...</div>;  // 显示加载状态
     }
 
     if (error) {
-        return <div>{error}</div>;  // Error state
+        return <div>{error}</div>;  // 显示错误信息
     }
 
-    // If there are no comments, display a message
+    // 如果没有评论，显示提示信息
     if (comments.length === 0) {
         return (
             <div style={{
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-                height: '100%',  // 确保父容器有足够的高度来进行居中
+                height: '100%',
             }}>
                 <div>该软件暂无评论</div>
             </div>
@@ -63,7 +75,7 @@ const CommentList = () => {
 
     return (
         <div className={styles.commentList}>
-            <h2>Comment List</h2>
+            <h2>评论列表</h2>
             <ul>
                 {comments.map((comment) => (
                     <li key={comment.id} className={styles.commentItem}>
@@ -79,13 +91,25 @@ const CommentList = () => {
                         <span className={styles.commentTimestamp}>{comment.timestamp}</span>
                         <button
                             className={styles.deleteButton}
-                            onClick={() => deleteComment(comment.id)}
+                            onClick={() => showDeleteConfirm(comment)} // 点击时显示删除确认弹窗
                         >
-                            Delete
+                            删除评论
                         </button>
                     </li>
                 ))}
             </ul>
+
+            {/* 删除确认弹窗 */}
+            <Modal
+                title="确认删除"
+                open={isModalVisible}
+                onOk={() => deleteComment(commentToDelete)} // 传递待删除评论对象
+                onCancel={handleCancel} // 点击取消
+                okText="确认"
+                cancelText="取消"
+            >
+                <p>确定要删除这条评论吗？</p>
+            </Modal>
         </div>
     );
 };

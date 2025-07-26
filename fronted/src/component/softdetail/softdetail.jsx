@@ -5,17 +5,18 @@ import { useParams, useNavigate } from 'react-router-dom';
 import styles from "./softdetail.module.css";
 import Load from "./load.jsx";
 import { submitSoftwareData } from "../../api/service/userService"
+import { useDispatch, useSelector } from "react-redux";
 
 const CheckDetail = () => {
-    const { name } = useParams();  // 获取路由中的动态参数 name来拉取信息
     const [form] = Form.useForm();
     const [isOpen, setisOpen] = useState(false);  // 初始值改为 false
     const [value, setvalue] = useState({});
     const navigate = useNavigate()
 
+    const id = useSelector((state) => state.user.user.id);
     // 提交表单处理函数
-    const onSubmit = async (values, name) => {
-        const result = await submitSoftwareData(values, name);
+    const onSubmit = async (values) => {
+        const result = await submitSoftwareData(values, id);
         if (result.success) {
             message.success(result.message);
         } else {
@@ -51,7 +52,7 @@ const CheckDetail = () => {
     const ensureRequest = () => {
         setisOpen(false); // 关闭弹窗
         if (value) {
-            onSubmit(value, name);
+            onSubmit(value);
         }
     }
 
@@ -111,10 +112,10 @@ const CheckDetail = () => {
                             rules={[{ required: true, message: '请输入软件类型' }]}
                         >
                             <Select placeholder="请选择软件类型">
-                                <Select.Option value="health">健康</Select.Option>
-                                <Select.Option value="education">教育</Select.Option>
-                                <Select.Option value="sports">运动</Select.Option>
-                                <Select.Option value="office">办公</Select.Option>
+                                <Select.Option value="健康">健康</Select.Option>
+                                <Select.Option value="教育">教育</Select.Option>
+                                <Select.Option value="运动">运动</Select.Option>
+                                <Select.Option value="办公">办公</Select.Option>
                             </Select>
                         </Form.Item>
                     </Col>

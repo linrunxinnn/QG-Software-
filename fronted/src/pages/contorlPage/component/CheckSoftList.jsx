@@ -39,9 +39,9 @@ const SoftwareList = () => {
         }
         return data.filter((software) => {
             if (selectedStatus === 'Reviewed') {
-                return software.status === 1;  // 已审核
+                return software.status === 1 || software.status === 2;  // 已审核
             }
-            return software.status === 2;  // 待审核
+            return software.status === 0;  // 待审核
         });
     };
 
@@ -67,8 +67,8 @@ const SoftwareList = () => {
             dataIndex: 'status',
             key: 'status',
             render: (status) => (
-                <Tag color={status === 1 ? 'orange' : 'green'}>
-                    {status === 1 ? '待审核' : '已审核'}
+                <Tag color={status === 0 ? 'orange' : 'green'}>
+                    {status === 0 ? '待审核' : '已审核'}
                 </Tag>
             ),
         },

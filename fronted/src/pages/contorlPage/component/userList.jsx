@@ -8,6 +8,7 @@ import { fetchApplyAPI } from "../../../api/service/userService"
 import { fetchBanAPI } from "../../../api/service/userService"
 import { fetchAdmitAPI } from "../../../api/service/userService"
 import { fetchfrezeeAPI } from "../../../api/service/userService"
+import { fecthseekAPI } from "../../../api/service/userService"
 
 const UserList = () => {
     //渲染的数据
@@ -22,6 +23,23 @@ const UserList = () => {
     const handleSearchChange = (e) => {
         setSearchQuery(e.target.value);
     };
+
+    // 处理模糊查询
+    // const handleSearch = (query) => {
+    //     if (query.trim() === "") {
+    //         fetchUsers()
+    //     } else {
+    //         const filteredUsers = users.filter(user =>
+    //             user.name.includes(query)// 根据 name 或 description 进行模糊匹配 // 根据 name 或 description 进行模糊匹配
+    //         );
+    //         setUsers(filteredUsers);
+    //     }
+    // };
+
+    // 每次 searchQuery 变化时触发模糊查询
+    // useEffect(() => {
+    //     handleSearch(searchQuery);
+    // }, [searchQuery]);
 
     // 冻结用户的处理函数
     const handleFreezeUser = async (userId, useStatus) => {
@@ -125,6 +143,7 @@ const UserList = () => {
             console.log(userId);
             const response = await fetchAdmitAPI(id, userId);
             message.success("同意用户申请成功")
+            setRender(!render)
         } catch (error) {
             console.error("同意用户申请失败", error);
             message.error("同意用户申请失败");
@@ -135,6 +154,8 @@ const UserList = () => {
         try {
             setexpandedRow(false)
             const response = await fetchBanAPI(id, userId);
+            message.success("驳回用户申请成功")
+            setRender(!render)
         } catch (error) {
             console.error("拒绝用户申请失败", error);
             message.error("拒绝用户申请失败");
@@ -180,7 +201,7 @@ const UserList = () => {
                         ]}
                     >
                         <List.Item.Meta
-                            avatar={<Avatar src={user.avatarUrl} />}
+                            avatar={<Avatar src={user.avatar} />}
                             title={user.name}
                         />
                         {/* 用户冻结状态和身份 */}
@@ -244,7 +265,7 @@ const UserList = () => {
                                                 </a>
                                             </div>
                                             <Button onClick={() => admit(apply.id, apply.userId)} >同意</Button>
-                                            <Button onClick={() => Ban(apply.id, apply.userId)}>取消</Button>
+                                            <Button onClick={() => Ban(apply.id, apply.userId)}>驳回</Button>
                                         </div>
                                     </Collapse.Panel>
                                 </Collapse>
