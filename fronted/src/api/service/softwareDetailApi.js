@@ -11,10 +11,20 @@ import api from '../index.js';
  * @returns {number} 转换后的数字ID
  */
 const convertToLong = (id) => {
-  const numId = parseInt(id, 10);
+  // 🔥 处理null和undefined的情况
+  if (id === null || id === undefined) {
+    throw new Error(`ID不能为空: ${id}`);
+  }
+
+  // 🔥 使用Number()而不是parseInt()，保持与userOperationApi.js一致
+  const numId = Number(id);
+  console.log(`转换ID: ${id} -> ${numId}`);
+
   if (isNaN(numId)) {
+    console.error(`无效的ID格式: ${id}`);
     throw new Error(`无效的ID格式: ${id}`);
   }
+
   return numId;
 };
 
@@ -75,8 +85,8 @@ export const getSubscribeStatus = async (authorId, userId) => {
   try {
     const response = await api.get('/subscribes/isSubscribe', {
       params: {
-        developerId: convertToLong(authorId), 
-        userId: convertToLong(userId)   
+        developerId: convertToLong(authorId),
+        userId: convertToLong(userId)
       }
     });
     return {
@@ -197,14 +207,17 @@ export const mapSoftwareStatus = (statusCode) => {
  * 获取软件详情页完整数据
  * 一次性获取软件详情、开发商信息和关注状态
  * @param {string} softwareId - 软件ID
- * @param {string} userId - 当前用户ID
+ * @param {string|null} userId - 当前用户ID（可以为null）
  * @returns {Promise} 完整的页面数据
  */
 export const getSoftwareDetailPageData = async (softwareId, userId) => {
+  console.log('获取软件详情页数据:', { softwareId, userId });
   try {
-    // 转换ID为long类型
+    // 转换软件ID为long类型
     const softwareIdLong = convertToLong(softwareId);
-    const userIdLong = convertToLong(userId);
+
+    // 只有当userId不为空时才转换，否则保持为null
+    const userIdLong = userId ? convertToLong(userId) : null;
 
     // 1. 获取软件详情
     const softwareResult = await getSoftwareDetail(softwareIdLong);
@@ -220,7 +233,7 @@ export const getSoftwareDetailPageData = async (softwareId, userId) => {
       ? mapDeveloperData(developerResult.data)
       : null;
 
-    // 3. 获取关注状态（如果有用户ID和开发商ID）
+    // 3. 修复：获取关注状态（只有当用户已登录且有开发商ID时才获取）
     let subscribeStatus = false;
     if (userIdLong && softwareData.developerId) {
       const subscribeResult = await getSubscribeStatus(softwareData.developerId, userIdLong);
