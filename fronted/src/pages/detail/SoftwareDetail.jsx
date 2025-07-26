@@ -22,7 +22,7 @@ import {
   getSoftwareVersions,
   mapVersionsData,
   downloadSoftwareVersion,
-  bindDeviceWithMachineCode
+  // bindDeviceWithMachineCode
 } from '../../api/service/userOperationApi';
 import styles from './SoftwareDetail.module.css';
 import { useSelector } from 'react-redux';
@@ -96,7 +96,7 @@ const SoftwareDetail = () => {
   // 修改：弹窗状态管理
   const [purchaseModalVisible, setPurchaseModalVisible] = useState(false);
   const [reserveModalVisible, setReserveModalVisible] = useState(false);
-  const [bindingDevice, setBindingDevice] = useState(false); // 绑定设备加载状态
+  // const [bindingDevice, setBindingDevice] = useState(false); 绑定设备加载状态
   const [expandedFeatures, setExpandedFeatures] = useState(false);
 
   // 静态软件截图数据（保留作为后备）
@@ -217,14 +217,12 @@ const SoftwareDetail = () => {
     }
   };
 
-
   // 页面加载时获取数据
   useEffect(() => {
     if (softwareId) {
       fetchSoftwareDetail();
     }
   }, [softwareId]);
-
 
   //  当用户已购买时获取版本信息
   useEffect(() => {
@@ -234,43 +232,42 @@ const SoftwareDetail = () => {
   }, [softwareStatus.hasPurchased, softwareId]);
 
   // 简化：直接绑定当前设备的机械码
-  const bindCurrentDevice = async () => {
-    try {
-      setBindingDevice(true);
+  // const bindCurrentDevice = async () => {
+  //   try {
+  //     setBindingDevice(true);
 
-      if (!currentUserId) {
-        message.error('用户未登录，无法绑定设备');
-        return { success: false, error: '用户未登录' };
-      }
+  //     if (!currentUserId) {
+  //       message.error('用户未登录，无法绑定设备');
+  //       return { success: false, error: '用户未登录' };
+  //     }
 
-      if (!softwareInfo) {
-        message.error('软件信息不存在，无法绑定设备');
-        return { success: false, error: '软件信息不存在' };
-      }
+  //     if (!softwareInfo) {
+  //       message.error('软件信息不存在，无法绑定设备');
+  //       return { success: false, error: '软件信息不存在' };
+  //     }
 
-      console.log('正在绑定设备，用户ID:', currentUserId, '软件ID:', softwareInfo.id);
+  //     console.log('正在绑定设备，用户ID:', currentUserId, '软件ID:', softwareInfo.id);
 
-      //  调用修复后的绑定API
-      const result = await bindDeviceWithMachineCode(currentUserId, softwareInfo.id, softwareInfo.name);
+  //     //  调用修复后的绑定API
+  //     const result = await bindDeviceWithMachineCode(currentUserId, softwareInfo.id, softwareInfo.name);
 
-      if (result.success) {
-        message.success('设备绑定成功！机械码已保存到数据库');
-        return { success: true, data: result.data };
-      } else {
-        // 显示具体的错误信息
-        message.error(result.error);
-        return { success: false, error: result.error };
+  //     if (result.success) {
+  //       message.success('设备绑定成功！机械码已保存到数据库');
+  //       return { success: true, data: result.data };
+  //     } else {
+  //       // 显示具体的错误信息
+  //       message.error(result.error);
+  //       return { success: false, error: result.error };
+  //     }
 
-      }
-
-    } catch (error) {
-      console.error('绑定设备失败:', error);
-      message.error('绑定失败，请稍后重试');
-      return { success: false, error: error.message };
-    } finally {
-      setBindingDevice(false);
-    }
-  };
+  //   } catch (error) {
+  //     console.error('绑定设备失败:', error);
+  //     message.error('绑定失败，请稍后重试');
+  //     return { success: false, error: error.message };
+  //   } finally {
+  //     setBindingDevice(false);
+  //   }
+  // };
 
   // 获取软件详情和相关数据
   const fetchSoftwareDetail = async () => {
@@ -345,7 +342,6 @@ const SoftwareDetail = () => {
   };
 
   // 获取软件版本列表
-
   const fetchSoftwareVersions = async () => {
     try {
       setVersionsLoading(true);
@@ -370,7 +366,6 @@ const SoftwareDetail = () => {
       setVersionsLoading(false);
     }
   };
-
 
   // 模拟版本数据
   const getMockVersions = () => {
@@ -404,7 +399,6 @@ const SoftwareDetail = () => {
       }
     ];
   };
-
 
   //  设置默认软件状态
   const setDefaultSoftwareStatus = () => {
@@ -536,7 +530,6 @@ const SoftwareDetail = () => {
     }
   };
 
-
   //  修改：处理预约 - 使用currentUserId
   const handleReserve = () => {
     if (!currentUserId) {
@@ -550,7 +543,6 @@ const SoftwareDetail = () => {
     }
     setReserveModalVisible(true);
   };
-
 
   //  修改：确认预约 - 使用currentUserId
   const handleConfirmReserve = async () => {
@@ -597,8 +589,7 @@ const SoftwareDetail = () => {
     setPurchaseModalVisible(true);
   };
 
-
-  //  修改：确认购买 - 使用currentUserId
+  //  修改：确认购买 - 移除自动绑定
   const handleConfirmPurchase = async () => {
     try {
       if (!currentUserId) {
@@ -631,9 +622,8 @@ const SoftwareDetail = () => {
         message.success('购买成功！');
         setPurchaseModalVisible(false);
 
-
-        //  购买成功后自动绑定当前设备
-        await bindCurrentDevice();
+        //  ❌ 注释掉购买成功后自动绑定当前设备
+        // await bindCurrentDevice();
       } else {
         message.error(formatErrorMessage(result.error));
       }
@@ -659,7 +649,6 @@ const SoftwareDetail = () => {
     }
   };
 
-
   //  处理版本下载
   const handleVersionDownload = async (version) => {
     try {
@@ -674,7 +663,6 @@ const SoftwareDetail = () => {
       message.error('下载失败，请稍后重试');
     }
   };
-
 
   //  生成版本下拉菜单
   const getVersionsMenu = () => {
@@ -720,11 +708,10 @@ const SoftwareDetail = () => {
     );
   };
 
-
   //  修改：手动绑定设备（已购买用户可以使用）
-  const handleBindDevice = async () => {
-    await bindCurrentDevice();
-  };
+  // const handleBindDevice = async () => {
+  //   await bindCurrentDevice();
+  // };
 
   // 评论相关回调函数
   const handleCommentSubmit = (comment) => {
@@ -839,7 +826,6 @@ const SoftwareDetail = () => {
                   {mainButtonConfig.text}
                 </Button>
 
-
                 {/*  多版本下载下拉按钮 - 只有已购买时显示 */}
                 {softwareStatus.hasPurchased && (
                   <Dropdown
@@ -891,7 +877,6 @@ const SoftwareDetail = () => {
 
               <p className={styles.description}>{softwareInfo.description}</p>
 
-
               {currentUserId && (
                 <div className={styles.actionButtons}>
                   {/* 根据新状态显示不同的操作按钮 */}
@@ -919,21 +904,20 @@ const SoftwareDetail = () => {
                     </Button>
                   )}
 
-                  {/* 已购买用户可以手动绑定设备 */}
-                  {softwareStatus.hasPurchased && (
-                    <Button
-                      icon={<DesktopOutlined />}
-                      size="large"
-                      onClick={handleBindDevice}
-                      loading={bindingDevice}
-                      className={styles.actionBtn}
-                    >
-                      绑定本机
-                    </Button>
-                  )}
+                  {/* ❌ 注释掉已购买用户可以手动绑定设备的按钮 */}
+                  {/* {softwareStatus.hasPurchased && (
+      <Button
+        icon={<DesktopOutlined />}
+        size="large"
+        onClick={handleBindDevice}
+        loading={bindingDevice}
+        className={styles.actionBtn}
+      >
+        绑定本机
+      </Button>
+    )} */}
                 </div>
               )}
-
             </div>
           </div>
         </div>
@@ -977,7 +961,6 @@ const SoftwareDetail = () => {
         </div>
       </div>
 
-
       {/* 用户评论区 */}
       <CommentSection
         softwareId={softwareInfo.id}
@@ -1017,15 +1000,13 @@ const SoftwareDetail = () => {
         </div>
       </Modal>
 
-
       {/*  修改：购买弹窗 - 改成绑定本机说明 */}
-
       <Modal
         title="购买软件"
         open={purchaseModalVisible}
         onOk={handleConfirmPurchase}
         onCancel={() => setPurchaseModalVisible(false)}
-        okText="确认购买并绑定本机"
+        okText="确认购买"
         cancelText="取消"
         width={480}
       >
@@ -1035,15 +1016,14 @@ const SoftwareDetail = () => {
               <span>购买价格：</span>
               <span className={styles.finalPrice}>{softwareInfo.price}</span>
             </div>
-            <div className={styles.bindInfo}>
+            {/* <div className={styles.bindInfo}>
               <p className={styles.bindNote}>
                 * 购买成功后将自动获取本机机械码并绑定<br />
                 * 每个软件最多可绑定3台设备<br />
                 * 绑定后可在对应设备上激活使用<br />
-
                 * 重复绑定或超过3台设备会绑定失败
               </p>
-            </div>
+            </div> */}
           </div>
         </div>
       </Modal>

@@ -140,7 +140,7 @@ export const purchaseSoftware = async (purchaseData) => {
   } catch (error) {
     console.error('购买软件失败:', error);
 
-    // 🔥 从错误响应中提取后端返回的错误信息
+    //  从错误响应中提取后端返回的错误信息
     let errorMessage = '购买失败，请稍后重试';
 
     if (error.response?.data?.msg) {
@@ -159,7 +159,7 @@ export const purchaseSoftware = async (purchaseData) => {
 };
 
 /**
- * 🔥 修改：预约软件 - 简化，不需要设备类型
+ *  修改：预约软件 - 简化，不需要设备类型
  * @param {string} userid - 用户ID
  * @param {string} softid - 软件ID
  * @returns {Promise} 预约操作结果
@@ -262,7 +262,7 @@ export const downloadSoftware = async (softwareId) => {
 };
 
 // ============================================
-//  🔥 多版本下载功能
+//   多版本下载功能
 // ============================================
 
 /**
@@ -348,81 +348,80 @@ export const downloadSoftwareVersion = async (downloadLink, version) => {
 };
 
 // ============================================
-//  🔥 核心功能：设备绑定（机械码存储）
+//  核心功能：设备绑定（机械码存储）
 // ============================================
 
 /**
- * 🔥 核心功能：获取机械码并绑定设备
+ * 核心功能：获取机械码并绑定设备
  * 该功能会将机械码存储到数据库中
  * @param {string} userId - 用户ID
  * @param {string} softwareId - 软件ID
  * @param {string} softwareName - 软件名称
  * @returns {Promise} 绑定操作结果
  */
-export const bindDeviceWithMachineCode = async (userId, softwareId, softwareName) => {
-  try {
-    // ✅ 调用真实API：PUT /equipments/addNetWorkCode
-    const response = await api.put('/equipments/addNetWorkCode', {
-      userId: convertToLong(userId),
-      softwareId: convertToLong(softwareId),
-      softwareName: softwareName
-    });
+// export const bindDeviceWithMachineCode = async (userId, softwareId, softwareName) => {
+//   try {
+//     // ✅ 调用真实API：PUT /equipments/addNetWorkCode
+//     const response = await api.put('/equipments/addNetWorkCode', {
+//       userId: convertToLong(userId),
+//       softwareId: convertToLong(softwareId),
+//       softwareName: softwareName
+//     });
 
-    console.log('绑定设备API响应:', response.status, response.data);
+//     console.log('绑定设备API响应:', response.status, response.data);
 
-    // 🔥 修复：检查HTTP状态码和业务状态码
-    if (response.status === 200) {
-      // HTTP请求成功，再检查业务状态码
-      const businessCode = response.data?.code;
+//     // 修复：检查HTTP状态码和业务状态码
+//     if (response.status === 200) {
+//       // HTTP请求成功，再检查业务状态码
+//       const businessCode = response.data?.code;
 
-      if (businessCode === 200 || businessCode === undefined || businessCode === null) {
-        // 业务状态码200或没有业务状态码，认为成功
-        console.log('✅ 设备绑定成功');
+//       if (businessCode === 200 || businessCode === undefined || businessCode === null) {
+//         // 业务状态码200或没有业务状态码，认为成功
+//         console.log('✅ 设备绑定成功');
 
-        return {
-          success: true,
-          data: {
-            id: Date.now().toString(),
-            machineCode: '绑定成功',
-            deviceName: softwareName,
-            bindTime: new Date().toLocaleString(),
-            lastUsed: new Date().toLocaleString(),
-            status: 'active'
-          },
-          message: '设备绑定成功，机械码已保存'
-        };
-      } else {
-        // 业务状态码非200，绑定失败
-        const errorMsg = response.data?.msg || response.data?.message || '绑定失败，请勿重复绑定';
-        console.log(`❌ 业务状态码失败: ${businessCode}, 错误信息: ${errorMsg}`);
+//         return {
+//           success: true,
+//           data: {
+//             id: Date.now().toString(),
+//             machineCode: '绑定成功',
+//             deviceName: softwareName,
+//             bindTime: new Date().toLocaleString(),
+//             lastUsed: new Date().toLocaleString(),
+//             status: 'active'
+//           },
+//           message: '设备绑定成功，机械码已保存'
+//         };
+//       } else {
+//         // 业务状态码非200，绑定失败
+//         const errorMsg = response.data?.msg || response.data?.message || '绑定失败，请勿重复绑定';
+//         console.log(`❌ 业务状态码失败: ${businessCode}, 错误信息: ${errorMsg}`);
 
-        throw new Error(errorMsg);
-      }
-    } else {
-      // HTTP状态码非200
-      throw new Error('绑定失败，请勿重复绑定');
-    }
+//         throw new Error(errorMsg);
+//       }
+//     } else {
+//       // HTTP状态码非200
+//       throw new Error('绑定失败，请勿重复绑定');
+//     }
 
-  } catch (error) {
-    console.error('绑定设备失败:', error);
+//   } catch (error) {
+//     console.error('绑定设备失败:', error);
 
-    // 🔥 根据错误信息返回更具体的提示
-    let errorMessage = '绑定失败，请勿重复绑定';
+//     // 根据错误信息返回更具体的提示
+//     let errorMessage = '绑定失败，请勿重复绑定';
 
-    if (error.message && error.message.includes('请勿')) {
-      errorMessage = error.message; // 使用后端返回的具体错误信息
+//     if (error.message && error.message.includes('请勿')) {
+//       errorMessage = error.message; // 使用后端返回的具体错误信息
+//     }
 
-    }
-
-    return {
-      success: false,
-      error: errorMessage
-    };
-  }
-};
+//     return {
+//       success: false,
+//       error: errorMessage
+//     };
+//   }
+// };
 
 // ============================================
-//  🔥 其他功能函数
+//  其他功能函数
 // ============================================
 
 /**
@@ -513,7 +512,7 @@ export const validatePurchaseData = (purchaseData) => {
 };
 
 /**
- * 🔥 修改：验证预约参数 - 简化，不需要设备类型验证
+ *  修改：验证预约参数 - 简化，不需要设备类型验证
  * @param {string} userid - 用户ID
  * @param {string} softid - 软件ID
  * @returns {Object} 验证结果
@@ -565,7 +564,7 @@ export const formatErrorMessage = (error) => {
 };
 
 // ============================================
-//  🔥 软件状态管理接口
+//   软件状态管理接口
 // ============================================
 
 /**
