@@ -31,6 +31,7 @@ import RegisterForm from "./register.jsx";
 import ResetForm from "./reset.jsx";
 import { logout } from "../../store/slice/userSlice.js";
 import { mainSearch } from "../../api/service/mainApi.js";
+import { hasInfo } from "../../api/service/userService.js";
 
 const { Search } = Input;
 
@@ -52,9 +53,31 @@ const Header = () => {
   useEffect(() => {
     if (localStorage.getItem("token")) {
       setIsLoggedIn(true);
+      console.log("用户已登录，设置状态为已登录");
       setUserInfo(JSON.parse(localStorage.getItem("user")));
     }
   }, []);
+
+  useEffect(() => {
+    async function checkUserInfo() {
+      console.log("检查用户登录状态", isLoggedIn);
+      if (isLoggedIn) {
+        const userId = userInfo.id;
+        console.log("检查用户信息，用户ID:", userId);
+        try {
+          const response = await hasInfo(userId);
+          if (!response.data) {
+            // message.warning("请先完善个人信息");
+            setIsLoginModalVisible(true);
+            setActiveTab("reset");
+          }
+        } catch (error) {
+          console.error("检查用户信息失败:", error);
+        }
+      }
+    }
+    checkUserInfo();
+  }, [isLoggedIn, userInfo]);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();

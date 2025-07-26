@@ -115,6 +115,16 @@ export const getDeveloperSoftware = async (authorId) => {
   return response.data;
 };
 
+//用户有没有信息
+export const hasInfo = async (userId) => {
+  console.log("有没有信息检查用户信息，用户ID:", userId);
+  const response = await api.get(`/messages/check/${userId}`);
+  console.log("检查用户消息结果:", response.data);
+  return response.data;
+};
+
+//! 其他接口
+
 //这个是展示不同类别的软件的接口
 export const fetchSortFromAPI = async (type) => {
   const path = "/softwares/SearchTypeNew";
