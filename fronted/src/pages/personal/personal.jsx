@@ -711,7 +711,7 @@ const Personal = () => {
             <div className={styles.navContent}>
               <h3 className={styles.navTitle}>动态</h3>
               <p className={styles.navDesc}>
-                {userInfo.role === "developer"
+                {userInfo.role === 2
                   ? "查看我的最新动态和活动记录"
                   : "暂无动态，升级为开发商后可发布动态"}
               </p>
@@ -747,7 +747,7 @@ const Personal = () => {
         <div className={styles.contentSection}>
           <div className={styles.tabContentWrapper}>
             {/* 如果是动态页面且用户不是开发商，显示提示 */}
-            {activeTab === "momentsLayout" && userInfo.role !== "developer" ? (
+            {activeTab === "momentsLayout" && userInfo.role !== 2 ? (
               <div className={styles.emptyState}>
                 <div className={styles.emptyIcon}>
                   <User size={48} />

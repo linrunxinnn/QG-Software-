@@ -84,7 +84,7 @@ const Header = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  console.log("头像", userInfo);
+  console.log("头像", userInfo.avatar);
 
   // Tab配置
   const tabItems = [

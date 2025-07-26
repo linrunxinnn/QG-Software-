@@ -107,7 +107,8 @@ const userSlice = createSlice({
   },
   reducers: {
     setUser: (state, action) => {
-      const { id, username, role, token } = action.payload;
+      const { id, username, role, token, avatar } = action.payload;
+      state.avatar = avatar;
       state.id = id;
       state.username = username;
       state.role = role;
@@ -122,7 +123,7 @@ const userSlice = createSlice({
       localStorage.removeItem("user");
       localStorage.removeItem("token");
       localStorage.removeItem("role");
-      useNavigate("/");
+      window.location.reload(); // 刷新页面
     },
     clearError: (state) => {
       state.error = null;
@@ -145,6 +146,7 @@ const userSlice = createSlice({
         state.user = action.payload.data.user;
         state.token = action.payload.data.token;
         state.role = action.payload.data.user.role;
+        state.avatar = action.payload.data.user.avatar;
         state.error = null;
         localStorage.setItem("user", JSON.stringify(action.payload.data.user));
         localStorage.setItem("token", action.payload.data.token);
