@@ -387,13 +387,13 @@ const Personal = () => {
       icon: <Heart size={16} />,
       path: "/personal",
     },
-    {
-      key: "momentsLayout",
-      label: "动态",
-      icon: <User size={16} />,
-      path: "/personal/momentsLayout",
-      showForDeveloper: true, // 标记这个tab需要开发商身份
-    },
+    // {
+    //   key: "momentsLayout",
+    //   label: "动态",
+    //   icon: <User size={16} />,
+    //   path: "/personal/momentsLayout",
+    //   showForDeveloper: true, // 标记这个tab需要开发商身份
+    // },
     {
       key: "appointment",
       label: "软件详情",
@@ -696,17 +696,17 @@ const Personal = () => {
               <h3 className={styles.navTitle}>
                 {userInfo && userInfo.role === 1 ? "我的粉丝" : "我的关注"}
               </h3>
-              <p className={styles.navDesc}>
+              {/* <p className={styles.navDesc}>
                 {userInfo && userInfo.role === 1
                   ? `${userInfo && userInfo.followerCount} 位粉丝关注了你`
                   : `关注了 ${
                       userInfo && userInfo.followingCount
                     } 个软件开发商`}
-              </p>
+              </p> */}
             </div>
           </div>
 
-          <div
+          {/* <div
             className={styles.navCard}
             onClick={() => handleNavigate("momentsLayout")}
           >
@@ -721,7 +721,7 @@ const Personal = () => {
                   : "暂无动态，升级为开发商后可发布动态"}
               </p>
             </div>
-          </div>
+          </div> */}
 
           <div
             className={styles.navCard}
@@ -732,9 +732,9 @@ const Personal = () => {
             </div>
             <div className={styles.navContent}>
               <h3 className={styles.navTitle}>已预约</h3>
-              <p className={styles.navDesc}>
+              {/* <p className={styles.navDesc}>
                 {statistics.reservedCount} 个软件等待发布
-              </p>
+              </p> */}
             </div>
           </div>
         </div>
