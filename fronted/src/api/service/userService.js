@@ -285,11 +285,7 @@ export const submitSoftwareData = async (values, publishId) => {
         console.error('提交失败:', error);
         return { success: false, message: '提交失败' };
     }
-  } catch (error) {
-    console.error("提交失败:", error);
-    return { success: false, message: "提交失败" };
-  }
-};
+  } 
 
 //这个是查看开发商发布过的软件的接口
 export const fetchPublishSortAPI = async (authorId) => {
@@ -320,7 +316,7 @@ export const fetchPublishSortAPI = async (authorId) => {
         }
     }
   }
-};
+
 
 //这个是查看开发商发布过的软件版本的接口
 export const fetchSoftVersionAPI = async (id) => {
@@ -505,13 +501,7 @@ export const fetchSoftApplyAPI = async (authorId, id) => {
     }
 }
 
-    return response.data.data;
-    //这里会有三个id
-  } catch (error) {
-    console.error("请求失败", error);
-  }
-};
-
+  
 //同意软件发布时的接口 /softwares/roleUpdate _body id
 export const fetchContollerAdmitAPI = async (softwareId, authorId, id) => {
     const path1 = "/softwares/roleUpdate";
