@@ -1,0 +1,29 @@
+.rechargeContainer {
+  display: inline-block;
+}
+
+.rechargeCard {
+  border-radius: 8px;
+}
+
+.amountSection,
+.paymentSection {
+  margin-bottom: 20px;
+}
+
+.presetAmounts {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 10px 0;
+}
+
+.paymentMethods {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.paymentMethod {
+  flex: 1;
+}

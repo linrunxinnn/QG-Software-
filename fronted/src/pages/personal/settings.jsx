@@ -247,39 +247,41 @@ const Settings = () => {
             <Card title="个人资料设置" bordered={false}>
               <div
                 style={{
-                  marginBottom: 16,
-                  width: "100%",
                   display: "flex",
-                  justifyContent: "center",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  marginBottom: 16,
                 }}
               >
-                <Button
-                  type="primary"
-                  onClick={() => handleCardChange("changeAvatar")}
-                >
-                  更换头像
+                <span>头像设置</span>
+                <Button onClick={() => handleCardChange("changeAvatar")}>
+                  更换新头像
                 </Button>
               </div>
+
               <div
                 style={{
-                  marginBottom: 16,
-                  width: "100%",
                   display: "flex",
-                  justifyContent: "center",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  marginBottom: 16,
                 }}
               >
+                <span>用户名</span>
                 <Button onClick={() => handleCardChange("changeUsername")}>
                   修改用户名
                 </Button>
               </div>
+
               <div
                 style={{
-                  marginBottom: 16,
-                  width: "100%",
                   display: "flex",
-                  justifyContent: "center",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  marginBottom: 16,
                 }}
               >
+                <span>手机号</span>
                 <Button onClick={() => handleCardChange("changePhone")}>
                   修改手机号
                 </Button>

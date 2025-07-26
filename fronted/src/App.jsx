@@ -6,8 +6,6 @@ import Header from "./component/Header/Header.jsx";
 import Home from "./pages/home/home.jsx";
 import "./App.css";
 import { Outlet } from "react-router-dom";
-import api from "./api/index.js";
-import { useState } from "react";
 
 function App() {
   // const [files, setFiles] = useState({
@@ -54,6 +52,7 @@ function App() {
   //     console.error("Disable user failed:", error);
   //   }
   // };
+
   return (
     <>
       {/* <div>
