@@ -123,6 +123,17 @@ export const hasInfo = async (userId) => {
   return response.data;
 };
 
+//用户充值
+export const rechargeUser = async (userId, amount) => {
+  console.log("用户充值，用户ID:", userId, "充值金额:", amount);
+  const response = await api.put(`/users/updateMoney`, {
+    id: userId,
+    money: amount,
+  });
+  console.log("充值结果:", response.data);
+  return response.data;
+};
+
 //! 其他接口
 
 //这个是展示不同类别的软件的接口

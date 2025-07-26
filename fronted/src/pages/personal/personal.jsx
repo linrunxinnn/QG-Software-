@@ -12,6 +12,7 @@ import {
   File,
   Trash2,
 } from "lucide-react";
+import { Card, InputNumber, Button, Modal } from "antd";
 import { useNavigate, Outlet, useLocation } from "react-router-dom";
 import styles from "./personal.module.css";
 import { getUserInfo, setUser } from "../../store/slice/userSlice.js";
@@ -20,6 +21,7 @@ import { useSelector } from "react-redux";
 import { applyToDeveloper } from "../../api/service/applyDeveloperService.js";
 import { getHaveSubscribed } from "../../api/service/subscribe.js";
 import { applyDeveloper } from "../../api/service/applyDevelopers.js";
+import { rechargeUser } from "../../api/service/userService.js";
 
 const Personal = () => {
   const navigate = useNavigate();
@@ -27,6 +29,9 @@ const Personal = () => {
   const followingContentRef = useRef(null);
   const fileInputRef = useRef(null);
   const user = useSelector((state) => state.user);
+  const [isRechargeVisible, setIsRechargeVisible] = useState(false);
+  const [amount, setAmount] = useState(100);
+  const [loading, setLoading] = useState(false);
   // 用户数据
   const [userInfo, setUserInfo] = useState({});
   useEffect(() => {
@@ -299,6 +304,46 @@ const Personal = () => {
     } catch (error) {}
   };
 
+  // 处理充值
+  const handleRecharge = () => {
+    setIsRechargeVisible(true);
+  };
+
+  const handleCancel = () => {
+    setIsRechargeVisible(false);
+  };
+
+  const handleAmountChange = (value) => {
+    setAmount(value);
+  };
+
+  const handleSubmit = async () => {
+    setLoading(true);
+    try {
+      // Here you would call your recharge API
+      // await rechargeApi(amount);
+      console.log("Recharging amount:", amount);
+
+      // Simulate API call
+      // await new Promise((resolve) => setTimeout(resolve, 1000));
+      const response = await rechargeUser(userInfo.id, amount);
+
+      Modal.success({
+        title: "充值成功",
+        content: `成功充值 ${amount} 元`,
+      });
+      setIsRechargeVisible(false);
+    } catch (error) {
+      Modal.error({
+        title: "充值失败",
+        content: error.message || "请稍后重试",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const presetAmounts = [50, 100, 200, 500, 1000];
   // 处理设置
   const handleSettings = () => {
     navigate("/personal/settings");
@@ -551,6 +596,59 @@ const Personal = () => {
                 升级为开发商
               </button>
             )}
+            <div className={styles.rechargeContainer}>
+              <button className={styles.actionBtn} onClick={handleRecharge}>
+                <Settings size={16} />
+                充值
+              </button>
+
+              <Modal
+                title="账户充值"
+                visible={isRechargeVisible}
+                onCancel={handleCancel}
+                footer={null}
+                width={400}
+                centered
+              >
+                <Card bordered={false} className={styles.rechargeCard}>
+                  <div className={styles.amountSection}>
+                    <h4>充值金额</h4>
+                    <InputNumber
+                      min={10}
+                      max={10000}
+                      value={amount}
+                      defaultValue={100}
+                      onChange={handleAmountChange}
+                      formatter={(value) => `¥ ${value}`}
+                      parser={(value) => value.replace(/¥\s?|(,*)/g, "")}
+                      style={{ width: "100%", margin: "10px 0" }}
+                    />
+
+                    <div className={styles.presetAmounts}>
+                      {presetAmounts.map((amt) => (
+                        <Button
+                          key={amt}
+                          type={amount === amt ? "primary" : "default"}
+                          onClick={() => setAmount(amt)}
+                        >
+                          ¥{amt}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                  <Button
+                    type="primary"
+                    block
+                    size="large"
+                    onClick={handleSubmit}
+                    loading={loading}
+                    style={{ marginTop: 20 }}
+                  >
+                    立即充值 ¥{amount}
+                  </Button>
+                </Card>
+              </Modal>
+            </div>
             <button className={styles.actionBtn} onClick={handleSettings}>
               <Settings size={16} />
               设置
