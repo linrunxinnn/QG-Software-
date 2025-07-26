@@ -41,6 +41,7 @@ export const loginCode = async (credentials) => {
 };
 
 export const register = async (userData) => {
+  console.log("注册用户数据:", userData);
   const response = await api.post("/users/register", {
     code: userData.code,
     user: { email: userData.email, password: userData.password },
@@ -143,14 +144,6 @@ export const rechargeUser = async (userId, amount) => {
   return response.data;
 };
 
-//获取用户余额
-export const getUserBalance = async (userId) => {
-  console.log("获取用户余额，用户ID:", userId);
-  const response = await api.get(`/users/getPrice/${userId}`);
-  console.log("获取用户余额结果:", response.data);
-  return response.data;
-};
-
 //! 其他接口
 
 //这个是展示不同类别的软件的接口
@@ -233,7 +226,7 @@ export const submitSoftwareData = async (values, publishId) => {
   const formData = new FormData();
   // 将软件信息封装成 JSON 字符串
   const softwareData = JSON.stringify({
-    authorId: 1, // 假设这个值是固定的
+    authorId: publishId, // 假设这个值是固定的
     price: values.price,
     introduction: values.introduction,
     version: values.version,
@@ -264,7 +257,7 @@ export const submitSoftwareData = async (values, publishId) => {
       // 如果返回了 softwareId，准备第二次请求
       const secondFormData = new FormData();
       const secondData = JSON.stringify({
-        userId: 2,
+        userId: publishId,
         softwareId: softwareId,
         reason: "",
       });
@@ -283,11 +276,14 @@ export const submitSoftwareData = async (values, publishId) => {
     } else {
       throw new Error("获取 softwareId 失败");
     }
-  } 
+  } catch (error) {
+    console.error("提交失败:", error);
+    return { success: false, message: "提交失败" };
+  }
+};
 
 //这个是查看开发商发布过的软件的接口
 export const fetchPublishSortAPI = async (authorId) => {
-  // const path = "/softwares/selectLastRecordsPerName";
   try {
     // 使用 axios 发送 GET 请求，带上 authorId
     const response = await api.get("/softwares/selectLastRecordsPerName", {
@@ -314,7 +310,7 @@ export const fetchPublishSortAPI = async (authorId) => {
       console.error("请求错误:", error.message);
     }
   }
-
+};
 
 //这个是查看开发商发布过的软件版本的接口
 export const fetchSoftVersionAPI = async (id) => {
@@ -470,7 +466,7 @@ export const fetchBanAPI = async (id, userId) => {
       userId,
       reason,
     };
-    const response = await api.post(path, requestbody);
+    const response = await api.put(path, requestbody);
     return response.message; // 返回格式化后的数据
   } catch (error) {
     console.error("请求失败:", error);
@@ -487,16 +483,22 @@ export const fetchSoftApplyAPI = async (authorId, id) => {
         id, //请求表的id
       },
     });
-    console.log("这是点击进入审核资料", response.data);
+    console.log("这是点击进入审核资料", response.data.data);
 
-  
+    return response.data.data;
+    //这里会有三个id
+  } catch (error) {
+    console.error("请求失败", error);
+  }
+};
+
 //同意软件发布时的接口 /softwares/roleUpdate _body id
 export const fetchContollerAdmitAPI = async (softwareId, authorId, id) => {
   const path1 = "/softwares/roleUpdate";
   const path2 = "/applySoftwares/agreeApplySoftware";
 
   // 请求体
-  const body1 = { softwareId };
+  const body1 = { id: softwareId };
   const body2 = { userId: authorId, id, softwareId };
 
   try {
@@ -556,5 +558,19 @@ export const fetchDeletecommentAPI = async (id) => {
     return response.data;
   } catch (error) {
     console.error("请求失败", error);
+  }
+};
+
+export const fecthseekAPI = async (name) => {
+  const path = "/admins/name";
+  try {
+    const response = await api.get(path, {
+      params: {
+        name,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("模糊查询失败");
   }
 };
