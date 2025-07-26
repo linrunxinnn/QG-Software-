@@ -7,7 +7,7 @@ const ManagerRouter = ({ children }) => {
 
   const role = user?.role; // 获取用户角色
 
-  if (role !== 3) {
+  if (role !== 1) {
     return <Navigate to="/unauthorized" replace />;
   }
 

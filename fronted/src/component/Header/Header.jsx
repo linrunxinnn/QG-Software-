@@ -208,7 +208,7 @@ const Header = () => {
   const handleSelect = (value) => {
     console.log("Selected:", value);
     // 你可以在这里跳转或处理选中的结果
-    navigate(`/detail/${value}`);
+    navigate(`/software/${value}`);
   };
 
   // 用户菜单
