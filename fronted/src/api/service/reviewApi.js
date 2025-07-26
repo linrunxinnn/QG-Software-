@@ -15,7 +15,7 @@ export const getSoftwareReviews = async (softwareId) => {
     const response = await api.get(`/reviews/reviewOfSoftware/${softwareId}`);
     return {
       success: true,
-      data: response.data
+      data: response.data.data
     };
   } catch (error) {
     console.error('获取评论列表失败:', error);

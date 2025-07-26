@@ -16,6 +16,7 @@ import ControlPage from "../pages/contorlPage/controlPage.jsx";
 import CheckDetail from "../pages/contorlPage/component/softdetail.jsx";
 import ShowSoft from "../pages/contorlPage/component/commentSoft.jsx";
 import UserList from "../pages/contorlPage/component/userList.jsx";
+import ProtectRouterByToken from "../component/ProtectedRoute/ProtectedProvider.jsx";
 // 新增：供应商详情页面
 import SupplierProfile from "../pages/supplier/supplierProfile.jsx";
 import CheckList from "../pages/contorlPage/component/CheckSoftList.jsx";
@@ -37,7 +38,11 @@ export const router = createBrowserRouter([
       {
         //个人页面
         path: "personal",
-        element: <Personal />,
+        element: (
+          <ProtectRouterByToken>
+            <Personal />
+          </ProtectRouterByToken>
+        ),
         children: [
           {
             //粉丝数（软件提供商）/关注数（普通用户）
@@ -62,9 +67,10 @@ export const router = createBrowserRouter([
         ],
       },
       {
-        //软件详情页面（一个开发商版，一个用户版，用户版再分为已购未购）
-        path: "detail/:id",
-        element: <Detail />,
+        //软件详情页面（一个开发商版，一个用户版，用户版再分为已购未购）\
+        //! 禁用
+        // path: "detail/:id",
+        // element: <Detail />,
       },
       {
         //新的软件详情页面（统一的软件详情展示）
@@ -78,18 +84,26 @@ export const router = createBrowserRouter([
       },
       {
         //更多软件
-        path: "more",
-        element: <Moresoft />
+        path: "more/:type",
+        element: <Moresoft />,
       },
       {
         //动态页面（消息）
         path: "moments",
-        element: <Moments />,
+        element: (
+          <ProtectRouterByToken>
+            <Moments />
+          </ProtectRouterByToken>
+        ),
       },
       {
         //发布页面
         path: "publish",
-        element: <Publish />,
+        element: (
+          <ProtectRouterByToken>
+            <Publish />
+          </ProtectRouterByToken>
+        ),
         children: [
           {
             //列表展示&下拉栏搜索栏
@@ -109,7 +123,7 @@ export const router = createBrowserRouter([
           {
             path: "editor",
             element: <EditorDetail />,
-          }
+          },
         ],
       },
     ],
@@ -134,16 +148,16 @@ export const router = createBrowserRouter([
       {
         path: "comment",
         element: <ShowSoft />,
-        children: []
+        children: [],
       },
       {
         path: "comment/detail",
-        element: <CommentSection />
+        element: <CommentSection />,
       },
       {
         path: "detail/:name",
         element: <CheckDetail />,
-      }
+      },
     ],
   },
 ]);

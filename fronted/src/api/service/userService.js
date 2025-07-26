@@ -9,25 +9,132 @@ import api from "../index.js";
 //2.在组件的dispatch中使用
 //3.其他需要使用api的地方
 
+export const deleteUser = async (userId) => {
+    api.delete(`/users/delete/${userId}`);
+};
+
+export const loginPassword = async (credentials) => {
+    try {
+        console.log("登录请求数据:", credentials);
+        const response = await api.get("/users/password", {
+            params: credentials,
+        });
+        console.log("登录结果:", response.data);
+        return response.data;
+    } catch (error) {
+        console.error("登录失败:", error);
+    }
+};
+
+export const loginCode = async (credentials) => {
+    const response = await api.get("/users/code", {
+        params: credentials,
+    });
+    console.log("登录结果:", response.data);
+    return response.data;
+};
+
+export const register = async (userData) => {
+    const response = await api.post("/users/register", {
+        code: userData.code,
+        user: { email: userData.email, password: userData.password },
+    });
+    return response.data;
+};
+
+//发送验证码
+export const sendCode = async (email) => {
+    console.log("发送验证码到:", email);
+    const response = await api.get("/users/sendCodeByEmail", {
+        params: { email },
+    });
+    return response.data;
+};
+
+//重设密码
+export const resetPassword = async (email, newPassword) => {
+    const response = await api.post("/users/resetPassword", {
+        params: { email, newPassword },
+    });
+    return response.data;
+};
+
+//更改用户头像
+export const changeAvatar = async (formData, userId) => {
+    const response = await api.post(`/users/updateAvatar`, formData, {
+        params: { userId },
+        headers: {
+            "Content-Type": "multipart/form-data",
+        },
+    });
+    return response.data;
+};
+
+//更改用户名
+export const changeUsername = async (id, name) => {
+    console.log("更新用户名请求数据:", { id, name });
+    const response = await api.put(`/users/updateName`, {
+        id: id,
+        name: name,
+    });
+    return response.data;
+};
+
+//更改手机号
+export const changePhone = async (id, phone) => {
+    const response = await api.put(`/users/updatePhone`, {
+        id: id,
+        phone: phone,
+    });
+    return response.data;
+};
+
+//获取用户预约软件
+export const getAppointment = async (userId) => {
+    // console.log("获取用户预约软件，用户ID:", userId);
+    const response = await api.get(`/equipments/selectAppointment/${userId}`);
+    // console.log("获取预约软件结果:", response.data);
+    return response.data;
+};
+
+//获取用户已经购买软件
+export const getPurchase = async (userId) => {
+    // console.log("获取用户购买软件，用户ID:", userId);
+    const response = await api.get(`/equipments/selectPurchased/${userId}`);
+    // console.log("获取购买软件结果:", response.data);
+    return response.data;
+};
+
+//获取软件开发商的软件
+export const getDeveloperSoftware = async (authorId) => {
+    console.log("获取开发商软件，作者ID:", authorId);
+    const response = await api.get(
+        `/softwares/selectLastRecordsPerName/${authorId}`
+    );
+    console.log("获取开发商软件结果:", response.data);
+    return response.data;
+};
+
 //这个是展示不同类别的软件的接口
 export const fetchSortFromAPI = async (type) => {
     const path = "/softwares/SearchTypeNew";
     try {
         // 使用 axios 发送 GET 请求
         const response = await api.get(`${path}?type=${type}`);
-        const result = response.data;  // axios 返回的数据位于 `data` 字段中
+        const result = response.data; // axios 返回的数据位于 `data` 字段中
 
         // 处理并格式化数据
         const formattedData = result.map((item) => ({
             picture: item.picture,
             name: item.name,
             price: item.price,
+            id: item.id,
         }));
 
         return formattedData;
     } catch (error) {
-        console.error('请求失败:', error);
-        throw error;  // 抛出错误以便外部捕获
+        console.error("请求失败:", error);
+        throw error; // 抛出错误以便外部捕获
     }
 };
 
@@ -72,8 +179,8 @@ export const fetchSortCheckAPI = async () => {
 
         return formattedData;
     } catch (error) {
-        console.error('请求失败:', error);
-        throw error;  // 抛出错误以便外部捕获
+        console.error("请求失败:", error);
+        throw error; // 抛出错误以便外部捕获
     }
 };
 
@@ -197,10 +304,10 @@ export const fetchSoftVersionAPI = async (id) => {
         }));
         console.log(formattedData);
 
-        return formattedData;  // 返回格式化后的数据
+        return formattedData; // 返回格式化后的数据
     } catch (error) {
-        console.error('请求失败:', error);
-        throw error;  // 抛出错误以便外部捕获
+        console.error("请求失败:", error);
+        throw error; // 抛出错误以便外部捕获
     }
 };
 

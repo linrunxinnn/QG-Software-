@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { use, useState } from "react";
 import {
   ArrowLeft,
   User,
@@ -11,13 +11,22 @@ import {
   Eye,
   Trash2,
   HelpCircle,
-  LogOut
-} from 'lucide-react';
-import { useNavigate, useOutletContext } from 'react-router-dom';
-import styles from './settings.module.css';
+  LogOut,
+} from "lucide-react";
+import { Card, Button } from "antd";
+import EditCard from "./EditCard.jsx";
+import { useNavigate, useOutletContext } from "react-router-dom";
+import styles from "./settings.module.css";
+import { logout } from "../../store/slice/userSlice.js";
+import { useDispatch } from "react-redux";
+import { deleteUser } from "../../api/service/userService.js";
+import { message } from "antd";
+import { updateAvatar } from "../../store/slice/userSlice.js";
+import Title from "antd/es/skeleton/Title.js";
 
 const Settings = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const { userInfo } = useOutletContext();
 
   // 设置状态
@@ -29,23 +38,26 @@ const Settings = () => {
     promotionalEmails: false,
 
     // 隐私设置
-    profileVisibility: 'public', // public, friends, private
-    activityVisibility: 'friends',
+    profileVisibility: "public", // public, friends, private
+    activityVisibility: "friends",
     showEmail: false,
     showPhone: false,
 
     // 应用设置
-    theme: 'system', // light, dark, system
-    language: 'zh-CN',
+    theme: "system", // light, dark, system
+    language: "zh-CN",
     autoDownload: false,
-    downloadPath: '/Downloads',
+    downloadPath: "/Downloads",
 
     // 账户设置
     twoFactorAuth: false,
-    loginNotifications: true
+    loginNotifications: true,
   });
 
-  const [activeSection, setActiveSection] = useState('profile');
+  const [visible, setVisible] = useState(false);
+  const [currentEditType, setCurrentEditType] = useState(null);
+
+  const [activeSection, setActiveSection] = useState("profile");
   const [showHelpModal, setShowHelpModal] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
   const [showAboutModal, setShowAboutModal] = useState(false);
@@ -53,10 +65,10 @@ const Settings = () => {
   // 设置选项配置
   const settingSections = [
     {
-      key: 'profile',
-      title: '个人资料',
+      key: "profile",
+      title: "个人资料",
       icon: <User size={20} />,
-      description: '管理您的个人信息和头像'
+      description: "管理您的个人信息和头像",
     },
     // {
     //   key: 'notifications',
@@ -83,42 +95,74 @@ const Settings = () => {
     //   description: '自定义应用行为和偏好'
     // },
     {
-      key: 'help',
-      title: '帮助支持',
+      key: "help",
+      title: "帮助支持",
       icon: <HelpCircle size={20} />,
-      description: '获取帮助和联系支持团队'
-    }
+      description: "获取帮助和联系支持团队",
+    },
   ];
+
+  const handleCardChange = (type) => {
+    setCurrentEditType(type);
+    setVisible(true);
+  };
+
+  const handleCardClose = () => {
+    setVisible(false);
+    setCurrentEditType(null);
+  };
+
+  // 处理头像更换
+  const handleChangeAvatar = async () => {
+    // 这里可以实现头像更换逻辑
+    try {
+      const response = await dispatch(
+        updateAvatar({ userId: userInfo.id, avatarFile: null })
+      ).unwrap();
+      console.log("头像更换成功:", response);
+      message.success("头像更换成功");
+    } catch (error) {}
+  };
 
   // 处理返回
   const handleBack = () => {
-    navigate('/personal');
+    navigate("/personal");
   };
 
   // 处理设置更新
   const handleSettingChange = (key, value) => {
-    setSettings(prev => ({
+    setSettings((prev) => ({
       ...prev,
-      [key]: value
+      [key]: value,
     }));
   };
 
   // 处理开关切换
   const handleToggle = (key) => {
-    setSettings(prev => ({
+    setSettings((prev) => ({
       ...prev,
-      [key]: !prev[key]
+      [key]: !prev[key],
     }));
   };
 
   // 处理退出登录
   const handleLogout = () => {
-    console.log('用户退出登录');
+    // console.log("用户退出登录");
+    dispatch(logout());
+    message.success("退出登录成功");
   };
 
   // 处理删除账户
-  const handleDeleteAccount = () => {
-    console.log('删除账户请求');
+  const handleDeleteAccount = async () => {
+    // console.log("删除账户请求");
+    try {
+      const response = await deleteUser(userInfo.id);
+      console.log("删除账户响应:", response);
+      dispatch(logout());
+      message.success("账户已删除");
+    } catch (error) {
+      console.error("删除账户失败:", error);
+    }
   };
 
   // 处理使用帮助
@@ -138,21 +182,21 @@ const Settings = () => {
 
   // 渲染设置项
   const renderSettingItem = (title, description, control, danger = false) => (
-    <div className={`${styles.settingItem} ${danger ? styles.danger : ''}`}>
+    <div className={`${styles.settingItem} ${danger ? styles.danger : ""}`}>
       <div className={styles.settingInfo}>
         <h4 className={styles.settingTitle}>{title}</h4>
         {description && <p className={styles.settingDesc}>{description}</p>}
       </div>
-      <div className={styles.settingControl}>
-        {control}
-      </div>
+      <div className={styles.settingControl}>{control}</div>
     </div>
   );
 
   // 渲染开关控件
   const renderSwitch = (key, disabled = false) => (
     <button
-      className={`${styles.switch} ${settings[key] ? styles.active : ''} ${disabled ? styles.disabled : ''}`}
+      className={`${styles.switch} ${settings[key] ? styles.active : ""} ${
+        disabled ? styles.disabled : ""
+      }`}
       onClick={() => !disabled && handleToggle(key)}
       disabled={disabled}
     >
@@ -167,7 +211,7 @@ const Settings = () => {
       value={settings[key]}
       onChange={(e) => handleSettingChange(key, e.target.value)}
     >
-      {options.map(option => (
+      {options.map((option) => (
         <option key={option.value} value={option.value}>
           {option.label}
         </option>
@@ -184,11 +228,11 @@ const Settings = () => {
         <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
           <div className={styles.modalHeader}>
             <h3 className={styles.modalTitle}>{title}</h3>
-            <button className={styles.modalClose} onClick={onClose}>×</button>
+            <button className={styles.modalClose} onClick={onClose}>
+              ×
+            </button>
           </div>
-          <div className={styles.modalContent}>
-            {content}
-          </div>
+          <div className={styles.modalContent}>{content}</div>
         </div>
       </div>
     );
@@ -197,35 +241,56 @@ const Settings = () => {
   // 渲染设置内容
   const renderSettingContent = () => {
     switch (activeSection) {
-      case 'profile':
+      case "profile":
         return (
           <div className={styles.settingContent}>
-            <h3 className={styles.sectionTitle}>个人资料设置</h3>
-            {renderSettingItem(
-              '头像',
-              '更换您的个人头像',
-              <button className={styles.actionBtn}>更换头像</button>
-            )}
-            {renderSettingItem(
-              '用户名',
-              '修改您的显示名称',
-              <button className={styles.actionBtn}>修改</button>
-            )}
-            {renderSettingItem(
-              '邮箱地址',
-              '更新您的联系邮箱',
-              <button className={styles.actionBtn}>修改</button>
-            )}
-            {renderSettingItem(
-              '手机号码',
-              '绑定或更换手机号码',
-              <button className={styles.actionBtn}>修改</button>
-            )}
-            {renderSettingItem(
-              '个人简介',
-              '编辑您的个人简介',
-              <button className={styles.actionBtn}>编辑</button>
-            )}
+            <Card title="个人资料设置" bordered={false}>
+              <div
+                style={{
+                  marginBottom: 16,
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+              >
+                <Button
+                  type="primary"
+                  onClick={() => handleCardChange("changeAvatar")}
+                >
+                  更换头像
+                </Button>
+              </div>
+              <div
+                style={{
+                  marginBottom: 16,
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+              >
+                <Button onClick={() => handleCardChange("changeUsername")}>
+                  修改用户名
+                </Button>
+              </div>
+              <div
+                style={{
+                  marginBottom: 16,
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+              >
+                <Button onClick={() => handleCardChange("changePhone")}>
+                  修改手机号
+                </Button>
+              </div>
+            </Card>
+
+            <EditCard
+              type={currentEditType}
+              visible={visible}
+              onClose={handleCardClose}
+            />
           </div>
         );
 
@@ -363,24 +428,30 @@ const Settings = () => {
       //     </div>
       //   );
 
-      case 'help':
+      case "help":
         return (
           <div className={styles.settingContent}>
             <h3 className={styles.sectionTitle}>帮助与支持</h3>
             {renderSettingItem(
-              '使用帮助',
-              '查看软件商场的使用指南和常见问题',
-              <button className={styles.actionBtn} onClick={handleShowHelp}>查看</button>
+              "使用帮助",
+              "查看软件商场的使用指南和常见问题",
+              <button className={styles.actionBtn} onClick={handleShowHelp}>
+                查看
+              </button>
             )}
             {renderSettingItem(
-              '联系客服',
-              '遇到问题时联系我们的支持团队',
-              <button className={styles.actionBtn} onClick={handleShowContact}>联系</button>
+              "联系客服",
+              "遇到问题时联系我们的支持团队",
+              <button className={styles.actionBtn} onClick={handleShowContact}>
+                联系
+              </button>
             )}
             {renderSettingItem(
-              '关于我们',
-              '了解更多关于我们软件商城的信息',
-              <button className={styles.actionBtn} onClick={handleShowAbout}>查看</button>
+              "关于我们",
+              "了解更多关于我们软件商城的信息",
+              <button className={styles.actionBtn} onClick={handleShowAbout}>
+                查看
+              </button>
             )}
           </div>
         );
@@ -403,10 +474,12 @@ const Settings = () => {
       <div className={styles.settingsContainer}>
         {/* 设置菜单 */}
         <div className={styles.settingsMenu}>
-          {settingSections.map(section => (
+          {settingSections.map((section) => (
             <button
               key={section.key}
-              className={`${styles.menuItem} ${activeSection === section.key ? styles.active : ''}`}
+              className={`${styles.menuItem} ${
+                activeSection === section.key ? styles.active : ""
+              }`}
               onClick={() => setActiveSection(section.key)}
             >
               <div className={styles.menuIcon}>{section.icon}</div>
@@ -427,8 +500,8 @@ const Settings = () => {
             <h3 className={styles.dangerTitle}>危险操作</h3>
             <div className={styles.dangerActions}>
               {renderSettingItem(
-                '退出登录',
-                '退出当前账户登录状态',
+                "退出登录",
+                "退出当前账户登录状态",
                 <button className={styles.dangerBtn} onClick={handleLogout}>
                   <LogOut size={16} />
                   退出登录
@@ -436,9 +509,12 @@ const Settings = () => {
                 true
               )}
               {renderSettingItem(
-                '删除账户',
-                '永久删除您的账户和所有数据',
-                <button className={styles.dangerBtn} onClick={handleDeleteAccount}>
+                "删除账户",
+                "永久删除您的账户和所有数据",
+                <button
+                  className={styles.dangerBtn}
+                  onClick={handleDeleteAccount}
+                >
                   <Trash2 size={16} />
                   删除账户
                 </button>,
@@ -453,7 +529,7 @@ const Settings = () => {
       {renderModal(
         showHelpModal,
         () => setShowHelpModal(false),
-        '软件商场使用帮助',
+        "软件商场使用帮助",
         <div>
           <h4>如何使用软件商场</h4>
           <ul>
@@ -478,15 +554,23 @@ const Settings = () => {
       {renderModal(
         showContactModal,
         () => setShowContactModal(false),
-        '联系客服',
+        "联系客服",
         <div>
           <h4>客服联系方式</h4>
           <p>如果您在使用过程中遇到任何问题，请通过以下方式联系我们：</p>
-          <div style={{ marginTop: '20px', padding: '15px', background: '#f8f9fa', borderRadius: '8px' }}>
+          <div
+            style={{
+              marginTop: "20px",
+              padding: "15px",
+              background: "#f8f9fa",
+              borderRadius: "8px",
+            }}
+          >
             <strong>QQ客服：468098@qq.com</strong>
           </div>
-          <p style={{ marginTop: '15px', fontSize: '14px', color: '#666' }}>
-            工作时间：周一至周日 9:00-21:00<br />
+          <p style={{ marginTop: "15px", fontSize: "14px", color: "#666" }}>
+            工作时间：周一至周日 9:00-21:00
+            <br />
             我们会尽快回复您的问题，感谢您的耐心等待！
           </p>
         </div>
@@ -496,19 +580,25 @@ const Settings = () => {
       {renderModal(
         showAboutModal,
         () => setShowAboutModal(false),
-        '关于我们',
+        "关于我们",
         <div>
           <h4>欢迎使用我们的软件应用商城</h4>
-          <p>我们是一个专业、好用的软件应用商城，致力于为用户提供优质的软件下载和使用体验。</p>
+          <p>
+            我们是一个专业、好用的软件应用商城，致力于为用户提供优质的软件下载和使用体验。
+          </p>
 
           <h4>我们的承诺</h4>
-          <p>我们承诺为每一位用户提供最好的服务体验，不断优化产品功能，持续更新软件资源，让您的数字生活更加便捷高效。</p>
+          <p>
+            我们承诺为每一位用户提供最好的服务体验，不断优化产品功能，持续更新软件资源，让您的数字生活更加便捷高效。
+          </p>
 
-          <p style={{ marginTop: '20px', fontSize: '14px', color: '#666' }}>
+          <p style={{ marginTop: "20px", fontSize: "14px", color: "#666" }}>
             感谢您选择我们的软件商城！
           </p>
         </div>
       )}
+
+      {/* 卡片修改用户信息 */}
     </div>
   );
 };

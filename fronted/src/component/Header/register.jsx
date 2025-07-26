@@ -3,6 +3,8 @@ import { Button, Form, Input, Select, Space, Typography, message } from "antd";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { sendCode } from "../../api/service/userService.js";
+import { registerUser } from "../../store/slice/userSlice.js";
 
 const { Option } = Select;
 
@@ -29,7 +31,6 @@ const RegisterForm = ({ onSuccess }) => {
   }, [countdown]);
 
   const handlerSendVerificationCode = async () => {
-    console.log("handlerSendVerificationCode");
     if (countdown > 0) {
       message.warning(`请等待 ${countdown} 秒后重试`);
       return;
@@ -42,7 +43,7 @@ const RegisterForm = ({ onSuccess }) => {
     }
 
     try {
-      // const res = await sendcode({ email });
+      const res = await sendCode(email);
       message.success(`验证码已发送到 ${email}`);
       setCountdown(60);
     } catch (error) {
@@ -57,11 +58,10 @@ const RegisterForm = ({ onSuccess }) => {
         message.warning("两次输入的密码不一致，请重新输入");
         return;
       }
-      // const res = await register(values);
-      // const { token, user } = res.data;
-      // dispatch(setLogin({ token, user }));
-      // localStorage.setItem("token", token);
+      console.log("注册表单提交:", values);
+      const result = await dispatch(registerUser(values)).unwrap();
       onSuccess(1);
+      message.success("注册成功");
     } catch (error) {
       console.log(error.message);
       message.warning("注册失败，请检查您的信息是否正确");
@@ -90,14 +90,20 @@ const RegisterForm = ({ onSuccess }) => {
         <Form.Item
           name="password"
           label="密码"
-          rules={[{ required: true, message: "请输入密码" }]}
+          rules={[
+            { required: true, message: "请输入密码" },
+            { min: 6, message: "密码至少6个字符!" },
+          ]}
         >
           <Input.Password placeholder="请输入密码" />
         </Form.Item>
         <Form.Item
           name="confirmPassword"
           label="确认密码"
-          rules={[{ required: true, message: "请输入确认密码" }]}
+          rules={[
+            { required: true, message: "请输入确认密码" },
+            { min: 6, message: "密码至少6个字符!" },
+          ]}
         >
           <Input.Password placeholder="请输入确认密码" />
         </Form.Item>
