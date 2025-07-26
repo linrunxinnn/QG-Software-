@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Tag, Modal, Button, Select, message, Collapse, Badge, Avatar, Card } from 'antd';
-import { DownloadOutlined, ShoppingCartOutlined, DesktopOutlined, MobileOutlined, TabletOutlined, ExpandAltOutlined, UserOutlined, HeartOutlined, HeartFilled, CalendarOutlined } from '@ant-design/icons';
+import { Tag, Modal, Button, Select, message, Collapse, Badge, Avatar, Card, Dropdown, Menu, Space } from 'antd';
+import { DownloadOutlined, ShoppingCartOutlined, DesktopOutlined, MobileOutlined, TabletOutlined, ExpandAltOutlined, UserOutlined, HeartOutlined, HeartFilled, CalendarOutlined, HistoryOutlined } from '@ant-design/icons';
 import { useParams } from 'react-router-dom';
 import CommentSection from '../../component/CommentSection/CommentSection';
 import {
@@ -16,8 +16,13 @@ import {
   validatePurchaseData,
   validateReserveData,
   formatErrorMessage,
-  getSoftwareStatus,    // 🔥 使用新接口
-  mapSoftwareStatus     // 🔥 使用新映射函数
+  getSoftwareStatus,
+  mapSoftwareStatus,
+  getSoftwareVersions,
+  mapVersionsData,
+  downloadSoftwareVersion,
+  bindDeviceWithMachineCode,
+  getBoundDevices
 } from '../../api/service/userOperationApi';
 import styles from './SoftwareDetail.module.css';
 
@@ -47,17 +52,20 @@ const SoftwareDetail = () => {
     }
   });
 
+  // 🔥 新增：版本管理状态
+  const [versionsData, setVersionsData] = useState([]);
+  const [versionsLoading, setVersionsLoading] = useState(false);
+
   // 开发商信息状态
   const [developerInfo, setDeveloperInfo] = useState(null);
   const [isFollowing, setIsFollowing] = useState(false);
   const [followLoading, setFollowLoading] = useState(false);
 
-  // 其他状态管理
+  // 🔥 修改：弹窗状态管理
   const [purchaseModalVisible, setPurchaseModalVisible] = useState(false);
   const [reserveModalVisible, setReserveModalVisible] = useState(false);
-  const [bindDeviceModalVisible, setBindDeviceModalVisible] = useState(false);
-  const [selectedDevice, setSelectedDevice] = useState('');
-  const [boundDevices, setBoundDevices] = useState([]);
+  const [bindingDevice, setBindingDevice] = useState(false); // 绑定设备加载状态
+  const [boundDevices, setBoundDevices] = useState([]); // 已绑定的机械码列表
   const [expandedFeatures, setExpandedFeatures] = useState(false);
 
   // 静态软件截图数据（保留作为后备）
@@ -96,19 +104,112 @@ const SoftwareDetail = () => {
     }
   ];
 
-  // 设备类型选项
-  const deviceOptions = [
-    { value: 'desktop', label: '台式机/笔记本', icon: <DesktopOutlined /> },
-    { value: 'mobile', label: '手机', icon: <MobileOutlined /> },
-    { value: 'tablet', label: '平板电脑', icon: <TabletOutlined /> }
-  ];
-
   // 页面加载时获取数据
   useEffect(() => {
     if (softwareId) {
       fetchSoftwareDetail();
     }
   }, [softwareId]);
+
+  // 🔥 当用户已购买时获取版本信息
+  useEffect(() => {
+    if (softwareStatus.hasPurchased && softwareId) {
+      fetchSoftwareVersions();
+      fetchBoundDevices(); // 获取已绑定设备
+    }
+  }, [softwareStatus.hasPurchased, softwareId]);
+
+  // 🔥 新增：获取已绑定设备列表的模拟API
+  // 🔥 修正：获取已绑定设备列表 - 调用真实API
+  const fetchBoundDevices = async () => {
+    try {
+      const currentUserId = localStorage.getItem('userId') || 'current_user_id';
+
+      // ✅ 调用真实API
+      const result = await getBoundDevices(currentUserId, softwareId);
+
+      if (result.success) {
+        setBoundDevices(result.data || []);
+      } else {
+        console.error('获取已绑定设备失败:', result.error);
+        setBoundDevices([]);
+      }
+
+    } catch (error) {
+      console.error('获取已绑定设备失败:', error);
+      setBoundDevices([]);
+    }
+  };
+
+  // 🔥 修正：获取机械码并绑定设备 - 调用真实API
+  const bindCurrentDevice = async () => {
+    try {
+      setBindingDevice(true);
+      const currentUserId = localStorage.getItem('userId') || 'current_user_id';
+
+      // 检查是否已达到绑定上限
+      if (boundDevices.length >= 3) {
+        message.error('最多只能绑定3台设备');
+        return;
+      }
+
+      // ✅ 调用真实API获取机械码并绑定
+      const result = await bindDeviceWithMachineCode(currentUserId, softwareId);
+
+      if (result.success) {
+        // 添加到已绑定设备列表
+        setBoundDevices(prev => [...prev, result.data]);
+        message.success('设备绑定成功！');
+
+        return {
+          success: true,
+          data: result.data
+        };
+      } else {
+        message.error(result.error || '绑定设备失败，请稍后重试');
+        return {
+          success: false,
+          error: result.error
+        };
+      }
+
+    } catch (error) {
+      console.error('绑定设备失败:', error);
+      message.error('绑定设备失败，请稍后重试');
+      return {
+        success: false,
+        error: error.message
+      };
+    } finally {
+      setBindingDevice(false);
+    }
+  };
+
+
+  // 🔥 获取设备信息的辅助函数
+  const getDeviceInfo = () => {
+    const userAgent = navigator.userAgent;
+    let os = 'Unknown OS';
+    let device = 'Unknown Device';
+
+    // 检测操作系统
+    if (userAgent.indexOf('Windows NT') !== -1) {
+      os = 'Windows';
+    } else if (userAgent.indexOf('Mac') !== -1) {
+      os = 'macOS';
+    } else if (userAgent.indexOf('Linux') !== -1) {
+      os = 'Linux';
+    }
+
+    // 检测设备类型
+    if (userAgent.match(/Mobile|Android|iPhone|iPad/)) {
+      device = '移动设备';
+    } else {
+      device = '桌面电脑';
+    }
+
+    return { os, device };
+  };
 
   // 获取软件详情和相关数据
   const fetchSoftwareDetail = async () => {
@@ -169,6 +270,65 @@ const SoftwareDetail = () => {
       console.error('获取软件状态异常:', error);
       setDefaultSoftwareStatus();
     }
+  };
+
+  // 🔥 获取软件版本列表
+  const fetchSoftwareVersions = async () => {
+    try {
+      setVersionsLoading(true);
+      console.log('正在获取软件版本列表:', { softwareId });
+
+      const result = await getSoftwareVersions(softwareId);
+
+      if (result.success) {
+        console.log('版本列表API返回:', result.data);
+        const mappedVersions = mapVersionsData(result.data);
+        console.log('映射后的版本数据:', mappedVersions);
+        setVersionsData(mappedVersions);
+      } else {
+        console.warn('获取版本列表失败，使用模拟数据:', result.error);
+        setVersionsData(getMockVersions());
+      }
+
+    } catch (error) {
+      console.error('获取版本列表异常:', error);
+      setVersionsData(getMockVersions());
+    } finally {
+      setVersionsLoading(false);
+    }
+  };
+
+  // 🔥 模拟版本数据
+  const getMockVersions = () => {
+    return [
+      {
+        id: '1',
+        version: 'v25.0.1',
+        link: 'https://example.com/download/v25.0.1',
+        releaseDate: '2024-07-01',
+        size: '2.1 GB',
+        description: '最新版本，修复已知问题，优化性能',
+        isLatest: true
+      },
+      {
+        id: '2',
+        version: 'v25.0.0',
+        link: 'https://example.com/download/v25.0.0',
+        releaseDate: '2024-06-15',
+        size: '2.0 GB',
+        description: '重大更新，新增AI功能',
+        isLatest: false
+      },
+      {
+        id: '3',
+        version: 'v24.7.3',
+        link: 'https://example.com/download/v24.7.3',
+        releaseDate: '2024-05-20',
+        size: '1.9 GB',
+        description: '稳定版本，兼容性优化',
+        isLatest: false
+      }
+    ];
   };
 
   // 🔥 设置默认软件状态
@@ -297,7 +457,7 @@ const SoftwareDetail = () => {
     }
   };
 
-  // 处理预约
+  // 🔥 修改：处理预约 - 简化，去掉设备选择
   const handleReserve = () => {
     if (!softwareStatus.canReserve) {
       message.error('该软件当前不支持预约');
@@ -306,13 +466,8 @@ const SoftwareDetail = () => {
     setReserveModalVisible(true);
   };
 
-  // 确认预约 - 使用新的接口
+  // 🔥 修改：确认预约 - 不再需要设备选择
   const handleConfirmReserve = async () => {
-    if (!selectedDevice) {
-      message.error('请选择要绑定的设备类型');
-      return;
-    }
-
     try {
       const currentUserId = localStorage.getItem('userId') || 'current_user_id';
 
@@ -330,7 +485,6 @@ const SoftwareDetail = () => {
 
         message.success('预约成功！我们会在软件发布时通知您');
         setReserveModalVisible(false);
-        setSelectedDevice('');
       } else {
         message.error(formatErrorMessage(result.error));
       }
@@ -349,13 +503,8 @@ const SoftwareDetail = () => {
     setPurchaseModalVisible(true);
   };
 
-  // 确认购买 - 使用新的接口
+  //  修改：确认购买 - 直接绑定当前设备
   const handleConfirmPurchase = async () => {
-    if (!selectedDevice) {
-      message.error('请选择要绑定的设备类型');
-      return;
-    }
-
     try {
       const currentUserId = localStorage.getItem('userId') || 'current_user_id';
 
@@ -378,9 +527,11 @@ const SoftwareDetail = () => {
         // 🔥 购买成功后，重新获取软件状态
         await fetchSoftwareStatus(softwareInfo.id, currentUserId);
 
-        message.success('购买成功！软件将在5分钟内发送到您的设备');
+        message.success('购买成功！');
         setPurchaseModalVisible(false);
-        setSelectedDevice('');
+
+        // 🔥 购买成功后自动绑定当前设备
+        await bindCurrentDevice();
       } else {
         message.error(formatErrorMessage(result.error));
       }
@@ -406,50 +557,68 @@ const SoftwareDetail = () => {
     }
   };
 
-  // 绑定设备
-  const handleBindDevice = () => {
-    setBindDeviceModalVisible(true);
-  };
-
-  // 确认绑定设备
-  const handleConfirmBindDevice = async () => {
-    if (!selectedDevice) {
-      message.error('请选择设备类型');
-      return;
-    }
-
+  // 🔥 处理版本下载
+  const handleVersionDownload = async (version) => {
     try {
-      // TODO: 调用绑定设备API
-      await new Promise(resolve => setTimeout(resolve, 500));
+      const result = await downloadSoftwareVersion(version.link, version.version);
 
-      const newDevice = {
-        id: Date.now(),
-        name: `新设备 ${boundDevices.length + 1}`,
-        type: selectedDevice,
-        status: 'active'
-      };
-      setBoundDevices([...boundDevices, newDevice]);
-      message.success('设备绑定成功');
-      setBindDeviceModalVisible(false);
-      setSelectedDevice('');
-
+      if (result.success) {
+        message.success(result.data.message);
+      } else {
+        message.error(formatErrorMessage(result.error));
+      }
     } catch (error) {
-      message.error('绑定失败，请稍后重试');
+      message.error('下载失败，请稍后重试');
     }
   };
 
-  // 解绑设备
-  const handleUnbindDevice = async (deviceId) => {
-    try {
-      // TODO: 调用解绑设备API
-      await new Promise(resolve => setTimeout(resolve, 300));
-
-      setBoundDevices(boundDevices.filter(device => device.id !== deviceId));
-      message.success('设备解绑成功');
-
-    } catch (error) {
-      message.error('解绑失败，请稍后重试');
+  // 🔥 生成版本下拉菜单
+  const getVersionsMenu = () => {
+    if (!versionsData || versionsData.length === 0) {
+      return (
+        <Menu>
+          <Menu.Item disabled>
+            暂无其他版本
+          </Menu.Item>
+        </Menu>
+      );
     }
+
+    return (
+      <Menu className={styles.versionsMenu}>
+        {versionsData.map((version) => (
+          <Menu.Item
+            key={version.id}
+            className={styles.versionMenuItem}
+            onClick={() => handleVersionDownload(version)}
+          >
+            <div className={styles.versionInfo}>
+              <div className={styles.versionHeader}>
+                <span className={styles.versionNumber}>
+                  {version.version}
+                  {version.isLatest && (
+                    <Tag color="green" size="small" className={styles.latestTag}>
+                      最新
+                    </Tag>
+                  )}
+                </span>
+                <span className={styles.versionSize}>{version.size}</span>
+              </div>
+              <div className={styles.versionDetails}>
+                <span className={styles.versionDate}>{version.releaseDate}</span>
+                <span className={styles.versionDesc}>{version.description}</span>
+              </div>
+            </div>
+            <DownloadOutlined className={styles.downloadIcon} />
+          </Menu.Item>
+        ))}
+      </Menu>
+    );
+  };
+
+  // 🔥 修改：手动绑定设备（已购买用户可以使用）
+  const handleBindDevice = async () => {
+    await bindCurrentDevice();
   };
 
   // 评论相关回调函数
@@ -552,15 +721,38 @@ const SoftwareDetail = () => {
           <div className={styles.infoSection}>
             <div className={styles.titleRow}>
               <h1 className={styles.softwareName}>{softwareInfo.name}</h1>
-              <Button
-                type={mainButtonConfig.type}
-                size="large"
-                className={styles.purchaseBtn}
-                onClick={handleMainButtonClick}
-                disabled={mainButtonConfig.disabled}
-              >
-                {mainButtonConfig.text}
-              </Button>
+              <div className={styles.downloadButtonGroup}>
+                <Button
+                  type={mainButtonConfig.type}
+                  size="large"
+                  className={styles.purchaseBtn}
+                  onClick={handleMainButtonClick}
+                  disabled={mainButtonConfig.disabled}
+                >
+                  {mainButtonConfig.text}
+                </Button>
+
+                {/* 🔥 多版本下载下拉按钮 - 只有已购买时显示 */}
+                {softwareStatus.hasPurchased && (
+                  <Dropdown
+                    overlay={getVersionsMenu()}
+                    placement="bottomRight"
+                    arrow
+                    disabled={versionsLoading}
+                    overlayClassName={styles.versionsDropdown}
+                  >
+                    <Button
+                      type="default"
+                      size="large"
+                      icon={<HistoryOutlined />}
+                      className={styles.versionsBtn}
+                      loading={versionsLoading}
+                    >
+                      其他版本
+                    </Button>
+                  </Dropdown>
+                )}
+              </div>
             </div>
 
             <div className={styles.metaInfo}>
@@ -617,14 +809,15 @@ const SoftwareDetail = () => {
                   </Button>
                 )}
 
-                {softwareStatus.hasPurchased && (
+                {softwareStatus.hasPurchased && boundDevices.length < 3 && (
                   <Button
                     icon={<DesktopOutlined />}
                     size="large"
                     onClick={handleBindDevice}
+                    loading={bindingDevice}
                     className={styles.actionBtn}
                   >
-                    绑定设备
+                    绑定本机
                   </Button>
                 )}
               </div>
@@ -671,37 +864,56 @@ const SoftwareDetail = () => {
         </div>
       </div>
 
-      {/* 已绑定设备 - 只有已购买才显示 */}
+      {/* 🔥 修改：已绑定设备 - 显示机械码，不可解绑 */}
       {softwareStatus.hasPurchased && (
         <div className={styles.devicesSection}>
-          <h2 className={styles.sectionTitle}>已绑定设备</h2>
+          <div className={styles.sectionHeader}>
+            <h2 className={styles.sectionTitle}>已绑定设备 ({boundDevices.length}/3)</h2>
+            {boundDevices.length < 3 && (
+              <Button
+                type="primary"
+                onClick={handleBindDevice}
+                loading={bindingDevice}
+                size="small"
+              >
+                绑定本机
+              </Button>
+            )}
+          </div>
           <div className={styles.devicesList}>
             {boundDevices.length === 0 ? (
               <div className={styles.emptyDevices}>
                 <p>暂无绑定设备</p>
-                <Button type="primary" onClick={handleBindDevice}>
-                  立即绑定设备
+                <Button
+                  type="primary"
+                  onClick={handleBindDevice}
+                  loading={bindingDevice}
+                >
+                  立即绑定本机
                 </Button>
               </div>
             ) : (
               boundDevices.map((device) => (
                 <div key={device.id} className={styles.deviceCard}>
                   <div className={styles.deviceInfo}>
-                    {device.type === 'desktop' && <DesktopOutlined className={styles.deviceIcon} />}
-                    {device.type === 'mobile' && <MobileOutlined className={styles.deviceIcon} />}
-                    {device.type === 'tablet' && <TabletOutlined className={styles.deviceIcon} />}
-                    <span className={styles.deviceName}>{device.name}</span>
+                    <DesktopOutlined className={styles.deviceIcon} />
+                    <div className={styles.deviceDetails}>
+                      <div className={styles.deviceName}>{device.deviceName}</div>
+                      <div className={styles.machineCode}>机械码: {device.machineCode}</div>
+                      <div className={styles.deviceMeta}>
+                        <span>绑定时间: {device.bindTime}</span>
+                        <span>最后使用: {device.lastUsed}</span>
+                      </div>
+                    </div>
                     <Badge color="green" text="已激活" />
                   </div>
-                  <Button
-                    type="link"
-                    danger
-                    onClick={() => handleUnbindDevice(device.id)}
-                  >
-                    解绑
-                  </Button>
                 </div>
               ))
+            )}
+            {boundDevices.length >= 3 && (
+              <div className={styles.deviceLimitNotice}>
+                <p>已达到设备绑定上限（3台），无法绑定更多设备</p>
+              </div>
             )}
           </div>
         </div>
@@ -721,7 +933,7 @@ const SoftwareDetail = () => {
         className={styles.commentSectionContainer}
       />
 
-      {/* 预约弹窗 */}
+      {/* 🔥 修改：预约弹窗 - 简化，去掉设备选择 */}
       <Modal
         title="预约软件"
         open={reserveModalVisible}
@@ -732,23 +944,6 @@ const SoftwareDetail = () => {
         width={480}
       >
         <div className={styles.modalContent}>
-          <p className={styles.modalDesc}>请选择要使用软件的设备类型：</p>
-          <Select
-            placeholder="选择设备类型"
-            value={selectedDevice}
-            onChange={setSelectedDevice}
-            style={{ width: '100%' }}
-            size="large"
-          >
-            {deviceOptions.map(option => (
-              <Option key={option.value} value={option.value}>
-                <div className={styles.deviceOption}>
-                  {option.icon}
-                  <span>{option.label}</span>
-                </div>
-              </Option>
-            ))}
-          </Select>
           <div className={styles.reserveInfo}>
             <div className={styles.reservePrice}>
               <span>预约价格：</span>
@@ -756,82 +951,37 @@ const SoftwareDetail = () => {
             </div>
             <p className={styles.reserveNote}>
               * 预约成功后，我们会在软件发布时第一时间通知您<br />
-              * 预约用户可享受首发优惠价格
+              * 预约用户可享受首发优惠价格<br />
+              * 预约无需绑定设备，购买时自动绑定当前设备
             </p>
           </div>
         </div>
       </Modal>
 
-      {/* 购买设备选择弹窗 */}
+      {/* 🔥 修改：购买弹窗 - 改成绑定本机说明 */}
       <Modal
-        title="选择设备类型"
+        title="购买软件"
         open={purchaseModalVisible}
         onOk={handleConfirmPurchase}
         onCancel={() => setPurchaseModalVisible(false)}
-        okText="确认购买"
+        okText="确认购买并绑定本机"
         cancelText="取消"
         width={480}
       >
         <div className={styles.modalContent}>
-          <p className={styles.modalDesc}>请选择要安装软件的设备类型：</p>
-          <Select
-            placeholder="选择设备类型"
-            value={selectedDevice}
-            onChange={setSelectedDevice}
-            style={{ width: '100%' }}
-            size="large"
-          >
-            {deviceOptions.map(option => (
-              <Option key={option.value} value={option.value}>
-                <div className={styles.deviceOption}>
-                  {option.icon}
-                  <span>{option.label}</span>
-                </div>
-              </Option>
-            ))}
-          </Select>
           <div className={styles.purchaseInfo}>
             <div className={styles.purchasePrice}>
               <span>购买价格：</span>
               <span className={styles.finalPrice}>{softwareInfo.price}</span>
             </div>
-          </div>
-        </div>
-      </Modal>
-
-      {/* 绑定设备弹窗 */}
-      <Modal
-        title="绑定新设备"
-        open={bindDeviceModalVisible}
-        onOk={handleConfirmBindDevice}
-        onCancel={() => setBindDeviceModalVisible(false)}
-        okText="确认绑定"
-        cancelText="取消"
-        width={480}
-      >
-        <div className={styles.modalContent}>
-          <p className={styles.modalDesc}>请选择要绑定的设备类型：</p>
-          <Select
-            placeholder="选择设备类型"
-            value={selectedDevice}
-            onChange={setSelectedDevice}
-            style={{ width: '100%' }}
-            size="large"
-          >
-            {deviceOptions.map(option => (
-              <Option key={option.value} value={option.value}>
-                <div className={styles.deviceOption}>
-                  {option.icon}
-                  <span>{option.label}</span>
-                </div>
-              </Option>
-            ))}
-          </Select>
-          <div className={styles.bindInfo}>
-            <p className={styles.bindNote}>
-              * 每个软件最多可绑定3台设备<br />
-              * 绑定后可在对应设备上激活使用
-            </p>
+            <div className={styles.bindInfo}>
+              <p className={styles.bindNote}>
+                * 购买成功后将自动获取本机机械码并绑定<br />
+                * 每个软件最多可绑定3台设备<br />
+                * 绑定后可在对应设备上激活使用<br />
+                * 设备绑定后不可解绑
+              </p>
+            </div>
           </div>
         </div>
       </Modal>
