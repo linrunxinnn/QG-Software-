@@ -26,7 +26,7 @@ import { useSelector } from "react-redux";
 import { applyToDeveloper } from "../../api/service/applyDeveloperService.js";
 import { getHaveSubscribed } from "../../api/service/subscribe.js";
 import { applyDeveloper } from "../../api/service/applyDevelopers.js";
-import { rechargeUser } from "../../api/service/userService.js";
+import { rechargeUser, getUserBalance } from "../../api/service/userService.js";
 
 const Personal = () => {
   const navigate = useNavigate();
@@ -38,6 +38,7 @@ const Personal = () => {
   const [isRechargeVisible, setIsRechargeVisible] = useState(false);
   const [amount, setAmount] = useState(100);
   const [loading, setLoading] = useState(false);
+  const [currentBalance, setcurrentBalance] = useState(0);
   // 用户数据
   const [userInfo, setUserInfo] = useState({});
   useEffect(() => {
@@ -45,6 +46,13 @@ const Personal = () => {
       setUserInfo(user.user);
       console.log("用户信息!!!!!:", user);
     }
+    const balance = async () => {
+      await getUserBalance(user.user.id).then((res) => {
+        console.log("用户余额:", res.data);
+        setcurrentBalance(res.data);
+      });
+    };
+    balance();
     if (user.user && user.user.role === 3) {
       const fetchSubscribed = async () => {
         try {
@@ -60,7 +68,7 @@ const Personal = () => {
       };
       fetchSubscribed();
     }
-  }, [user.id, user]);
+  }, [user.id, user, currentBalance]);
 
   // const [userInfo, setUserInfo] = useState({
   //   id: 1,
@@ -339,6 +347,7 @@ const Personal = () => {
         content: `成功充值 ${amount} 元`,
       });
       setIsRechargeVisible(false);
+      window.location.reload(); // 重新加载页面以更新余额
     } catch (error) {
       Modal.error({
         title: "充值失败",
@@ -622,6 +631,14 @@ const Personal = () => {
                 centered
               >
                 <Card bordered={false} className={styles.rechargeCard}>
+                  {/* 新增余额显示 */}
+                  <div className={styles.balanceSection}>
+                    <span>当前余额：</span>
+                    <strong className={styles.balanceAmount}>
+                      ¥{currentBalance}
+                    </strong>
+                  </div>
+
                   <div className={styles.amountSection}>
                     <h4>充值金额</h4>
                     <InputNumber
@@ -629,7 +646,6 @@ const Personal = () => {
                       max={10000}
                       value={amount}
                       defaultValue={100}
-                      icon={<MoneyCollectOutlined />}
                       onChange={handleAmountChange}
                       formatter={(value) => `¥ ${value}`}
                       parser={(value) => value.replace(/¥\s?|(,*)/g, "")}
@@ -648,6 +664,7 @@ const Personal = () => {
                       ))}
                     </div>
                   </div>
+
                   <Button
                     type="primary"
                     block

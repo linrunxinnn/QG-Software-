@@ -143,6 +143,14 @@ export const rechargeUser = async (userId, amount) => {
   return response.data;
 };
 
+//获取用户余额
+export const getUserBalance = async (userId) => {
+  console.log("获取用户余额，用户ID:", userId);
+  const response = await api.get(`/users/getPrice/${userId}`);
+  console.log("获取用户余额结果:", response.data);
+  return response.data;
+};
+
 //! 其他接口
 
 //这个是展示不同类别的软件的接口
