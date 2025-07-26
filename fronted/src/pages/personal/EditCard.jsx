@@ -6,6 +6,7 @@ import {
   updateAvatar,
   updateUsername,
   updatePhone,
+  fetchUserInfo,
 } from "../../store/slice/userSlice";
 
 const EditCard = ({ type, visible, onClose }) => {
@@ -30,6 +31,13 @@ const EditCard = ({ type, visible, onClose }) => {
           await dispatch(
             updateAvatar({ formData, userId: userInfo.id })
           ).unwrap();
+          const response = await fetchUserInfo(userInfo.id);
+          if (response.code === 200) {
+            message.success("头像修改成功");
+            //将用户信息修改到store和localStorage
+            dispatch({ type: "user/setUser", payload: response.data });
+            localStorage.setItem("user", JSON.stringify(response.data));
+          }
           break;
         case "changeUsername":
           await dispatch(

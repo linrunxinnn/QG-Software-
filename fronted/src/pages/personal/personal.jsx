@@ -16,7 +16,11 @@ import { Card, InputNumber, Button, Modal } from "antd";
 import { MoneyCollectOutlined } from "@ant-design/icons";
 import { useNavigate, Outlet, useLocation } from "react-router-dom";
 import styles from "./personal.module.css";
-import { getUserInfo, setUser } from "../../store/slice/userSlice.js";
+import {
+  getUserInfo,
+  setUser,
+  fetchUserInfo,
+} from "../../store/slice/userSlice.js";
 import { useSelector } from "react-redux";
 // 导入新创建的API服务
 import { applyToDeveloper } from "../../api/service/applyDeveloperService.js";
@@ -39,7 +43,7 @@ const Personal = () => {
   useEffect(() => {
     if (user) {
       setUserInfo(user.user);
-      // console.log("用户信息:", user);
+      console.log("用户信息!!!!!:", user);
     }
     if (user.user && user.user.role === 3) {
       const fetchSubscribed = async () => {
@@ -379,8 +383,7 @@ const Personal = () => {
   const tabs = [
     {
       key: "",
-      label:
-        userInfo && userInfo.role === "developer" ? "我的粉丝" : "我的关注",
+      label: userInfo && userInfo.role === 2 ? "我的粉丝" : "我的关注",
       icon: <Heart size={16} />,
       path: "/personal",
     },
@@ -691,12 +694,14 @@ const Personal = () => {
             </div>
             <div className={styles.navContent}>
               <h3 className={styles.navTitle}>
-                {userInfo.role === 1 ? "我的粉丝" : "我的关注"}
+                {userInfo && userInfo.role === 1 ? "我的粉丝" : "我的关注"}
               </h3>
               <p className={styles.navDesc}>
-                {userInfo.role === 1
-                  ? `${userInfo.followerCount} 位粉丝关注了你`
-                  : `关注了 ${userInfo.followingCount} 个软件开发商`}
+                {userInfo && userInfo.role === 1
+                  ? `${userInfo && userInfo.followerCount} 位粉丝关注了你`
+                  : `关注了 ${
+                      userInfo && userInfo.followingCount
+                    } 个软件开发商`}
               </p>
             </div>
           </div>
@@ -711,7 +716,7 @@ const Personal = () => {
             <div className={styles.navContent}>
               <h3 className={styles.navTitle}>动态</h3>
               <p className={styles.navDesc}>
-                {userInfo.role === 2
+                {userInfo && userInfo.role === 2
                   ? "查看我的最新动态和活动记录"
                   : "暂无动态，升级为开发商后可发布动态"}
               </p>
@@ -747,7 +752,9 @@ const Personal = () => {
         <div className={styles.contentSection}>
           <div className={styles.tabContentWrapper}>
             {/* 如果是动态页面且用户不是开发商，显示提示 */}
-            {activeTab === "momentsLayout" && userInfo.role !== 2 ? (
+            {activeTab === "momentsLayout" &&
+            userInfo &&
+            userInfo.role !== 2 ? (
               <div className={styles.emptyState}>
                 <div className={styles.emptyIcon}>
                   <User size={48} />

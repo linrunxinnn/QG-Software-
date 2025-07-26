@@ -51,6 +51,7 @@ const Header = () => {
   //搜索栏结果
   const [searchResult, setSearchResult] = useState([]);
   const user = useSelector((state) => state.user.user);
+  const avatar = useSelector((state) => state.user.avatar);
 
   useEffect(() => {
     if (localStorage.getItem("token")) {
@@ -339,7 +340,7 @@ const Header = () => {
               <div className={styles.userInfo}>
                 <Avatar
                   size="small"
-                  src={userInfo.avatar}
+                  src={avatar}
                   icon={<UserOutlined />}
                   className={styles.userAvatar}
                 />

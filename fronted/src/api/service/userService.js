@@ -9,6 +9,12 @@ import api from "../index.js";
 //2.在组件的dispatch中使用
 //3.其他需要使用api的地方
 
+export const getUserInfoApi = async (userId) => {
+  const response = await api.get(`/users/getInformation/${userId}`);
+  console.log("获取用户信息结果:", response.data);
+  return response.data;
+};
+
 export const deleteUser = async (userId) => {
   api.delete(`/users/delete/${userId}`);
 };
@@ -35,6 +41,7 @@ export const loginCode = async (credentials) => {
 };
 
 export const register = async (userData) => {
+  console.log("注册用户数据:", userData);
   const response = await api.post("/users/register", {
     code: userData.code,
     user: { email: userData.email, password: userData.password },
@@ -53,10 +60,11 @@ export const sendCode = async (email) => {
 };
 
 //重设密码
-export const resetPassword = async (email, newPassword) => {
-  const response = await api.post("/users/resetPassword", {
-    params: { email, newPassword },
+export const resetPassword = async (id, password, code) => {
+  const response = await api.post(`/users/update/${id}`, {
+    user: { id, password },
   });
+  console.log("重设密码结果:", response.data);
   return response.data;
 };
 

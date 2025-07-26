@@ -3,6 +3,7 @@ import {
   loginPassword,
   loginCode,
   register,
+  getUserInfoApi,
 } from "../../api/service/userService.js";
 import { useNavigate } from "react-router-dom";
 import { use } from "react";
@@ -11,6 +12,19 @@ import {
   changeUsername,
   changePhone,
 } from "../../api/service/userService.js";
+
+export const fetchUserInfo = createAsyncThunk(
+  "",
+  async (userId, { rejectWithValue }) => {
+    try {
+      const response = await getUserInfoApi(userId);
+      console.log("获取用户信息结果:", response);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || "获取用户信息失败");
+    }
+  }
+);
 
 //密码登录
 export const loginUserByPassword = createAsyncThunk(
@@ -62,6 +76,7 @@ export const updateAvatar = createAsyncThunk(
     // 解构参数
     try {
       const data = await changeAvatar(formData, userId); // 分开传
+      console.log("更新头像结果:", data);
       return data;
     } catch (error) {
       return rejectWithValue(error.response?.data || "更改头像失败");
@@ -197,6 +212,7 @@ const userSlice = createSlice({
         state.error = null;
       })
       .addCase(updateAvatar.fulfilled, (state, action) => {
+        console.log("更新头像成功:", action.payload.avatar);
         state.loading = false;
         state.user.avatar = action.payload.avatar;
         localStorage.setItem("user", JSON.stringify(state.user));

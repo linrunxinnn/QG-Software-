@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { sendCode } from "../../api/service/userService.js";
-import { registerUser } from "../../store/slice/userSlice.js";
+import { resetPassword } from "../../api/service/userService.js";
 
 const { Option } = Select;
 
@@ -59,7 +59,9 @@ const ResetForm = ({ onSuccess }) => {
         message.error("两次输入的密码不一致");
         return;
       }
-      const result = await dispatch(registerUser(values)).unwrap();
+      console.log("提交重设密码表单:", values);
+      const id = JSON.parse(localStorage.getItem("user")).id;
+      const result = await resetPassword(id, values.password, values.code);
       onSuccess(1);
     } catch (error) {
       console.log(error.message);
