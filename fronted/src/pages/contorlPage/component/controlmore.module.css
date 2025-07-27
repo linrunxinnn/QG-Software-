@@ -1,11 +1,39 @@
 .moresoftList {
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    flex-wrap: wrap;
+    /* 允许换行 */
+    justify-content: center;
+    /* 居中对齐 */
     padding: 20px;
     gap: 20px;
 }
 
 .item {
     cursor: pointer;
+    width: 100%;
+    /* 默认全宽 */
+    max-width: 300px;
+    /* 限制最大宽度 */
+    box-sizing: border-box;
+}
+
+@media (min-width: 600px) {
+    .item {
+        width: calc(50% - 20px);
+        /* 小屏设备上每行两个卡片 */
+    }
+}
+
+@media (min-width: 900px) {
+    .item {
+        width: calc(33.33% - 20px);
+        /* 中等屏幕上每行三个卡片 */
+    }
+}
+
+@media (min-width: 1200px) {
+    .item {
+        width: calc(25% - 20px);
+        /* 大屏幕上每行四个卡片 */
+    }
 }

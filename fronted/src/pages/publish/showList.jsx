@@ -109,10 +109,8 @@ const SoftwareList = () => {
     <>
       <div className={styles.softwareListContainer}>
         {/* 检查 softwareData 是否为空 */}
-        {softwareData.length === 0 ? (
-          <div className={styles.noSoftwareMessage}>还没有发布软件</div>
-        ) : (
-          softwareData.map((software) => (
+        {
+          softwareData?.map((software) => (
             <div key={software.name} className={styles.softwareRow}>
               {/* 父行：头像，软件名称，创建日期 */}
               <Row justify="space-between" align="middle">
@@ -165,7 +163,7 @@ const SoftwareList = () => {
               <Divider />
             </div>
           ))
-        )}
+        }
       </div>
       <Modal
         open={isopen}

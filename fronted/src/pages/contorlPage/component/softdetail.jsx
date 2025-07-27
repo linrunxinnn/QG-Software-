@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Input, Button, Form, InputNumber, Modal, message, Row, Col, Select } from 'antd';
 import { CloseCircleOutlined } from '@ant-design/icons';
-import { useParams, useLocation } from 'react-router-dom';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import styles from "./softdetail.module.css";
 import Load from "./load.jsx"; // 加载组件
 import { fetchSoftApplyAPI } from "../../../api/service/userService.js";
@@ -15,7 +15,7 @@ const CheckDetail = () => {
     const { authorId, id, } = location.state;
     const [data, setData] = useState(null);  // 初始为 null
     const [loading, setLoading] = useState(true);  // 加载状态
-
+    const navigator = useNavigate()
     useEffect(() => {
         // 检查 id 和 authorId 是否为空
         if (authorId && id) {
@@ -39,6 +39,7 @@ const CheckDetail = () => {
     // 提交表单处理函数
     const onSubmit = async () => {
         const result = await fetchContollerAdmitAPI(id, authorId, data.id);
+        navigator("/manager")
         if (result) {
             message.success("同意申请成功");
         } else {
@@ -55,6 +56,8 @@ const CheckDetail = () => {
             onOk: async () => {
                 try {
                     const result = await fetchControlcancelAPI(id, authorId, data.id);
+                    message.success("驳回申请成功")
+                    navigator("/manager")
                 } catch (error) {
                     console.error('Failed to fetch data:', error);
                 }
