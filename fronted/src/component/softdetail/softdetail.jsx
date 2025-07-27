@@ -53,6 +53,7 @@ const CheckDetail = () => {
         setisOpen(false); // 关闭弹窗
         if (value) {
             onSubmit(value);
+            navigate("/publish")
         }
     }
 

@@ -62,9 +62,6 @@ const Load = ({ value, onChange }) => {
         fileList={fileList}
         onPreview={handlePreview} // 处理预览事件
         onChange={handleChange} // 处理文件变化
-        onRemove={(file) => {
-          message.success(`${file.name} 文件已删除`);
-        }}
         accept="image/*,application/pdf,.zip" // 允许上传图片和PDF文件
         beforeUpload={() => false} // 阻止文件自动上传
       >

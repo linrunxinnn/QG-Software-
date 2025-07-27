@@ -109,7 +109,7 @@ const SoftwareList = () => {
                 <Table
                     columns={columns}
                     dataSource={filterSoftware()}  // 使用过滤后的数据
-                    pagination={true}  // 可以根据需求启用分页
+                    pagination={{ pageSize: 15 }}  // 可以根据需求启用分页
                     onRow={(record) => ({
                         onClick: () => handleRowClick(record),  // 点击行时触发，record对应的是当前行的所有信息
                     })}
