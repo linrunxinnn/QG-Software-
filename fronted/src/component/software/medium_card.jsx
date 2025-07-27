@@ -12,7 +12,7 @@ const MediumCard = ({ image, title, price, id, onClick }) => (
   <Card
     style={{ width: "90%" }}
     //cover是用于展示图片封面的
-    cover={<img alt="example" src={image} />}
+    cover={<img alt="example" src={image} style={{ height: "300px" }} />}
     className="Card"
     // onClick={onClick}
     onClick={() => onClick(id)} // 点击卡片时调用onClick函数并传入id
