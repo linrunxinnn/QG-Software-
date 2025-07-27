@@ -115,7 +115,7 @@ const Appointment = () => {
     <div key={software.id} className={styles.softwareCard}>
       <div className={styles.cardContent}>
         <img
-          src={software.icon}
+          src={software.picture || "qg"}
           alt={software.name}
           className={styles.softwareIcon}
         />

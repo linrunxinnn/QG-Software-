@@ -44,7 +44,7 @@ const Header = () => {
   const [options, setOptions] = useState([]);
   const [userInfo, setUserInfo] = useState({});
   const name =
-    useSelector((state) => state.user.user.name) ||
+    useSelector((state) => state.user?.user?.name) ||
     localStorage.getItem("user")?.name ||
     "用户";
 
