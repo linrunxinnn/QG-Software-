@@ -2,7 +2,7 @@ import axios from "axios";
 
 //创建一个axios实例
 const api = axios.create({
-  baseURL: "http://47.113.224.195:32409", // 设置基础URL
+  baseURL: "http://47.113.224.195:32406", // 设置基础URL
   timeout: 50000, // 设置请求超时时间
   headers: {
     "Content-Type": "application/json",
