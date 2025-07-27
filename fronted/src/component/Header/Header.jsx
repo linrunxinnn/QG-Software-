@@ -104,7 +104,7 @@ const Header = () => {
             setIsLoggedIn(true);
             setIsLoginModalVisible(false);
             handleModalClose();
-            // window.location.reload();
+            window.location.reload();
           }}
         />
       ),
@@ -180,7 +180,7 @@ const Header = () => {
   const handleLogout = () => {
     setIsLoggedIn(false);
     dispatch(logout());
-    // window.location.reload();
+    window.location.reload();
     message.success("退出登录成功");
   };
 
