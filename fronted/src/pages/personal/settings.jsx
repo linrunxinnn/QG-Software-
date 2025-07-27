@@ -18,7 +18,7 @@ import EditCard from "./EditCard.jsx";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import styles from "./settings.module.css";
 import { logout } from "../../store/slice/userSlice.js";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { deleteUser } from "../../api/service/userService.js";
 import { message } from "antd";
 import { updateAvatar } from "../../store/slice/userSlice.js";
@@ -28,6 +28,7 @@ const Settings = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { userInfo } = useOutletContext();
+  console.log("userInfo:", userInfo);
 
   // 设置状态
   const [settings, setSettings] = useState({
@@ -121,7 +122,9 @@ const Settings = () => {
       ).unwrap();
       console.log("头像更换成功:", response);
       message.success("头像更换成功");
-    } catch (error) {}
+    } catch (error) {
+      message.error("头像更换失败");
+    }
   };
 
   // 处理返回
@@ -267,7 +270,7 @@ const Settings = () => {
                   marginBottom: 16,
                 }}
               >
-                <span>用户名</span>
+                <span>用户名:{userInfo.name}</span>
                 <Button onClick={() => handleCardChange("changeUsername")}>
                   修改用户名
                 </Button>
@@ -281,7 +284,7 @@ const Settings = () => {
                   marginBottom: 16,
                 }}
               >
-                <span>手机号</span>
+                <span>手机号:***********</span>
                 <Button onClick={() => handleCardChange("changePhone")}>
                   修改手机号
                 </Button>
