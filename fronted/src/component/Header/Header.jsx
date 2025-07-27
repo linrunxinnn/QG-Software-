@@ -43,7 +43,11 @@ const Header = () => {
   const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
   const [options, setOptions] = useState([]);
   const [userInfo, setUserInfo] = useState({});
-  const name = localStorage.getItem("user")?.name || "用户";
+  const name =
+    useSelector((state) => state.user?.user?.name) ||
+    localStorage.getItem("user")?.name ||
+    "用户";
+
   // 三个表单实例
   const [loginForm] = Form.useForm();
   const [registerForm] = Form.useForm();
@@ -52,6 +56,7 @@ const Header = () => {
   const [searchResult, setSearchResult] = useState([]);
   const user = useSelector((state) => state.user.user);
   const avatar = useSelector((state) => state.user.avatar);
+  console.log("用户信息1111111111:", user);
 
   useEffect(() => {
     if (localStorage.getItem("token")) {
@@ -99,7 +104,7 @@ const Header = () => {
             setIsLoggedIn(true);
             setIsLoginModalVisible(false);
             handleModalClose();
-            // window.location.reload();
+            window.location.reload();
           }}
         />
       ),
@@ -175,7 +180,7 @@ const Header = () => {
   const handleLogout = () => {
     setIsLoggedIn(false);
     dispatch(logout());
-    // window.location.reload();
+    window.location.reload();
     message.success("退出登录成功");
   };
 
@@ -345,7 +350,7 @@ const Header = () => {
                   icon={<UserOutlined />}
                   className={styles.userAvatar}
                 />
-                <span className={styles.userName}>{userInfo.name}</span>
+                <span className={styles.userName}>{name}</span>
               </div>
             </Dropdown>
           ) : (

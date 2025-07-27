@@ -334,12 +334,12 @@ const Personal = () => {
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      // Here you would call your recharge API
-      // await rechargeApi(amount);
       console.log("Recharging amount:", amount);
 
-      // Simulate API call
-      // await new Promise((resolve) => setTimeout(resolve, 1000));
+      if (amount <= 0 || amount > 10000) {
+        throw new Error("充值金额必须在1到10000之间");
+      }
+
       const response = await rechargeUser(userInfo.id, amount);
 
       Modal.success({
