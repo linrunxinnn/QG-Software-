@@ -46,7 +46,7 @@ const ControlMoresoft = () => {
                 data.map((item) => (
                     <MediumCard
                         className={style.item}
-                        image={item.image}
+                        image={item.picture}
                         id={item.id}
                         title={item.name}
                         price={item.price}

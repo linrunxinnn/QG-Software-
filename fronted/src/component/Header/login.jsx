@@ -33,11 +33,7 @@ const LoginForm = ({ onSuccess }) => {
         const result = await dispatch(loginUserByPassword(values)).unwrap();
         onSuccess();
         message.success("登录成功");
-<<<<<<< HEAD
         console.log("!!!!!!!!!!!!!!!!!role", result)
-=======
-        console.log("!!!!!!!!!!!!!!!!!role", result);
->>>>>>> 9b99720f30cedbae247a6ff6d03cc4deb231dd9c
         // 返回的用户信息中有身份，如果身份为管理员则还要跳转到管理员页面
         if (result.data.user.role === 1) {
           console.log("成功成为管理员");
