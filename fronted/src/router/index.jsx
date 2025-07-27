@@ -130,6 +130,7 @@ export const router = createBrowserRouter([
       },
     ],
   },
+
   {
     //管理端路径
     path: "/manager",

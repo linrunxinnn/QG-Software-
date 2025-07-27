@@ -1,6 +1,7 @@
 //这里用来创建用户登录，注册，获取用户信息等相关的API
 import { version } from "react";
 import api from "../index.js";
+import { SwapLeftOutlined } from "@ant-design/icons";
 
 
 
@@ -288,7 +289,8 @@ export const fetchPublishSortAPI = async (authorId) => {
             picture: item.picture,         // 图片字段
             name: item.name,               // 名称字段
             published_time: item.publishedTime, // 发布时间字段
-            softId: item.id//软件的id
+            softId: item.id,//软件的id
+            status: item.status
         }));
 
         return formattedData;  // 返回格式化后的数据
@@ -566,5 +568,20 @@ export const fecthseekAPI = async (name) => {
         return response.data
     } catch (error) {
         console.error("模糊查询失败");
+    }
+}
+
+export const fetcheditorStatusAPI = async (softwareId) => {
+    const path = "/softwares/updateSoftware"
+    const body = {
+        id: softwareId
+    }
+    try {
+        console.log("开始发布");
+        const respose = await api.put(path, body)
+        console.log("结束发布");
+        return respose.msg
+    } catch (error) {
+        console.error("发布软件失败");
     }
 }

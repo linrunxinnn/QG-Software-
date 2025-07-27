@@ -89,17 +89,20 @@ const UserList = () => {
 
     //控制弹窗
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const showModal = async () => { // 添加async关键字
-        try {
-            setIsModalOpen(true);
-            const applications = await fetchApplyAPI();
-            setApplication(applications);
-            console.log(Application);
-            console.log(Application[0].userId);
-        } catch (error) {
-            console.error('获取申请数据失败:', error);
-        }
-    };
+    useEffect(() => {
+        const showModal = async () => { // 添加async关键字
+            try {
+                setIsModalOpen(true);
+                const applications = await fetchApplyAPI();
+                setApplication(applications);
+                console.log(Application);
+                console.log(Application[0].userId);
+            } catch (error) {
+                console.error('获取申请数据失败:', error);
+            }
+        };
+    }, [render])
+
     const handleOk = () => {
         setIsModalOpen(false);
     };
@@ -255,14 +258,35 @@ const UserList = () => {
                                 <Collapse bordered={false}>
                                     <Collapse.Panel header="申请" key="1">
                                         <div>
-                                            <h3>申请理由</h3>
-                                            <div>{apply.reason}</div>
-
-                                            <h3>佐证材料</h3>
-                                            <div>
-                                                <a href={apply.material} target="_blank" rel="noopener noreferrer">
-                                                    {apply.material}
-                                                </a>
+                                            <div
+                                                style={{
+                                                    backgroundColor: "white",
+                                                    boxShadow: "0 5px 5px rgba(0, 0, 0, 0.1)",
+                                                    borderRadius: "5px",
+                                                    padding: "10px",
+                                                    marginBottom: "10px"
+                                                }}>
+                                                <h3 style={{
+                                                    padding: "10px"
+                                                }}>申请理由</h3>
+                                                <div
+                                                    style={{
+                                                        padding: "10px"
+                                                    }}
+                                                >{apply.reason}</div>
+                                                <h3
+                                                    style={{
+                                                        padding: "10px"
+                                                    }}>佐证材料链接</h3>
+                                                <div
+                                                    style={{
+                                                        padding: "10px"
+                                                    }}
+                                                >
+                                                    <a href={apply.material} target="_blank" rel="noopener noreferrer">
+                                                        {apply.material}
+                                                    </a>
+                                                </div>
                                             </div>
                                             <Button onClick={() => admit(apply.id, apply.userId)} >同意</Button>
                                             <Button onClick={() => Ban(apply.id, apply.userId)}>驳回</Button>
@@ -273,8 +297,8 @@ const UserList = () => {
                         </div>
                     ))}
                 </div>
-            </Modal>
-        </div>
+            </Modal >
+        </div >
     );
 };
 

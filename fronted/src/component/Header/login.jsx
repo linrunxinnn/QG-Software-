@@ -32,8 +32,10 @@ const LoginForm = ({ onSuccess }) => {
         const result = await dispatch(loginUserByPassword(values)).unwrap();
         onSuccess();
         message.success("登录成功");
+        console.log("!!!!!!!!!!!!!!!!!role", result)
         // 返回的用户信息中有身份，如果身份为管理员则还要跳转到管理员页面
-        if (result.role === 1) {
+        if (result.data.user.role === 1) {
+          console.log("成功成为管理员");
           navigator("/manager");
         }
       } else {
@@ -42,6 +44,7 @@ const LoginForm = ({ onSuccess }) => {
         message.success("登录成功");
         // 返回的用户信息中有身份，如果身份为管理员则还要跳转到管理员页面
         if (result.role === 1) {
+          console.log("成功成为管理员");
           navigator("/manager");
         }
       }
