@@ -16,13 +16,17 @@ import { Card, InputNumber, Button, Modal } from "antd";
 import { MoneyCollectOutlined } from "@ant-design/icons";
 import { useNavigate, Outlet, useLocation } from "react-router-dom";
 import styles from "./personal.module.css";
-import { getUserInfo, setUser } from "../../store/slice/userSlice.js";
+import {
+  getUserInfo,
+  setUser,
+  fetchUserInfo,
+} from "../../store/slice/userSlice.js";
 import { useSelector } from "react-redux";
 // 导入新创建的API服务
 import { applyToDeveloper } from "../../api/service/applyDeveloperService.js";
 import { getHaveSubscribed } from "../../api/service/subscribe.js";
 import { applyDeveloper } from "../../api/service/applyDevelopers.js";
-import { rechargeUser } from "../../api/service/userService.js";
+import { rechargeUser, getUserBalance } from "../../api/service/userService.js";
 
 const Personal = () => {
   const navigate = useNavigate();
@@ -34,13 +38,21 @@ const Personal = () => {
   const [isRechargeVisible, setIsRechargeVisible] = useState(false);
   const [amount, setAmount] = useState(100);
   const [loading, setLoading] = useState(false);
+  const [currentBalance, setcurrentBalance] = useState(0);
   // 用户数据
   const [userInfo, setUserInfo] = useState({});
   useEffect(() => {
     if (user) {
       setUserInfo(user.user);
-      // console.log("用户信息:", user);
+      console.log("用户信息!!!!!:", user);
     }
+    const balance = async () => {
+      await getUserBalance(user.user.id).then((res) => {
+        console.log("用户余额:", res.data);
+        setcurrentBalance(res.data);
+      });
+    };
+    balance();
     if (user.user && user.user.role === 3) {
       const fetchSubscribed = async () => {
         try {
@@ -56,7 +68,7 @@ const Personal = () => {
       };
       fetchSubscribed();
     }
-  }, [user.id, user]);
+  }, [user.id, user, currentBalance]);
 
   // const [userInfo, setUserInfo] = useState({
   //   id: 1,
@@ -335,6 +347,7 @@ const Personal = () => {
         content: `成功充值 ${amount} 元`,
       });
       setIsRechargeVisible(false);
+      window.location.reload(); // 重新加载页面以更新余额
     } catch (error) {
       Modal.error({
         title: "充值失败",
@@ -379,18 +392,17 @@ const Personal = () => {
   const tabs = [
     {
       key: "",
-      label:
-        userInfo && userInfo.role === "developer" ? "我的粉丝" : "我的关注",
+      label: userInfo && userInfo.role === 2 ? "我的粉丝" : "我的关注",
       icon: <Heart size={16} />,
       path: "/personal",
     },
-    {
-      key: "momentsLayout",
-      label: "动态",
-      icon: <User size={16} />,
-      path: "/personal/momentsLayout",
-      showForDeveloper: true, // 标记这个tab需要开发商身份
-    },
+    // {
+    //   key: "momentsLayout",
+    //   label: "动态",
+    //   icon: <User size={16} />,
+    //   path: "/personal/momentsLayout",
+    //   showForDeveloper: true, // 标记这个tab需要开发商身份
+    // },
     {
       key: "appointment",
       label: "软件详情",
@@ -619,6 +631,14 @@ const Personal = () => {
                 centered
               >
                 <Card bordered={false} className={styles.rechargeCard}>
+                  {/* 新增余额显示 */}
+                  <div className={styles.balanceSection}>
+                    <span>当前余额：</span>
+                    <strong className={styles.balanceAmount}>
+                      ¥{currentBalance}
+                    </strong>
+                  </div>
+
                   <div className={styles.amountSection}>
                     <h4>充值金额</h4>
                     <InputNumber
@@ -626,7 +646,6 @@ const Personal = () => {
                       max={10000}
                       value={amount}
                       defaultValue={100}
-                      icon={<MoneyCollectOutlined />}
                       onChange={handleAmountChange}
                       formatter={(value) => `¥ ${value}`}
                       parser={(value) => value.replace(/¥\s?|(,*)/g, "")}
@@ -645,6 +664,7 @@ const Personal = () => {
                       ))}
                     </div>
                   </div>
+
                   <Button
                     type="primary"
                     block
@@ -691,17 +711,19 @@ const Personal = () => {
             </div>
             <div className={styles.navContent}>
               <h3 className={styles.navTitle}>
-                {userInfo.role === 1 ? "我的粉丝" : "我的关注"}
+                {userInfo && userInfo.role === 1 ? "我的粉丝" : "我的关注"}
               </h3>
-              <p className={styles.navDesc}>
-                {userInfo.role === 1
-                  ? `${userInfo.followerCount} 位粉丝关注了你`
-                  : `关注了 ${userInfo.followingCount} 个软件开发商`}
-              </p>
+              {/* <p className={styles.navDesc}>
+                {userInfo && userInfo.role === 1
+                  ? `${userInfo && userInfo.followerCount} 位粉丝关注了你`
+                  : `关注了 ${
+                      userInfo && userInfo.followingCount
+                    } 个软件开发商`}
+              </p> */}
             </div>
           </div>
 
-          <div
+          {/* <div
             className={styles.navCard}
             onClick={() => handleNavigate("momentsLayout")}
           >
@@ -711,12 +733,12 @@ const Personal = () => {
             <div className={styles.navContent}>
               <h3 className={styles.navTitle}>动态</h3>
               <p className={styles.navDesc}>
-                {userInfo.role === "developer"
+                {userInfo && userInfo.role === 2
                   ? "查看我的最新动态和活动记录"
                   : "暂无动态，升级为开发商后可发布动态"}
               </p>
             </div>
-          </div>
+          </div> */}
 
           <div
             className={styles.navCard}
@@ -727,9 +749,9 @@ const Personal = () => {
             </div>
             <div className={styles.navContent}>
               <h3 className={styles.navTitle}>已预约</h3>
-              <p className={styles.navDesc}>
+              {/* <p className={styles.navDesc}>
                 {statistics.reservedCount} 个软件等待发布
-              </p>
+              </p> */}
             </div>
           </div>
         </div>
@@ -747,7 +769,9 @@ const Personal = () => {
         <div className={styles.contentSection}>
           <div className={styles.tabContentWrapper}>
             {/* 如果是动态页面且用户不是开发商，显示提示 */}
-            {activeTab === "momentsLayout" && userInfo.role !== "developer" ? (
+            {activeTab === "momentsLayout" &&
+            userInfo &&
+            userInfo.role !== 2 ? (
               <div className={styles.emptyState}>
                 <div className={styles.emptyIcon}>
                   <User size={48} />
